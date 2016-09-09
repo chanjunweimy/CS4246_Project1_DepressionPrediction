@@ -15,5 +15,5 @@ Stress Detection with Gaussian Process
   * data: datas that used in the code. X is the features consisted of MFCC and Magnitude Spectrum; Y is the outcome, obtained using PHQ8 test.
   * forests.py: code written to do prediction by random forests using development set after training the model using training set
   * forests_crossValidation.py: code written to do 10-fold cross-validation test by random forests using the data provided in training set
-* **featuresExtractor**
+* **features_extractor**
   * all codes are written in java here.
