@@ -13,57 +13,73 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from math import sqrt
 from sklearn.ensemble import BaggingRegressor
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import mean_squared_error
 import warnings
 
 warnings.filterwarnings("ignore")
+def getX(fileName):
+    X = []
+    with open(fileName, 'rb') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        X = [ [ float(eaVal) for eaVal in row] for row in reader]
+        # safety to check every row
+        n_feats = len(X[0])
+        for x in X:
+            if n_feats != len(x):
+                print('Warning, some x has different number of features!!')
+                sys.exit(1)
+    return X, n_feats, len(X)
 
-X = []
-y = []
-n_x = 0
-n_y = 0
-n = 0
-n_feats = 0
+X_train, n_feats_train, k_x_train = getX('trainX.txt')
+X_dev, n_feats_dev, k_x_dev = getX('devX.txt')
 
-with open('trainX.txt', 'rb') as csvfile:
-    reader = csv.reader(csvfile, delimiter=',', quotechar='|')
-    X = [ [ float(eaVal) for eaVal in row] for row in reader]
-    # safety to check every row
-    n_feats = len(X[0])
-    for x in X:
-        if n_feats != len(x):
-            print('Warning, some x has different number of features!!')
-            sys.exit(1)
-n_x = len(X)
-
-with open('trainY.txt', 'rb') as csvfile:
-    reader = csv.reader(csvfile, delimiter=',', quotechar='|')
-    y = [ int(row[0]) for row in reader ]
-n_y = len(y)
-
-if n_x != n_y:
-    print('Error, n_x != n_y')
+# some sanity checks on n_feats
+if n_feats_train != n_feats_dev:
+    print('Error n_feats in train and dev. They are not equal.')
     sys.exit(1)
-n = n_x
+n_feats = n_feats_train
 
-print("Data has " + str(n_feats) + " features and " + str(n) + " data points." )
+def getY(filename):
+    y = []
+    with open(filename, 'rb') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        y = [ int(row[0]) for row in reader ]
+    return y, len(y)
+
+y_train, k_y_train = getY('trainY.txt')
+y_dev, k_y_dev = getY('devY.txt')
+
+# sanity checks for k_train
+if k_x_train != k_y_train:
+    print('Error, train is of different size')
+    sys.exit(1)
+k_train = k_x_train
+if k_x_dev != k_y_dev:
+    print('Error, dev is of different size')
+    sys.exit(1)
+k_dev = k_x_dev
+
+print("Data has " + str(n_feats) + " features and " + str(k_train) + " training points and " + str(k_dev) + " dev points." )
 
 # some baselines
 names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Decision Tree",
          "Random Forest", "AdaBoost", "Naive Bayes", "Gaussian Process",
          "Bagging with DTRegg"]
 classifiers = [
-    KNeighborsClassifier(3),
-    SVC(kernel="linear", C=0.025),
+    KNeighborsClassifier(2),
+    SVC(kernel="linear"),
     SVC(gamma=2, C=1),
-    DecisionTreeClassifier(max_depth=5),
-    RandomForestClassifier(n_estimators=10, max_features=60, max_depth=20),
+    DecisionTreeClassifier(min_samples_split=1024, max_features=60, max_depth=20),
+    RandomForestClassifier(n_estimators=10, min_samples_split=1024, max_features=60, max_depth=20),
     AdaBoostClassifier(),
     GaussianNB(),
     gaussian_process.GaussianProcess(),
-    BaggingRegressor(DecisionTreeRegressor(min_samples_split=1024, max_depth=20, max_features=60, random_state=0), n_estimators=10, max_samples=1.0, max_features=1.0, random_state=0)]
+    BaggingRegressor(DecisionTreeRegressor(min_samples_split=1024, max_depth=20, max_features=60), n_estimators=10, max_samples=1.0, max_features=1.0)]
 classifierPair = zip(names, classifiers)
 
-for eaPair in classifierPair:
-    scores = cross_validation.cross_val_score(eaPair[1], X[:], y[:], n_jobs=-1, cv=10, scoring='mean_squared_error')
-    print(eaPair[0] +":" + str(sqrt(-1*np.mean(scores))))
-
+for name,model in classifierPair:
+    model.fit(X_train[:], y_train[:])
+    rmse_train = sqrt(mean_squared_error(y_train, model.predict(X_train)))
+    rmse_predict = sqrt(mean_squared_error(y_dev, model.predict(X_dev)))
+    print(name)
+    print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
