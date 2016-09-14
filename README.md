@@ -20,3 +20,5 @@ Stress Detection with Gaussian Process
   * it is developed using Eclipse (Version: Luna Service Release 2 (4.4.2))
   * lib/: libraries included in the java project
   * src/: the java codes written by me using template provided in CS2108 class.
+* **report**
+  * all report-related files are placed here
