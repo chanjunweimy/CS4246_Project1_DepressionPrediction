@@ -69,7 +69,7 @@ classifiers = [
     SVC(kernel="linear", C=0.025),
     SVC(gamma=2, C=1),
     DecisionTreeClassifier(max_depth=10),
-    RandomForestClassifier(max_depth=10, max_features=None),
+    RandomForestClassifier(n_estimators=10, max_features=None, min_samples_split=1024, max_depth=20),
     AdaBoostClassifier(),
     GaussianNB(),
     gaussian_process.GaussianProcess()]
