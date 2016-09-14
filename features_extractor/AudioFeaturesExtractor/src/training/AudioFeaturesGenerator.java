@@ -20,7 +20,76 @@ public class AudioFeaturesGenerator {
 
 	public static final String EMOTION_DCAPSWOZ_MFCC = FILEPATH_FEATURE_OUT + "emotion_dcapswoz_mfcc.txt";
 	public static final String EMOTION_DCAPSWOZ_SPECTRUM = FILEPATH_FEATURE_OUT + "emotion_dcapswoz_spectrum.txt";
+	public static final String EMOTION_DCAPSWOZ_ALL = FILEPATH_FEATURE_OUT + "emotion_dcapswoz_all.txt";
 
+	public boolean computeMfccMsEnergyAndZc(File[] audioFiles, String filename) {
+		writeToFile(filename, false, "");
+		
+		try (FileWriter fw = new FileWriter(filename, true)){
+			for (int i = 0; i < audioFiles.length; i++) {
+				String audioName = audioFiles[i].getAbsolutePath();
+				
+				WaveIO waveio = new WaveIO();
+				short[] signal = waveio.readWave(audioName);
+				
+				MFCC mfcc = new MFCC();
+				mfcc.process(signal);
+				double[] mean = mfcc.getMeanFeature();
+				
+				MagnitudeSpectrum ms = new MagnitudeSpectrum();
+				double[] meanMs = ms.getFeature(signal);
+				
+				Energy energy = new Energy();
+				double[] meanEnergy = energy.getFeature(signal);
+				
+				ZeroCrossing zc = new ZeroCrossing();
+				double[] meanZc = zc.getFeature(signal);
+				
+				StringBuffer buffer = new StringBuffer();
+				
+				//buffer.append(audioFiles[i].getName());
+				if (mean.length > 0) {
+					buffer.append(mean[0]);
+				} else if (meanMs.length > 0) {
+					buffer.append(meanMs[0]);
+				} else if (meanEnergy.length > 0) {
+					buffer.append(meanEnergy[0]);
+				} else if (meanZc.length > 0) {
+					buffer.append(meanZc[0]);				
+				}
+				
+				for (int j = 1; j < mean.length; j++) {
+					buffer.append(", "); 
+					buffer.append(mean[j]);
+				}
+				
+				for (int j = 0; j < meanMs.length; j++) {
+					buffer.append(", "); 
+					buffer.append(meanMs[j]);
+				}
+				
+				for (int j = 0; j < meanEnergy.length; j++) {
+					buffer.append(", "); 
+					buffer.append(meanEnergy[j]);
+				}
+				
+				for (int j = 0; j < meanZc.length; j++) {
+					buffer.append(", "); 
+					buffer.append(meanZc[j]);
+				}
+				
+				buffer.append("\n");
+				fw.write(buffer.toString());
+			}
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public boolean computeMfccMsAndZc(File[] audioFiles, String filename) {
 		writeToFile(filename, false, "");
 		
@@ -277,11 +346,12 @@ public class AudioFeaturesGenerator {
 		File emotionTrain = new File(trainFilePath);
 		File[] emotionFiles = emotionTrain.listFiles();
 		
-		File emotionMfccFile = featureGenerator.createFile(AudioFeaturesGenerator.EMOTION_DCAPSWOZ_MFCC);
+		File emotionAllFeaturesFile = featureGenerator.createFile(AudioFeaturesGenerator.EMOTION_DCAPSWOZ_ALL);
+		//File emotionMfccFile = featureGenerator.createFile(AudioFeaturesGenerator.EMOTION_DCAPSWOZ_MFCC);
 		//File emotionSpectrumFile = featureGenerator.createFile(AudioFeaturesGenerator.EMOTION_DCAPSWOZ_SPECTRUM);
 		
 
-		if (!featureGenerator.computeMFCCAndMagnitudeSpectrum(emotionFiles, emotionMfccFile.getAbsolutePath())) {
+		if (!featureGenerator.computeMfccMsEnergyAndZc(emotionFiles, emotionAllFeaturesFile.getAbsolutePath())) {
 			System.exit(-1);
 		} /* else if (!featureGenerator.computeMagnitudeSpectrum(emotionFiles, emotionSpectrumFile.getAbsolutePath())) {
 			System.exit(-1);
