@@ -9,6 +9,7 @@ AudioFeaturesExtractor/*.model
 
 data/
 emotion_dcapswoz_mfcc.txt
+emotion_dcapswoz_all_train.txt
 
 */test.arff
 */out.arff
