@@ -2,7 +2,6 @@
 features/
 
 #### report folder
-report/*.pdf
 report/*.gz
 
 
