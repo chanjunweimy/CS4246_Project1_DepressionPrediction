@@ -65,8 +65,8 @@ print("Data has " + str(n_feats) + " features and " + str(k_train) + " training 
 
 # some baselines
 names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Decision Tree",
-         "Random Forest", "AdaBoost", "Naive Bayes", "Gaussian Process",
-         "Bagging with DTRegg"]
+         "Random Forest", "AdaBoost", "Naive Bayes", "GP abs_exp", "GP squared_exp",
+         "GP cubic", "GP linear", "Bagging with DTRegg"]
 
 classifiers = [
     KNeighborsClassifier(2),
@@ -76,9 +76,14 @@ classifiers = [
     RandomForestClassifier(n_estimators=10, min_samples_split=1024, max_features=60, max_depth=20),
     AdaBoostClassifier(),
     GaussianNB(),
-    gaussian_process.GaussianProcess(),
+    gaussian_process.GaussianProcess(corr='absolute_exponential'),
+    gaussian_process.GaussianProcess(corr='squared_exponential'),
+    #Genereal Expo doesn't work with the data: 'Exception: Length of theta must be 2 or 525'
+    gaussian_process.GaussianProcess(corr='cubic'),
+    gaussian_process.GaussianProcess(corr='linear'),
     BaggingRegressor(DecisionTreeRegressor(min_samples_split=1024, max_depth=20, max_features=60), n_estimators=10, max_samples=1.0, max_features=1.0)]
 classifierPair = zip(names, classifiers)
+
 
 models_rmse = {}
 for name, model in classifierPair:
