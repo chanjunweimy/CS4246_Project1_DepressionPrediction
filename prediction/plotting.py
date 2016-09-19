@@ -10,6 +10,8 @@ def plot_bar(models_rmse):
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
+    plt.axhline(6.7418, color='k', linestyle='solid', label="Baseline")    
+
     rmse_train, rmse_predict = zip(*models_rmse.values())
     rects_train = ax.bar(ind, rmse_train, width, color='b')
     rects_predict = ax.bar(ind+width, rmse_predict, width, color='g')
