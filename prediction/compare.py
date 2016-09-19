@@ -13,8 +13,23 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import mean_squared_error
 from inputs import read_train_dev_files
 from plotting import plot_bar, plot_all_Y
+import sys
 
-X_train, y_train, X_dev, y_dev = read_train_dev_files("trainX.txt", "devX.txt", "trainY.txt", "devY.txt")
+x_train_file_name = "trainX.txt"
+x_dev_file_name = "devX.txt"
+y_train_file_name = "trainY.txt"
+y_dev_file_name = "devY.txt"
+
+if len(sys.argv) == 5:
+    x_train_file_name = sys.argv[1]
+    x_dev_file_name = sys.argv[2]
+    y_train_file_name = sys.argv[3]
+    y_dev_file_name = sys.argv[4]
+elif len(sys.argv) == 3:
+    x_train_file_name = sys.argv[1]
+    x_dev_file_name = sys.argv[2]
+
+X_train, y_train, X_dev, y_dev = read_train_dev_files(x_train_file_name, x_dev_file_name, y_train_file_name, y_dev_file_name)
 
 classifiers = {
     "Nearest Neighbors": KNeighborsClassifier(2),
