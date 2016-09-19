@@ -1,5 +1,7 @@
 import numpy as np
+from matplotlib import pylab
 import matplotlib.pyplot as plt
+from collections import Counter
 
 def plot_bar(models_rmse):
     ind = np.arange(len(models_rmse))
@@ -34,6 +36,12 @@ def plot_bar(models_rmse):
 def plot_all_Y():
     with open("allY.txt", 'rb') as allY:
         cont = allY.readlines()
-
-    plt.plot(range(len(cont)), cont)
+    cont = [ int(ea.strip()) for ea in cont]
+    counter = Counter(cont)
+    x = range(25)
+    y = [ counter[k] for k in x]
+    pylab.ylabel("Frequency")
+    pylab.xlabel("Depression Severity [PHQ-8 Score]")
+    plt.bar(x, y)
     plt.show()
+
