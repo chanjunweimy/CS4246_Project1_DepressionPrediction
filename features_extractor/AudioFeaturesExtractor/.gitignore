@@ -11,6 +11,12 @@ data/
 emotion_dcapswoz_mfcc.txt
 emotion_dcapswoz_all_train.txt
 
+bias/
+unbias/
+generatedFeatures/
+emotion_dcapswoz_all.txt
+emotion_dcapswoz_all_bias.txt
+
 */test.arff
 */out.arff
 *.arff
