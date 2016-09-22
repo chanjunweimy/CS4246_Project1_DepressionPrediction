@@ -1,0 +1,212 @@
+\documentclass{article}
+\usepackage{aaai17}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\graphicspath{ {images/} }
+\frenchspacing
+\setlength{\pdfpagewidth}{8.5in}
+\setlength{\pdfpageheight}{11in}
+
+\title{
+	CS4246 Project 1\\ Depression Prediction
+}
+\author{
+	{\bf Team 01} \\
+	Antoine Charles Vincent Garcia - A0159072A\\
+	Chan Jun Wei - A0112084\\
+	Chen Tze Cheng - A0112092\\
+	Eric Ewe Yow Choong - A0112204\\
+	Han Liang Wee, Eric - A0065517\\
+	Ho Wei Li - A0094679\\
+}
+
+\begin{document}
+ 	\maketitle
+
+	\begin{abstract}
+	\begin{quote}
+	In this report, we illustrate the use of Gaussian Processes to calculate and model stress levels in society and with the data obtained, is used to estimate depression severity.
+	\end{quote}
+	\end{abstract}
+	
+	\section{Introduction}
+
+	\section{Background}
+	There are some brief introductions to some important background informations.
+
+	\subsection{Audio Features}
+	What are the differences between sounds? To differentiate between sounds, we need to learn about audio features, which will be described below:
+	
+	\subsubsection{Energy}
+	The Energy feature of a sound refers to the loudness of the sound at various timeframes, 
+	hence it is obvious that energy of a sound is directly proportional to the amplitude of the soundwave. 
+	This shows that the higher the energy, the louder the sound is going to be.	
+	
+
+	\subsubsection{Mel Frequency Cepstral Coefficients (MFCC)}: 
+	Mel Frequency Cepstral (MFC) is a representation of short-term power spectrum of a sound, 
+	based on a linear cosine transform of a log power spectrum on a nonlinear Mel scale of frequency. 
+	MFCC are the coefficients that forms the MFC. The greatest benefit of using MFCC is that the scale approximates to the 
+	human’s auditory system response more closely, hence it allows for a better representation of sound. 
+	In order to obtain MFCC, Fourier transformed is performed on the sound signals.	
+
+
+	\subsubsection{Magnitude Spectrum}: 
+	Magnitude spectrum can be produced by converting the input signal of an audio into frames. 
+	Fast Fourier Transform (FFT) is performed on each frames and this will form the Magnitude Spectrum.
+	
+
+	\subsubsection{Zero-Crossing Rate}: 
+	Zero crossing rate is the rate of sign-changes along a signal. This feature is extremely useful in speech recognition and music information retrieval.
+
+	\subsection{Other Machine Learning Methods}
+	Machine learning is about using model to learn from existing data for some improvement or prediction. 
+	The following is some methods used in machine learning:
+	
+	\section{Gaussian Process Regression Model}
+
+	\section{Technical Approach}
+	In this section, we are going to discuss the technical approach of this project. 
+
+	\subsection{Application of Gaussian Process model}
+	
+	\textbf{Using Gaussian Process model as a machine learning model}: 
+	When a person is depressed, no matter what time the person talks, we should also be able to determine the person is depressed according 
+	to the speech signal. And we assume that the speech signals extracted from different depreessed people should be similar and thus is suitable 
+	to use Gaussian Process Model.
+
+	\subsection{Additional Insights}
+
+	\subsection{Novel Modifications}
+	\textbf{Using Gaussian Process model to optimize the parameters of the ensemble of different maching learning model}: 
+	The outcome of different machine learning model should be similar and thus is suitable to put inside Gaussian Process model.
+	
+	
+
+	\section{Evaluation}
+	In order to test our Gaussian Process model, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016). The goal of AEVC is to weigh-in on the various approaches(visual, audio) used to recognize emotions under unambiguous conditions. AVEC 2016 provided 2 pieces of data as input: visual and auditory data. However, we would be reducing the scope of the experiment, limiting the experiment to only the auditory data. Two Sub-Challenges are lised in AVEC 2016. We are only interested in the Depression Classification Sub-Challenge, which requires participants to classify inputs by the PHQ-8 score.
+
+	\subsection{Data}
+	The depression data used in AVEC 2016 was obtained from the benchmarking database, the Distress Analysis Interview Corpus - Wizard of Oz(DAIC-WOZ). Data collected from DAIC-WOZ include audio and video recordings and the corresponsing PHQ-8 score[CITE:27](0-24), which is a frequently used self-report scheme to access severity of depression[CITE]. Henceforth, we would need to pre-process the auditory data before we use it in our Gaussian Process Model. The data is pre-processed as described in the Section [REF]. The distribution of the depression severity scores in both training and development set is given in Figure \ref{histogram_phq8}. The data provided are split into 2 sets: training and development. A summary of the data is given in Table \ref{summary_table}.
+	\begin{figure}
+  \includegraphics[width=0.45\textwidth]{histogram_phq8}
+  \caption{PHQ-8 scores' histogram of both training and development set}
+  \label{histogram_phq8}
+ \end{figure}
+ \subsection{Measure of Accuracy}
+ AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$[CITE]. In order to provide a meaningful and consistent comparison to the baseline provided, we would be only using Root Mean Square Deviation Error(RMSE) to measure the error rate on both Training and Development datasets. RMSE(Equation \ref{eq:rmse}) is a commonly used in machine learning communities to measure the differences between the values predicted by a model and the values actually observed. 
+
+ \begin{equation}\label{eq:rmse}
+  \text{RMSE} = \sqrt{\frac{\sum_{t=1}^n (\hat y_t - y_t)^2}{n}}
+ \end{equation}
+ \begin{table}
+  \begin{center}
+   \begin{tabular}{ | r | c | c || c | }
+    \hline
+    & Training & Development & All \\ \hline
+    n               & 95 & 31 & 126 \\ \hline
+    $\mu$           & 6.326 & 7.548 & 6.626 \\ \hline
+    $\sigma$        & 5.597 & 6.690 & 5.909 \\ \hline
+   \end{tabular}
+  \end{center}
+  \caption{Summary of Datasets provided}
+  \label{summary_table}
+ \end{table}
+ [CITEDBLP:journals/corr/ValstarGSRLTSSC16]
+ 
+ \subsection{Experimental Setup}
+ We compared our Gaussian Model against commonly used machine learning algorithms. The list of algorithms and their hyperparameters are given in Table \ref{list_mls}. The hyper-parameters are either determined by the defaults used in the popular machine learning library, Scikit Learn[CITE] or some reasonable values were used. Each machine learning algorithm is trained against the training set and thereafter tested against the development set using RMSE as the error metric. The process used is shown in Figure \ref{process}.
+	\begin{figure}
+ 	\begin{center}
+   \includegraphics[width=0.25\textwidth]{process}
+  \end{center}
+  \caption{Experimental process}
+  \label{process}
+ \end{figure}
+ \begin{comment}
+ DO NOT REMOVE
+ @startuml
+ digraph g {
+     ML,RMSE[shape=square];
+     Model[shape=circle];
+	 Train_X -> ML;
+	 Train_y -> ML;
+	 ML -> Model
+	 Dev_X -> Model
+	 Model -> RMSE[label=Prediction]
+	 Dev_y -> RMSE[label=Actual]
+	 RMSE -> Score
+ }
+ @enduml
+ \end{comment}
+
+ \begin{table}
+  \begin{center}
+   \begin{tabular}{ | r | c |}
+    \hline
+     Algorithm & Hyper-parameters \\ \hline\hline
+    K-Nearest Neighbors        & x \\ \hline
+    Linear SVM                 & x \\ \hline
+    RBF SVM                    & x \\ \hline
+    Decision Tree              & x \\ \hline
+    Random Forest              & x \\ \hline
+    AdaBoost                   & x \\ \hline
+    Naive Bayes                & x \\ \hline
+    Decision Tree              & x \\ \hline
+   \end{tabular}
+  \end{center}
+  \caption{List of Machine Learning Algorithms with their corresponding hyper-parameters}
+  \label{list_mls}
+ \end{table}
+ \subsection{Results}
+ The results of the experiment is shown in t
+ 
+ \begin{table}
+  \begin{center}
+   \begin{tabular}{ | r | c | c |}
+    \hline
+    & \multicolumn{2}{c|}{RMSE} \\ \hline
+     Algorithm & Training & Development \\ \hline\hline
+    K-Nearest Neighbors        & x & x \\ \hline
+    Linear SVM                 & x & x \\ \hline
+    RBF SVM                    & x & x \\ \hline
+    Decision Tree              & x & x \\ \hline
+    Random Forest              & x & x \\ \hline
+    AdaBoost                   & x & x \\ \hline
+    Naive Bayes                & x & x \\ \hline
+    Decision Tree              & x & x \\ \hline
+    Gaussian Process           & x & x \\ \hline
+   \end{tabular}
+  \end{center}
+  \caption{RMSE results of the different machine learning algorithms}
+  \label{rmse_results}
+ \end{table}
+ 
+ \begin{figure*}
+  \includegraphics[width=\textwidth]{results}
+  \caption{Chart showing RMSE(Training and Development) for the different classifiers}
+  \label{rmse_results_chart}
+ \end{figure*}
+	\section{Conclusion}	
+
+
+	\section{Main Roles of Each Member}
+	\begin{itemize}
+		\item \textbf{Antoine Charles Vincent Garcia}: 
+		Scripting the program, setting up machine learning libraries and running tests.
+		\item \textbf{Chan Jun Wei}: 
+		Project technicalities such as problem formulation and modelling, mathematics and experiment planning.
+		\item \textbf{Chen Tze Cheng}: 
+		Project technicalities such as problem formulation and modelling, mathematics and experiment planning.
+		\item \textbf{Eric Ewe Yow Choong}: 
+		Documentation especially writing of the motivation, recording research findings and keeping track of requirements.
+		\item \textbf{Han Liang Wee, Eric}: 
+		Scripting the program, setting up machine learning libraries and running tests.
+		\item \textbf{Ho Wei Li}: 
+		Documentation especially writing up the motivation, recording research findings and keeping track of requirements.
+	\end{itemize}
+	
+	\section{References}
+
+\end{document}
