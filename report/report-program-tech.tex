@@ -42,13 +42,12 @@
 	The Energy feature of a sound refers to the loudness of the sound at various timeframes, 
 	hence it is obvious that energy of a sound is directly proportional to the amplitude of the soundwave. 
 	This shows that the higher the energy, the louder the sound is going to be.	
-	
 
 	\subsubsection{Mel Frequency Cepstral Coefficients (MFCC)}: 
 	Mel Frequency Cepstral (MFC) is a representation of short-term power spectrum of a sound, 
 	based on a linear cosine transform of a log power spectrum on a nonlinear Mel scale of frequency. 
 	MFCC are the coefficients that forms the MFC. The greatest benefit of using MFCC is that the scale approximates to the 
-	human’s auditory system response more closely, hence it allows for a better representation of sound. 
+	human's auditory system response more closely, hence it allows for a better representation of sound. 
 	In order to obtain MFCC, Fourier transformed is performed on the sound signals.	
 
 
@@ -63,6 +62,10 @@
 	\subsection{Other Machine Learning Methods}
 	Machine learning is about using model to learn from existing data for some improvement or prediction. 
 	The following is some methods used in machine learning:
+
+	\subsubsection{Magnitude Spectrum}: 
+	Magnitude spectrum can be produced by converting the input signal of an audio into frames. 
+	Fast Fourier Transform (FFT) is performed on each frames and this will form the Magnitude Spectrum.
 	
 	\section{Gaussian Process Regression Model}
 
@@ -76,7 +79,31 @@
 	to the speech signal. And we assume that the speech signals extracted from different depreessed people should be similar and thus is suitable 
 	to use Gaussian Process Model.
 
-	\subsection{Additional Insights}
+	\subsection{Kernels}
+	The similarity measure of all features is usually called kernel.
+	For a kernel to be used in Gaussian Process, one kernel must be  positive semidenite.\\\\
+	A real n x n matrix K which satisfies 
+	\begin{equation}\label{eq:psd_mat}
+		\text{Q(v)} = v^{T}Kv \geq 0 \text{, } \forall v  \epsilon R^{n}
+	\end{equation}
+	is called positive semidefinite (PSD). 
+	If Q(v) = 0 only when v = 0 the matrix is positive definite. Q(v) is called a quadratic form. 
+	A symmetric matrix is PSD if and only if all of its eigenvalues are non negative. A Gram matrix corresponding to a covariance function is PSD.\\\\
+
+	A kernel is said to be positive semidefinite if 
+	\begin{equation}\label{eq:psd_kernel}
+		\int_{}^{} \text{k(x,x')f(x)f(x')d}\mu\text{(x) d}\mu\text{(x')} \geq 0 \text{, } \forall f  \epsilon L_{2}\text{(X,}\mu\text{)}
+	\end{equation}
+	Equivalently a kernel function which gives rise to PSD Gram matrices for any choice of n  N and D is positive semidefinite.
+
+	\begin{enumerate}
+		\item \textbf{Radial Basis Function (RBF)}\\
+		The RBF kernel on two samples \( x = ( x_{1} x_{2} x_{3} ... x_{n} ) \) and \( x' = ( x_{1}^{'} x_{2}^{'} x_{3}^{'} ... x_{n}^{'})\) ,  
+		represented as feature vectors in some input space, is defined as 
+		\begin{equation}\label{eq:psd_kernel}
+			K(x,x') = \exp^{-\frac{||x-x'||}{2\sigma^2}}
+		\end{equation}
+	\end{enumerate}
 
 	\subsection{Novel Modifications}
 	\textbf{Using Gaussian Process model to optimize the parameters of the ensemble of different maching learning model}: 
@@ -90,10 +117,10 @@
 	\subsection{Data}
 	The depression data used in AVEC 2016 was obtained from the benchmarking database, the Distress Analysis Interview Corpus - Wizard of Oz(DAIC-WOZ). Data collected from DAIC-WOZ include audio and video recordings and the corresponsing PHQ-8 score[CITE:27](0-24), which is a frequently used self-report scheme to access severity of depression[CITE]. Henceforth, we would need to pre-process the auditory data before we use it in our Gaussian Process Model. The data is pre-processed as described in the Section [REF]. The distribution of the depression severity scores in both training and development set is given in Figure \ref{histogram_phq8}. The data provided are split into 2 sets: training and development. A summary of the data is given in Table \ref{summary_table}.
 	\begin{figure}
-  \includegraphics[width=0.45\textwidth]{histogram_phq8}
-  \caption{PHQ-8 scores' histogram of both training and development set}
-  \label{histogram_phq8}
- \end{figure}
+	  \includegraphics[width=0.45\textwidth]{histogram_phq8}
+	  \caption{PHQ-8 scores' histogram of both training and development set}
+	  \label{histogram_phq8}
+	 \end{figure}
  \subsection{Measure of Accuracy}
  AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$[CITE]. In order to provide a meaningful and consistent comparison to the baseline provided, we would be only using Root Mean Square Deviation Error(RMSE) to measure the error rate on both Training and Development datasets. RMSE(Equation \ref{eq:rmse}) is a commonly used in machine learning communities to measure the differences between the values predicted by a model and the values actually observed. 
 
