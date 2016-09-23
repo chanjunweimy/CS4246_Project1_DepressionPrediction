@@ -35,34 +35,34 @@
 	\end{quote}
 	\end{abstract}
 	
-	\section{1.	  Introduction}
+	\section{1. Introduction}
 	For our experiment, we will use the GP model to measure and compute depression severity via audio recordings. We will also be discussing about the desirable properties of the GP model as well as the technical details such as the GP model requirements for the proposed application and modifications made to enhance performance. We will also include our experimental evaluations and procedure in this report.\\
 
 	The rationale of depression prediction is enable authorities to take appropriate actions if an area or individual is depressed. For example, suicide and crime are often linked to high depression and stress levels. The data can help authorities to monitor and mitigate crime in areas with marked as 'depressed'. In addition, annual health checks may include psychiatrist recommendations which is given to individuals who falls into the depression category. If successful, these data can even be used to break down depression into 'levels' which are a better of measurement. \\
 
-	\section{2.  Gaussian Process Regression Model}
+	\section{2. Gaussian Process Regression Model}
 	As all individuals have varying inherent stress management, the use of the GP model for depression prediction makes use of all samples and feature information to perform the prediction including training data with different or uneven sampling rates. From the mean and variance obtained from previous data, we are able to predict if an individual is depressed. \\	
 
-	\subsection{2.1  Qualitative Advantages}
+	\subsection{2.1 Qualitative Advantages}
 	... \\
 
-	\subsection{2.2  Important Requirements}
+	\subsection{2.2 Important Requirements}
 	 Our GP model requires multiple audio recordings of an individual's speech. \\
 
-	\section{3.  Technical Approach}
+	\section{3. Technical Approach}
 	... \\	
 
-	\section{4.  Evaluation}
+	\section{4. Evaluation}
 	In order to test our Gaussian Process model, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016). The goal of AEVC is to weigh-in on the various approaches(visual, audio) used to recognize emotions under unambiguous conditions. AVEC 2016 provided 2 pieces of data as input: visual and auditory data. However, we would be reducing the scope of the experiment, limiting the experiment to only the auditory data. Two Sub-Challenges are lised in AVEC 2016. We are only interested in the Depression Classification Sub-Challenge, which requires participants to classify inputs by the PHQ-8 score.
 
-	\subsection{Data}
+	\subsection{4.1 Data}
 	The depression data used in AVEC 2016 was obtained from the benchmarking database, the Distress Analysis Interview Corpus - Wizard of Oz(DAIC-WOZ). Data collected from DAIC-WOZ include audio and video recordings and the corresponsing PHQ-8 score[CITE:27](0-24), which is a frequently used self-report scheme to access severity of depression[CITE]. Henceforth, we would need to pre-process the auditory data before we use it in our Gaussian Process Model. The data is pre-processed as described in the Section [REF]. The distribution of the depression severity scores in both training and development set is given in Figure \ref{histogram_phq8}. The data provided are split into 2 sets: training and development. A summary of the data is given in Table \ref{summary_table}.
 	\begin{figure}
   \includegraphics[width=0.45\textwidth]{histogram_phq8}
   \caption{PHQ-8 scores' histogram of both training and development set}
   \label{histogram_phq8}
  \end{figure}
- \subsection{Measure of Accuracy}
+ \subsection{4.2 Measure of Accuracy}
  AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$[CITE]. In order to provide a meaningful and consistent comparison to the baseline provided, we would be only using Root Mean Square Deviation Error(RMSE) to measure the error rate on both Training and Development datasets. RMSE(Equation \ref{eq:rmse}) is a commonly used in machine learning communities to measure the differences between the values predicted by a model and the values actually observed. 
 
  \begin{equation}\label{eq:rmse}
@@ -83,7 +83,7 @@
  \end{table}
  [CITEDBLP:journals/corr/ValstarGSRLTSSC16]
  
- \subsection{Experimental Setup}
+ \subsection{4.3 Experimental Setup}
  We compared our Gaussian Model against commonly used machine learning algorithms. The list of algorithms and their hyperparameters are given in Table \ref{list_mls}. The hyper-parameters are either determined by the defaults used in the popular machine learning library, Scikit Learn[CITE] or some reasonable values were used. Each machine learning algorithm is trained against the training set and thereafter tested against the development set using RMSE as the error metric. The process used is shown in Figure \ref{process}.
 	\begin{figure}
  	\begin{center}
@@ -127,7 +127,7 @@
   \caption{List of Machine Learning Algorithms with their corresponding hyper-parameters}
   \label{list_mls}
  \end{table}
- \subsection{Results}
+ \subsection{4.4 Results}
  The results of the experiment is shown in t
  
  \begin{table}
@@ -176,7 +176,7 @@
 		Documentation especially writing up the motivation, recording research findings and keeping track of requirements.
 	\end{itemize}
 	
-	\section{References}
+	\section{7. References}
 	\begin{itemize}
 		\item
 		[1] Michel Valstar, Jonathan Gratch, Bjorn Schuller, Fabian Ringeval, Denis Lalanne, Mercedes Torres Torres, Stefan Scherer, Giota Stratou, Roddy Cowie, Maja Pantic, ``AVEC 2016 - Depression, Mood, and Emotion Recognition Workshop and Challenge", MAY. 27, 2016 \\
