@@ -9,9 +9,12 @@ def getX(fileName):
         X = [ [ float(eaVal) for eaVal in row] for row in reader]
         # safety to check every row
         n_feats = len(X[0])
+        i = 0
         for x in X:
+            i += 1
             if n_feats != len(x):
                 print('Warning, some x has different number of features!!')
+                print(fileName+":"+str(i)+" has "+ str(len(x)) + " features != " + str(n_feats))
                 sys.exit(1)
     return X, n_feats, len(X)
 
