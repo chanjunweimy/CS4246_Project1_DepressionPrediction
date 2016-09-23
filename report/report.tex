@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage{aaai17}
 \usepackage{amsmath}
+\usepackage{graphicx}
 \usepackage{times}
 \usepackage{helvet}
 \usepackage{courier}
@@ -29,33 +30,33 @@
 
 	\begin{abstract}
 	\begin{quote}
-	Depression is a worrying issue in modern times. If left unregulated, it can be dentrimental both health and life. \\
+	Depression is a worrying issue in modern times. If left unregulated, it can be dentrimental both health and life.
 	
-	In this report, we illustrate the use of Gaussian Processes (GP) to calculate and model stress levels in society and with the data obtained, is used to estimate depression severity.
+	In this report, we illustrate the use of Gaussian Processes (GP) to calculate and model stress levels in society and with the data obtained, is used to estimate depression severity. \\
 	\end{quote}
 	\end{abstract}
 	
-	\section{1.	  Introduction}
-	For our experiment, we will use the GP model to measure and compute depression severity via audio recordings. We will also be discussing about the desirable properties of the GP model as well as the technical details such as the GP model requirements for the proposed application and modifications made to enhance performance. We will also include our experimental evaluations and procedure in this report. \\
+	\section{1. Introduction}
+	For our experiment, we will use the GP model to measure and compute depression severity via audio recordings. We will also be discussing about the desirable properties of the GP model as well as the technical details such as the GP model requirements for the proposed application and modifications made to enhance performance. We will also include our experimental evaluations and procedure in this report.\\
 
-	The rationale of depression prediction is enable authorities to take appropriate actions if an area or individual is depressed. For example, suicide and crime are often linked to high depression and stress levels. The data can help authorities to monitor and mitigate crime in areas with marked as 'depressed'. In addition, annual health checks may include psychiatrist recommendations which is given to individuals who falls into the depression category. If successful, these data can even be used to break down depression into 'levels' which are a better of measurement.
+	The rationale of depression prediction is enable authorities to take appropriate actions if an area or individual is depressed. For example, suicide and crime are often linked to high depression and stress levels. The data can help authorities to monitor and mitigate crime in areas with marked as 'depressed'. In addition, annual health checks may include psychiatrist recommendations which is given to individuals who falls into the depression category. If successful, these data can even be used to break down depression into 'levels' which are a better of measurement. \\
 
-	\section{2.  Gaussian Process Regression Model}
+	\section{2. Gaussian Process Regression Model}
 	As all individuals have varying inherent stress management, the use of the GP model for depression prediction makes use of all samples and feature information to perform the prediction including training data with different or uneven sampling rates. From the mean and variance obtained from previous data, we are able to predict if an individual is depressed. \\	
 
-	\subsection{2.1  Qualitative Advantages}
+	\subsection{2.1 Qualitative Advantages}
 	... \\
 
-	\subsection{2.2  Important Requirements}
+	\subsection{2.2 Important Requirements}
 	 Our GP model requires multiple audio recordings of an individual's speech. \\
 
-	\section{3.  Technical Approach}
+	\section{3. Technical Approach}
 	... \\	
 
-	\section{4.  Evaluation}
+	\section{4. Evaluation}
 	In order to test our Gaussian Process model, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016). The goal of AEVC is to weigh-in on the various approaches(visual, audio) used to recognize emotions under unambiguous conditions. AVEC 2016 provided 2 pieces of data as input: visual and auditory data. However, we would be reducing the scope of the experiment, limiting the experiment to only the auditory data. Two Sub-Challenges are lised in AVEC 2016. We are only interested in the Depression Classification Sub-Challenge, which requires participants to classify inputs by the PHQ-8 score.
 
-	\subsection{4.1	Data}
+	\subsection{4.1 Data}
 	The depression data used in AVEC 2016 was obtained from the benchmarking database, the Distress Analysis Interview Corpus - Wizard of Oz(DAIC-WOZ). Data collected from DAIC-WOZ include audio and video recordings and the corresponsing PHQ-8 score[CITE:27](0-24), which is a frequently used self-report scheme to access severity of depression[CITE]. Henceforth, we would need to pre-process the auditory data before we use it in our Gaussian Process Model. The data is pre-processed as described in the Section [REF]. The distribution of the depression severity scores in both training and development set is given in Figure \ref{histogram_phq8}. The data provided are split into 2 sets: training and development. A summary of the data is given in Table \ref{summary_table}.
 	\begin{figure}
  	\includegraphics[width=0.45\textwidth]{histogram_phq8}
@@ -159,10 +160,10 @@
 	\label{rmse_results_chart}
 	\end{figure*}
 
-	\section{5.  Conclusion}	
+	\section{5. Conclusion}	
 	... \\
 
-	\section{6.  Main Roles of Each Member}
+	\section{6. Main Roles of Each Member}
 	\begin{itemize}
 		\item \textbf{Antoine Charles Vincent Garcia}: 
 		Scripting the program, setting up machine learning libraries and running tests.
@@ -178,7 +179,7 @@
 		Documentation especially writing up the motivation, recording research findings and keeping track of requirements.
 	\end{itemize}
 	
-	\section{7.	References}
+	\section{7. References}
 	\begin{itemize}
 	\item
 	[1] Michel Valstar, Jonathan Gratch, Bjorn Schuller, Fabian Ringeval, Denis Lalanne, Mercedes Torres Torres, Stefan Scherer, Giota Stratou, Roddy Cowie, Maja Pantic, ``AVEC 2016 - Depression, Mood, and Emotion Recognition Workshop and Challenge", MAY. 27, 2016 \\
