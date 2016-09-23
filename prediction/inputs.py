@@ -1,12 +1,14 @@
 import csv
 import sys
 import warnings
+import numpy as np
+from numpy import inf
 
 def getX(fileName):
     X = []
     with open(fileName, 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
-        X = [ [ float(eaVal) for eaVal in row] for row in reader]
+        X = np.array([ [ float(eaVal) for eaVal in row] for row in reader])
         # safety to check every row
         n_feats = len(X[0])
         i = 0
@@ -16,6 +18,16 @@ def getX(fileName):
                 print('Warning, some x has different number of features!!')
                 print(fileName+":"+str(i)+" has "+ str(len(x)) + " features != " + str(n_feats))
                 sys.exit(1)
+            if np.any(np.isnan(x)):
+                print("Warning:"+fileName+":"+str(i)+" has NaN values")
+                sys.exit(1)
+            if not np.all(np.isfinite(x)):
+                print("Warning:"+fileName+":"+str(i)+" has Inf values") 
+                x[np.isneginf(x)] = 0;np.finfo(np.float64).min
+                x[np.isposinf(x)] = 0; np.finfo(np.float64).max
+                X[i-1] = x
+                #print x
+                #sys.exit(1)
     return X, n_feats, len(X)
 
 def getY(filename):

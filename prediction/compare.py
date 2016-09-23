@@ -15,10 +15,10 @@ from inputs import read_train_dev_files
 from plotting import plot_bar, plot_all_Y
 import sys
 
-x_train_file_name = "trainX.txt"
-x_dev_file_name = "devX.txt"
-y_train_file_name = "trainY.txt"
-y_dev_file_name = "devY.txt"
+x_train_file_name = "data/splitted/X/urop/trainX.txt"
+x_dev_file_name = "data/splitted/X/urop/devX.txt"
+y_train_file_name = "data/splitted/y/trainY.txt"
+y_dev_file_name = "data/splitted/y/devY.txt"
 
 if len(sys.argv) == 5:
     x_train_file_name = sys.argv[1]
