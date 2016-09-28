@@ -10,7 +10,7 @@ public class ConfigFileHandler {
 	public static final String FILE_CONFIG_NAME_DEFAULT = "config.txt";
 	public static final String FILE_OUTPUT_NAME_DEFAULT = "out.txt";
 	public static final String FILE_OUTPUT_BIAS_NAME_DEFAULT = "out_bias.txt";
-	public static final String FILEPATH_INPUT_DEFAULT = System.getProperty("user.dir");
+	public static final String FILEPATH_INPUT_DEFAULT = ".";
 	public static final int FRAME_LENGTH_DEFAULT = 512;
 	public static final double FRAME_PRE_EMPHASIS_ALPHA_DEFAULT = 0.95;
 	public static final int MFCC_NUM_CEPSTRA_PER_FRAME = 13;
