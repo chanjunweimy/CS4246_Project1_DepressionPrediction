@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.Vector;
 
 import signal.WaveIO;
-import storage.ConfigFileHandler;
 import features.Energy;
 import features.MFCC;
 import features.MagnitudeSpectrum;
@@ -120,7 +119,7 @@ public class AudioFeaturesGenerator {
 			
 			for (String feature : features) {
 				fw.write(feature);
-				biasFw.write("1 " + feature);
+				biasFw.write("1, " + feature);
 			}
 			
 			fw.close();

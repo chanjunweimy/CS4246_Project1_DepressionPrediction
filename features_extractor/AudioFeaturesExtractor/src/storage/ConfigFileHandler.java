@@ -46,7 +46,8 @@ public class ConfigFileHandler {
 	};
 	
 	public static final String DELIMITER = ":==:";
-	
+
+	private String _configFileName = null;
 	private String _outputFileName = null;
 	private String _outputBiasFileName = null;
 	private String _inputFilePath = null;
@@ -80,6 +81,8 @@ public class ConfigFileHandler {
 	}
 	
 	private void initializeConfigFileHandle(String configFileName) {
+		_configFileName = configFileName;
+		
 		File configFile = new File(configFileName);
 		if (configFile.exists()) {
 			readConfigFile(configFile);
@@ -87,6 +90,15 @@ public class ConfigFileHandler {
 			initializeVariables();
 			createConfigFile(configFile);
 		}
+	}
+	
+	public void generateConfigFile() {
+		File configFile = new File(_configFileName);
+		if (configFile.exists()) {
+			configFile.delete();
+		} 
+		initializeVariables();	
+		createConfigFile(configFile);
 	}
 
 	private void readConfigFile(File configFile) {
