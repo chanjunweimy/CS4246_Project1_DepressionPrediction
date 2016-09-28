@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import signal.WaveIO;
+import storage.ConfigFileHandler;
 import features.Energy;
 import features.MFCC;
 import features.MagnitudeSpectrum;
@@ -25,6 +26,12 @@ public class AudioFeaturesGenerator {
 	public static final String EMOTION_DCAPSWOZ_ALL = FILEPATH_FEATURE_OUT + "emotion_dcapswoz_all.txt";
 	public static final String EMOTION_DCAPSWOZ_ALL_BIAS = FILEPATH_FEATURE_OUT + "emotion_dcapswoz_all_bias.txt";
 
+	
+	public AudioFeaturesGenerator() {
+	}
+	
+
+	
 	public boolean computeMfccMsEnergyAndZcBiasAndUnbias(File[] audioFiles, String biasFile, String unbiasFile) {
 		writeToFile(unbiasFile, false, "");
 		writeToFile(biasFile, false, "");
