@@ -128,9 +128,9 @@ public class ConfigFileHandler {
             	} else if (line.startsWith(CONFIG_CONSTANTS_FIELDS[4])) {
             		_framePreEmphasisAlpha = Double.parseDouble(value);
             	} else if (line.startsWith(CONFIG_CONSTANTS_FIELDS[5])) {
-            		_mfccPreEmphasisAlpha = Double.parseDouble(value);
-            	} else if (line.startsWith(CONFIG_CONSTANTS_FIELDS[6])) {
             		_mfccNumCepstra = Integer.parseInt(value);
+            	} else if (line.startsWith(CONFIG_CONSTANTS_FIELDS[6])) {
+            		_mfccPreEmphasisAlpha = Double.parseDouble(value);
             	} else if (line.startsWith(CONFIG_CONSTANTS_FIELDS[7])) {
             		_mfccLowerFilterFrequency = Double.parseDouble(value);
             	} else if (line.startsWith(CONFIG_CONSTANTS_FIELDS[8])) {
