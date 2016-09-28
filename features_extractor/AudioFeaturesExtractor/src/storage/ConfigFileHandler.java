@@ -32,19 +32,6 @@ public class ConfigFileHandler {
 		"MFCC_NUMBER_MEL_FILTERS"
 	};
 	
-	public static final Object[] CONFIG_CONSTANTS_VALUES = {
-		FILE_OUTPUT_NAME_DEFAULT,
-		FILE_OUTPUT_BIAS_NAME_DEFAULT,
-		FILEPATH_INPUT_DEFAULT,
-		FRAME_LENGTH_DEFAULT,
-		FRAME_PRE_EMPHASIS_ALPHA_DEFAULT,
-		MFCC_NUM_CEPSTRA_PER_FRAME,
-		MFCC_PRE_EMPHASIS_ALPHA_DEFAULT,
-		MFCC_LOWER_FILTER_FREQUENCY_DEFAULT,
-		MFCC_UPPER_FILTER_FREQUENCY_DEFAULT,
-		MFCC_NUMBER_MEL_FILTERS_DEFAULT
-	};
-	
 	public static final String DELIMITER = ":==:";
 
 	private String _configFileName = null;
@@ -144,6 +131,7 @@ public class ConfigFileHandler {
             	
                 line = br.readLine();
             }
+            fr.close();
             br.close();
         }catch (Exception e){
             e.printStackTrace();
@@ -165,6 +153,19 @@ public class ConfigFileHandler {
 	}
 	
 	private void createConfigFile(File configFile) {
+		final Object[] CONFIG_CONSTANTS_VALUES = {
+			FILE_OUTPUT_NAME_DEFAULT,
+			FILE_OUTPUT_BIAS_NAME_DEFAULT,
+			FILEPATH_INPUT_DEFAULT,
+			FRAME_LENGTH_DEFAULT,
+			FRAME_PRE_EMPHASIS_ALPHA_DEFAULT,
+			MFCC_NUM_CEPSTRA_PER_FRAME,
+			MFCC_PRE_EMPHASIS_ALPHA_DEFAULT,
+			MFCC_LOWER_FILTER_FREQUENCY_DEFAULT,
+			MFCC_UPPER_FILTER_FREQUENCY_DEFAULT,
+			MFCC_NUMBER_MEL_FILTERS_DEFAULT
+		};
+		
 		try (FileWriter fw = new FileWriter(configFile, true)){
 			
 			for (int i = 0; i < CONFIG_CONSTANTS_FIELDS.length; i++) {

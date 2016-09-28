@@ -163,7 +163,7 @@ public class Main {
 			}
 			
 			
-			buffer.append("\n");
+			buffer.append(System.lineSeparator());
 			features.add(buffer.toString());
 		}
 		return features;
@@ -189,12 +189,16 @@ public class Main {
 			args[i] = args[i].trim().toUpperCase();
 			if (FEATURE_MFCC.equals(args[i])) {
 				_hasMfcc = true;
+				System.out.println("MFCC is chosen!");
 			} else if (FEATURE_MS.equals(args[i])) {
 				_hasMs = true;
+				System.out.println("Magnitude Spectrum is chosen!");
 			} else if (FEATURE_ENERGY.equals(args[i])) {
 				_hasEnergy = true;
+				System.out.println("Energy is chosen!");
 			} else if (FEATURE_ZERO_CROSSING.equals(args[i])) {
 				_hasZeroCrossing = true;
+				System.out.println("Zero Crossing is chosen!");
 			}
 		}
 	}
