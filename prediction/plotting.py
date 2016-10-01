@@ -12,13 +12,13 @@ def plot_bar(models_rmse):
 
     plt.axhline(6.7418, color='k', linestyle='solid', label="Baseline")    
 
-    rmse_train, rmse_predict = zip(*models_rmse.values())
+    model_names, rmse_train, rmse_predict = zip(*models_rmse)
     rects_train = ax.bar(ind, rmse_train, width, color='b')
     rects_predict = ax.bar(ind+width, rmse_predict, width, color='g')
 
     ax.set_ylabel('RMSE')
     ax.set_xticks(ind+width)
-    ax.set_xticklabels(models_rmse.keys())
+    ax.set_xticklabels(model_names)
     labels = ax.get_xticklabels()
     plt.setp(labels, rotation=30, fontsize=10)
     ax.legend((rects_train[0], rects_predict[0]), ('train', 'predict'), loc=2)
