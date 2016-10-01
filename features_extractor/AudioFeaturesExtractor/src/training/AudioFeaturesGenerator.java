@@ -25,6 +25,12 @@ public class AudioFeaturesGenerator {
 	public static final String EMOTION_DCAPSWOZ_ALL = FILEPATH_FEATURE_OUT + "emotion_dcapswoz_all.txt";
 	public static final String EMOTION_DCAPSWOZ_ALL_BIAS = FILEPATH_FEATURE_OUT + "emotion_dcapswoz_all_bias.txt";
 
+	
+	public AudioFeaturesGenerator() {
+	}
+	
+
+	
 	public boolean computeMfccMsEnergyAndZcBiasAndUnbias(File[] audioFiles, String biasFile, String unbiasFile) {
 		writeToFile(unbiasFile, false, "");
 		writeToFile(biasFile, false, "");
@@ -113,7 +119,7 @@ public class AudioFeaturesGenerator {
 			
 			for (String feature : features) {
 				fw.write(feature);
-				biasFw.write("1 " + feature);
+				biasFw.write("1, " + feature);
 			}
 			
 			fw.close();

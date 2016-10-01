@@ -1,5 +1,7 @@
 package signal;
 
+import storage.ConfigFileHandler;
+
 /**
  * Created by workshop on 9/18/2015.
  */
@@ -7,15 +9,15 @@ public class Frames {
     /**
      * Number of samples per frame
      */
-    public final static int frameLength = 512;
+    public static int frameLength;
     /**
      * Number of overlapping samples (usually 50% of frame length)
      */
-    public final static int shiftInterval = frameLength / 2;
+    public static int shiftInterval;
     /**
      * Pre-Emphasis Alpha (Set to 0 if no pre-emphasis should be performed)
      */
-    public final static double preEmphasisAlpha = 0.95;
+    public static double preEmphasisAlpha;
     /**
      * All the frames of the input signal
      */
@@ -27,8 +29,19 @@ public class Frames {
 
 
     public Frames(short[] inputSignals){
+    	initializeClassVariables();
         preProcess(inputSignals);
     }
+
+	/**
+	 * 
+	 */
+	private void initializeClassVariables() {
+		ConfigFileHandler config = ConfigFileHandler.getInstance();
+		frameLength = config.getFrameLength();
+    	shiftInterval = frameLength / 2;
+    	preEmphasisAlpha = config.getFramePreEmphasisAlpha();
+	}
 
     /***
      * takes a audio signal and returns the magnitude spectrum feature.
