@@ -14,6 +14,7 @@ from inputs import read_train_dev_files
 from plotting import plot_bar, plot_all_Y
 import numpy as np
 import sys
+from ARD_kernel import ard_kernel
 
 x_train_file_name = "data/splitted/X/urop/trainX.txt"
 x_dev_file_name = "data/splitted/X/urop/devX.txt"
@@ -45,6 +46,7 @@ classifiers = [("Nearest Neighbors", KNeighborsClassifier(2)),
                                                                               max_depth=20, max_features=60))),
                ("GP isotropic RBF", gp.GaussianProcessRegressor(kernel=gp.kernels.RBF())),
                ("GP anisotropic RBF", gp.GaussianProcessRegressor(kernel=gp.kernels.RBF(length_scale=np.array([1]*n_feats)))),
+               ("GP ARD", gp.GaussianProcessRegressor(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*n_feats)))),
                ("GP isotropic matern nu=0.5", gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=0.5))),
                ("GP isotropic matern nu=1.5", gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=1.5))),
                ("GP isotropic matern nu=2.5", gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=2.5))),
