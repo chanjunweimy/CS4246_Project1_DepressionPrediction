@@ -41,8 +41,12 @@
 	\section{1. Introduction}
 	For our experiment, we will use the GP model to measure and compute depression severity via audio recordings. We will also be discussing about the desirable properties of the GP model as well as the technical details such as the GP model requirements for the proposed application and modifications made to enhance performance. We will also include our experimental evaluations and procedure in this report.\\
 
-	The rationale of depression prediction is enable authorities to take appropriate actions if an area or individual is depressed. For example, suicide and crime are often linked to high depression and stress levels. The data can help authorities to monitor and mitigate crime in areas with marked as 'depressed'. In addition, annual health checks may include psychiatrist recommendations which is given to individuals who falls into the depression category. If successful, these data can even be used to break down depression into 'levels' which are a better of measurement. \\
+	\subsection{1.1 Motivation and Hypothesis}
+	The rationale of depression prediction is enable authorities to take appropriate actions if an area or individual is depressed. For example, suicide and crime are often linked to high depression and stress levels. The data can help authorities to monitor and mitigate crime in areas with marked as 'depressed'. In addition, annual health checks may include psychiatrist recommendations which is given to individuals who falls into the depression category. 
 
+	\subsection{1.2 Future Applications}
+	If successful, the data collected can be contributed to the implementation of a depression calculator application. Instead of undergoing the standard Patient Health Questionnaire depression scale (PHQ-8), users will be able to check their depression scale objectively with the app. At dangerously high levels of depression, help and consultation can be issued via notification from the app itself. 
+	
 	\section{2. Gaussian Process Regression Model}
 	As all individuals have varying inherent stress management, the use of the GP model for depression prediction makes use of all samples and feature information to perform the prediction including training data with different or uneven sampling rates. From the mean and variance obtained from previous data, we are able to predict if an individual is depressed. \\	
 
@@ -328,7 +332,7 @@
 	
 	\subsection{4.4	Results}
 	The results of the experiment is shown in t
- 
+
 	\begin{table}
 		\begin{center}
 			\begin{tabular}{ | r | c | c |}
@@ -350,12 +354,13 @@
 		\label{rmse_results}
 	\end{table}
  
- 	\begin{figure*}
-	\includegraphics[width=\textwidth]{results}
+	\begin{figure*}
+	\includegraphics[height=105mm, keepaspectratio]{results}
 	\caption{Chart showing RMSE(Training and Development) for the different classifiers}
 	\label{rmse_results_chart}
 	\end{figure*}
 
+	\newpage
 	\section{5. Conclusion}	
 	... \\
 
