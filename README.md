@@ -3,7 +3,7 @@
 ## Topic
 Stress Detection with Gaussian Process
 
-##  Develop
+## Develop
 1. Setup three main branches `documentation`, `technical` and `program`. Individual work should further branch from these branches.
 2. Edit your work and push any work in progress into the respective branches. This is so that any rebase does not affect other's work.
 3. Push to master once you are complete.
@@ -22,3 +22,10 @@ Stress Detection with Gaussian Process
   * src/: the java codes written by me using template provided in CS2108 class.
 * **report**
   * all report-related files are placed here
+
+## Referencing
+If you encountered any errors with the .bib and .tex files, run `make` in the command line for Unix system. Else, compile the document in the following sequence
+1. `pdflatex report`
+2. `bibtex report`
+3. `pdflatex report`
+4. Run the document in you favourite latex editor
