@@ -1,7 +1,7 @@
 # CS4246
 
 ## Topic
-Stress Detection with Gaussian Process
+Depression Prediction with Gaussian Process
 
 ## Develop
 1. Setup three main branches `documentation`, `technical` and `program`. Individual work should further branch from these branches.
@@ -24,8 +24,8 @@ Stress Detection with Gaussian Process
   * all report-related files are placed here
 
 ## Referencing
-If you encountered any errors with the .bib and .tex files, run `make` in the command line for Unix system. Else, compile the document in the following sequence
+If you encountered any errors with the .bib and .tex files, run `make` in the command line for Unix system. Else, compile the document in the following sequence:
 1. `pdflatex report`
 2. `bibtex report`
 3. `pdflatex report`
-4. Run the document in you favourite latex editor
+4. Run the document in you favorite latex editor
