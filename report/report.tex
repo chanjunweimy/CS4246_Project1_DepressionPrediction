@@ -32,10 +32,10 @@
 
 	\begin{abstract}
 	\begin{quote}
-	For our experiment, we will use the GP model to measure and compute depression severity via audio recordings. 
-	We will also be discussing about the desirable properties of the GP model as well as the technical details such as the 
-	GP model requirements for the proposed application and modifications made to enhance performance. 
-	We will also include our experimental evaluations and procedure in this report. \\
+	Human's emotions are often reflected in their voices and thus, indirectly correlates to a measure of depression. 
+	As depression is a growing issue that affects our lifestyle, we will solve this issue with the notion of depression prediction via Gaussian Process modelling.
+	In this report, will be discussing about the desirable properties of the GP model as well as the technical details such as the 
+	GP model requirements for the proposed application and experimental evaluations. \\
 	\end{quote}
 	\end{abstract}
 	
@@ -48,8 +48,14 @@
 	\subsection{Motivation and Hypothesis}
 	The rationale of depression prediction is enable authorities to take appropriate actions if an area or individual is depressed. 
 	For example, suicide and crime are often linked to high depression and stress levels. The data can help authorities to monitor and mitigate crime in areas with marked as 'depressed'. 
-	In addition, annual health checks may include psychiatrist recommendations which is given to individuals who falls into the depression category. 
-
+	In addition, annual health checks may include psychiatrist recommendations which is given to individuals who falls into the depression category. \\
+	
+	Our assumption on using audio recordings as our dataset is that humans exhibit a common manner of speech when depressed.
+	For example, a depressed individual will give an incoherent speech, variations in loudness, slower and
+	provides unnecessary replies due to their difficulty in registering information.
+	By identifying this quality, we will be able to provide a baseline or a predictive mean.
+	Finally, we will be able to gauge the levels of depression through the variances in the output.
+	
 	\subsection{Future Applications}
 	The output is the level of depression an individual is currently experiencing, much like the PHQ-8 survey itself. 
 	This will enable both users and experts to gauge how depressed is an individual. If successful, the data collected can be contributed to the implementation of a depression calculator application. 
@@ -387,8 +393,8 @@
 
 	\newpage
 	\section{Conclusion}	
-	... \\
-
+	Our work has succesfully modelled the various levels of depression with GP by taking audio recordings as our input. \\
+	
 	\section{Contributions}
 	\begin{itemize}
 		\item \textbf{Antoine Charles Vincent Garcia}: 
