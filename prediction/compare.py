@@ -15,6 +15,9 @@ from plotting import plot_bar, plot_all_Y
 import numpy as np
 import sys
 from ARD_kernel import ard_kernel
+import GPy.kern as kern
+import GPy.models as models
+
 
 x_train_file_name = "data/splitted/X/urop/trainX.txt"
 x_dev_file_name = "data/splitted/X/urop/devX.txt"
@@ -60,6 +63,7 @@ classifiers = [("Nearest Neighbors", KNeighborsClassifier(2)),
                ("GP cubic", gp.GaussianProcess(corr='cubic')),
                ("GP linear", gp.GaussianProcess(corr='linear'))]
 
+
 models_rmse = []
 for name, model in classifiers:
     model.fit(X_train[:], y_train[:])
@@ -68,6 +72,29 @@ for name, model in classifiers:
     models_rmse.append([name, rmse_train, rmse_predict])
     print(name)
     print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
+
+def add_rbf_ard(Xtrain, ytrain, rmse):
+    X_train = np.array(Xtrain)
+    y_train = np.array(ytrain)
+    y_train = y_train.reshape((y_train.shape[0], 1))
+
+    kernel_ard = kern.RBF(input_dim=n_feats, variance=1., lengthscale=np.array([1]*n_feats), ARD=True)
+    m = models.GPRegression(X_train, y_train, kernel_ard)
+
+    m.constrain_positive('')
+    m.optimize_restarts(num_restarts=10)
+    m.randomize()
+    m.optimize()
+
+    train_mean, train_var = m.predict(X_train)
+    dev_mean, dev_var = m.predict(X_dev)
+
+    rmse_train = sqrt(mean_squared_error(y_train, train_mean))
+    rmse_dev = sqrt(mean_squared_error(y_dev, dev_mean))
+
+    rmse.append(["GP RBF ARD", rmse_train, rmse_dev])
+
+add_rbf_ard(X_train, y_train, models_rmse)
 
 plot_bar(models_rmse)
 #plot_all_Y()
