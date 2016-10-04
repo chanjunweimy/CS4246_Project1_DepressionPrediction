@@ -32,33 +32,49 @@
 
 	\begin{abstract}
 	\begin{quote}
-	Depression is a worrying issue in modern times. If left unregulated, it can be dentrimental both health and life.
-	
-	In this report, we illustrate the use of Gaussian Processes (GP) to calculate and model stress levels in society and with the data obtained, is used to estimate depression severity. \\
+	For our experiment, we will use the GP model to measure and compute depression severity via audio recordings. 
+	We will also be discussing about the desirable properties of the GP model as well as the technical details such as the 
+	GP model requirements for the proposed application and modifications made to enhance performance. 
+	We will also include our experimental evaluations and procedure in this report. \\
 	\end{quote}
 	\end{abstract}
 	
-	\section{1. Introduction}
-	For our experiment, we will use the GP model to measure and compute depression severity via audio recordings. We will also be discussing about the desirable properties of the GP model as well as the technical details such as the GP model requirements for the proposed application and modifications made to enhance performance. We will also include our experimental evaluations and procedure in this report.\\
+	\section{Introduction}
+	Depression is a worrying issue in modern times. 
+	If left unregulated, it can be dentrimental both health and life.
+	According to surveys, approximately 7.2\% of the American household population suffered from depression between 2009-2012 \cite{nchs2014} and
+	in 2013, there were 41,149 recorded cases of suicide \cite{nvsr2016}. \\
 
-	\subsection{1.1 Motivation and Hypothesis}
-	The rationale of depression prediction is enable authorities to take appropriate actions if an area or individual is depressed. For example, suicide and crime are often linked to high depression and stress levels. The data can help authorities to monitor and mitigate crime in areas with marked as 'depressed'. In addition, annual health checks may include psychiatrist recommendations which is given to individuals who falls into the depression category. 
+	\subsection{Motivation and Hypothesis}
+	The rationale of depression prediction is enable authorities to take appropriate actions if an area or individual is depressed. 
+	For example, suicide and crime are often linked to high depression and stress levels. The data can help authorities to monitor and mitigate crime in areas with marked as 'depressed'. 
+	In addition, annual health checks may include psychiatrist recommendations which is given to individuals who falls into the depression category. 
 
-	\subsection{1.2 Future Applications}
-	The output is the level of depression an individual is currently experiencing, much like the PHQ-8 survey itself. This will enable both users and experts to gauge how depressed is an individual. If successful, the data collected can be contributed to the implementation of a depression calculator application. Instead of undergoing the standard Patient Health Questionnaire depression scale (PHQ-8), users will be able to check their depression scale objectively with the app. \\
-	With the ability to monitor depressions, psychiatrist and experts can identify and offer consultation to those who needs it before it reaches unhealthy levels. The application may even incorporate these feature such that the nearest psychiatrist's number will be displayed if depression levels exceed a certain threshold. Similar to diet and workout applications, this app and the data collected will be able to help users plan their lifestyle as well as offer help to those in need.
+	\subsection{Future Applications}
+	The output is the level of depression an individual is currently experiencing, much like the PHQ-8 survey itself. 
+	This will enable both users and experts to gauge how depressed is an individual. If successful, the data collected can be contributed to the implementation of a depression calculator application. 
+	Instead of undergoing the standard Patient Health Questionnaire depression scale (PHQ-8), users will be able to check their depression scale objectively with the app. \\
+	With the ability to monitor depressions, psychiatrist and experts can identify and offer consultation to those who needs it before it reaches unhealthy levels. 
+	The application may even incorporate these feature such that the nearest psychiatrist's number will be displayed if depression levels exceed a certain threshold. 
+	Similar to diet and workout applications, this app and the data collected will be able to help users plan their lifestyle as well as offer help to those in need.
 	
-	\section{2. Gaussian Process Regression Model}
-	As all individuals have varying inherent stress management, the use of the GP model for depression prediction makes use of all samples and feature information to perform the prediction including training data with different or uneven sampling rates. From the mean and variance obtained from previous data, we are able to predict if an individual is depressed. \\	
+	\section{Gaussian Process Regression Model}
+	As all individuals have varying inherent stress management, the use of the GP model for depression prediction makes use of all samples and feature information to perform the prediction including training data with different or uneven sampling rates. 
+	From the mean and variance obtained from previous data, we are able to predict if an individual is depressed. \\	
 
-	\subsection{2.1 Qualitative Advantages}
-	 GP is exceptionally useful in this application as it enables us to perform prediction on various training data including outliers or those with irregular sampling rates. As our experiment is based on individuals and their personality, the data is therefore subjective for each individual. This helps in our attempt to verify our hypothesis of the correlation between human behaviour and depression. \\
+	\subsection{Qualitative Advantages}
+	 GP is exceptionally useful in this application as it enables us to perform prediction on various training data including outliers or those with irregular sampling rates. 
+	As our experiment is based on individuals and their personality, the data is therefore subjective for each individual. This helps in our attempt to verify our hypothesis of the correlation between human behaviour and depression. \\
 
-	One key advantage of GP is that it is able to give the confidence interval. Curve-fitting algorithms for interpolation of data do not accomodate well to noise, unlike GP as it can be optimized with the appropriate hyper-parameters and thus, allows a fine and precise trade-off between smoothing and fitting the data. \\
+	One key advantage of GP is that it is able to give the confidence interval. 
+	Curve-fitting algorithms for interpolation of data do not accomodate well to noise, unlike GP as it can be optimized with the appropriate hyper-parameters and thus, allows a fine and precise trade-off between smoothing and fitting the data. \\
 
-	With GP, we can also obtain a probability distribution such as the predicitve mean and variance. These properties have a significant role to play in estimating the depression levels. For instance, the mean could be use as the baseline for an average working-human mood. The variance here would give us a picture to how depressed is an individual or vice versa.
+	With GP, we can also obtain a probability distribution such as the predicitve mean and variance. 
+	These properties have a significant role to play in estimating the depression levels. For instance, the mean could be use as the baseline for an average working-human mood. 
+	The variance here would give us a picture to how depressed is an individual or vice versa.
+	These properties allows us to gauge the depression 'levels' as well as measure the accuracy of the correlation between a subject's emotion and how depress they are feeling.
 
-	\subsection{2.2 Requirements}
+	\subsection{Requirements}
 	Aside from the audio recordings, our GP model makes use of the following:
 	\begin{enumerate}
 		\item \textbf{Energy}	\\
@@ -115,10 +131,10 @@
 		independent of the value of any other feature, given the class variable. Naive Bayes multiplies all the possibilities of a particular event occurs, then 
 		give the prediction of possibility that event. All the data are extracted from the dataset to represent the possibilities which are the number of times 
 		the particular event occurs in the dataset over the total number of events. Naive Bayes can produce great results if the features in the dataset is as 
-	independent as possible. 
+		independent as possible. 
 	\end{enumerate}
 
-	\section{3. Technical Approach}
+	\section{Technical Approach}
 	\subsection{Application of Gaussian Process model}
 	
 	\textbf{Using Gaussian Process model as a machine learning model}: 
@@ -260,10 +276,10 @@
 	\textbf{Using Gaussian Process model to optimize the parameters of the ensemble of different maching learning model}: 
 	The outcome of different machine learning model should be similar and thus is suitable to put inside Gaussian Process model.
 
-	\section{4. Evaluation}
+	\section{Evaluation}
 	In order to test our Gaussian Process model, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016) \cite{avec2016}. The goal of AEVC is to weigh-in on the various approaches(visual, audio) used to recognize emotions under unambiguous conditions. AVEC 2016 provided 2 pieces of data as input: visual and auditory data. However, we would be reducing the scope of the experiment, limiting the experiment to only the auditory data. Two Sub-Challenges are lised in AVEC 2016. We are only interested in the Depression Classification Sub-Challenge, which requires participants to classify inputs by the PHQ-8 score.
 
-	\subsection{4.1 Data}
+	\subsection{Data}
 	\begin{figure}[h]
  	\includegraphics[width=0.40\textwidth]{histogram_phq8}
 	\caption{PHQ-8 scores' histogram of both training and development set}
@@ -286,14 +302,14 @@
  	\label{summary_table}
  	\end{table}
 
- 	\subsection{4.2	Measure of Accuracy}
+ 	\subsection{Measure of Accuracy}
 	AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$[CITE]. In order to provide a meaningful and consistent comparison to the baseline provided, we would be only using Root Mean Square Deviation Error(RMSE) to measure the error rate on both Training and Development datasets. RMSE(Equation \ref{eq:rmse}) is a commonly used in machine learning communities to measure the differences between the values predicted by a model and the values actually observed. 
 	\begin{equation}\label{eq:rmse}
   	\text{RMSE} = \sqrt{\frac{\sum_{t=1}^n (\hat y_t - y_t)^2}{n}}
  	\end{equation}
 	[CITEDBLP:journals/corr/ValstarGSRLTSSC16]
 
-	\subsection{4.3	Experimental Setup}
+	\subsection{Experimental Setup}
 	We compared our Gaussian Model against commonly used machine learning algorithms. The list of algorithms and their hyperparameters are given in Table \ref{list_mls}. The hyper-parameters are either determined by the defaults used in the popular machine learning library, Scikit Learn[CITE] or some reasonable values were used. Each machine learning algorithm is trained against the training set and thereafter tested against the development set using RMSE as the error metric. The process used is shown in Figure \ref{process}.
 
 	\begin{table}[h]
@@ -339,7 +355,7 @@
  	@enduml
  	\end{comment}
 
-	\subsection{4.4	Results}
+	\subsection{Results}
 	The results of the experiment is shown in t
 
 	\begin{table}
@@ -370,10 +386,10 @@
 	\end{figure*}
 
 	\newpage
-	\section{5. Conclusion}	
+	\section{Conclusion}	
 	... \\
 
-	\section{6. Main Roles of Each Member}
+	\section{Contributions}
 	\begin{itemize}
 		\item \textbf{Antoine Charles Vincent Garcia}: 
 		Scripting the program, setting up machine learning libraries and running tests.
@@ -389,7 +405,7 @@
 		Documentation especially writing up the motivation, recording research findings and keeping track of requirements.
 	\end{itemize}
 	
-	\bibliographystyle{plain}
+	\bibliographystyle{aaai}
 	\bibliography{references}
 
 \end{document}
