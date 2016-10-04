@@ -45,7 +45,8 @@
 	The rationale of depression prediction is enable authorities to take appropriate actions if an area or individual is depressed. For example, suicide and crime are often linked to high depression and stress levels. The data can help authorities to monitor and mitigate crime in areas with marked as 'depressed'. In addition, annual health checks may include psychiatrist recommendations which is given to individuals who falls into the depression category. 
 
 	\subsection{1.2 Future Applications}
-	If successful, the data collected can be contributed to the implementation of a depression calculator application. Instead of undergoing the standard Patient Health Questionnaire depression scale (PHQ-8), users will be able to check their depression scale objectively with the app. At dangerously high levels of depression, help and consultation can be issued via notification from the app itself. 
+	The output is the level of depression an individual is currently experiencing, much like the PHQ-8 survey itself. This will enable both users and experts to gauge how depressed is an individual. If successful, the data collected can be contributed to the implementation of a depression calculator application. Instead of undergoing the standard Patient Health Questionnaire depression scale (PHQ-8), users will be able to check their depression scale objectively with the app. \\
+	With the ability to monitor depressions, psychiatrist and experts can identify and offer consultation to those who needs it before it reaches unhealthy levels. The application may even incorporate these feature such that the nearest psychiatrist's number will be displayed if depression levels exceed a certain threshold. Similar to diet and workout applications, this app and the data collected will be able to help users plan their lifestyle as well as offer help to those in need.
 	
 	\section{2. Gaussian Process Regression Model}
 	As all individuals have varying inherent stress management, the use of the GP model for depression prediction makes use of all samples and feature information to perform the prediction including training data with different or uneven sampling rates. From the mean and variance obtained from previous data, we are able to predict if an individual is depressed. \\	
@@ -53,9 +54,9 @@
 	\subsection{2.1 Qualitative Advantages}
 	 GP is exceptionally useful in this application as it enables us to perform prediction on various training data including outliers or those with irregular sampling rates. As our experiment is based on individuals and their personality, the data is therefore subjective for each individual. This helps in our attempt to verify our hypothesis of the correlation between human behaviour and depression. \\
 
-One key advantage of GP is that it is able to give the confidence interval. Curve-fitting algorithms for interpolation of data do not accomodate well to noise, unlike GP as it can be optimized with the appropriate hyper-parameters and thus, allows a fine and precise trade-off between smoothing and fitting the data. \\
+	One key advantage of GP is that it is able to give the confidence interval. Curve-fitting algorithms for interpolation of data do not accomodate well to noise, unlike GP as it can be optimized with the appropriate hyper-parameters and thus, allows a fine and precise trade-off between smoothing and fitting the data. \\
 
-With GP, we can also obtain a probability distribution such as the predicitve mean and variance. These properties have a significant role to play in estimating the depression levels. For instance, the mean could be use as the baseline for an average working-human mood. The variance here would give us a picture to how depressed is an individual or vice versa.
+	With GP, we can also obtain a probability distribution such as the predicitve mean and variance. These properties have a significant role to play in estimating the depression levels. For instance, the mean could be use as the baseline for an average working-human mood. The variance here would give us a picture to how depressed is an individual or vice versa.
 
 	\subsection{2.2 Requirements}
 	Aside from the audio recordings, our GP model makes use of the following:
