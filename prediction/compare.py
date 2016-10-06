@@ -1,10 +1,10 @@
 from math import sqrt
 from sklearn import gaussian_process as gp
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor, AdaBoostRegressor
 from sklearn.ensemble import BaggingRegressor
 from sklearn.naive_bayes import GaussianNB
 #from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -87,6 +87,7 @@ for featSelName, featSel in featSelectionFns.iteritems():
     score = ml(X_train[:,bitVec], y_train)
     bitVecs[featSelName] = bitVec
     print(featSelName+ "," + str(numFeats) + ": " + str(score) + " in "+ str(timeTaken) + "seconds")
+    print(bitVec)
 
 class RBF_ARD_WRAPPER:
     def __init__(self, kernel_ardIn):
@@ -101,16 +102,14 @@ class RBF_ARD_WRAPPER:
     def predict(self, X):
         return self.m.predict(X)[0]
 
-classifiers = [("Nearest Neighbors", None, KNeighborsClassifier(2)),
+regressors = [("Nearest Neighbors", None, KNeighborsRegressor(2)),
                ("Linear SVM", None, SVC(kernel="linear")),
                ("RBF SVM", None, SVC(gamma=2, C=1)),
-               ("Decision Tree", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
-               ("Random Forest", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
-                                                         max_depth=20)),
-               ("AdaBoost", None, AdaBoostClassifier()),
+               ("Decision Tree", None, DecisionTreeRegressor(min_samples_split=1024, max_depth=20)),
+               ("Random Forest-UROP", ["All"], RandomForestRegressor(n_estimators=10, min_samples_split=1024,
+                                                         max_features=60, max_depth=20)),
+               ("AdaBoost", None, AdaBoostRegressor()),
                ("Naive Bayes", None, GaussianNB()),
-               ("Bagging with DTRegg", ["All"], BaggingRegressor(DecisionTreeRegressor(min_samples_split=1024,
-                                                                              max_depth=20))),
                ("GP isotropic RBF", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RBF())),
                ("GP anisotropic RBF", ["All"], gp.GaussianProcessRegressor(kernel=gp.kernels.RBF(length_scale=np.array([1]*n_feats)))),
                ("GP ARD", ["All"], gp.GaussianProcessRegressor(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*n_feats)))),
@@ -131,7 +130,7 @@ classifiers = [("Nearest Neighbors", None, KNeighborsClassifier(2)),
 
 
 models_rmse = []
-for name, featSelectionMode, model in classifiers:
+for name, featSelectionMode, model in regressors:
     modes = featSelectionMode
     if featSelectionMode==None:
         modes = featSelectionFns.keys()
