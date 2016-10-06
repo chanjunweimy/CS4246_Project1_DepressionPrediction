@@ -62,4 +62,4 @@ def read_train_dev_files(trainx, devx, trainy, devy):
     k_dev = k_x_dev
 
     print("Data has " + str(n_feats) + " features and " + str(k_train) + " training points and " + str(k_dev) + " dev points." )
-    return X_train, y_train, X_dev, y_dev
+    return np.array(X_train), np.array(y_train), np.array(X_dev), np.array(y_dev)

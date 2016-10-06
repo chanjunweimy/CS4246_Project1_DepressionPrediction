@@ -20,11 +20,11 @@
 \author{
 	{\bf Team 01} \\
 	Antoine Charles Vincent Garcia - A0159072A\\
-	Chan Jun Wei - A0112084\\
-	Chen Tze Cheng - A0112092\\
-	Eric Ewe Yow Choong - A0112204\\
-	Han Liang Wee, Eric - A0065517\\
-	Ho Wei Li - A0094679\\
+	Chan Jun Wei - A0112084U\\
+	Chen Tze Cheng - A0112092W\\
+	Eric Ewe Yow Choong - A0112204E\\
+	Han Liang Wee, Eric - A0065517A\\
+	Ho Wei Li - A0094679H\\
 }
 
 \begin{document}
@@ -32,37 +32,30 @@
 
 	\begin{abstract}
 	\begin{quote}
-	Human's emotions are often reflected in their voices and thus, indirectly correlates to a measure of depression. 
-	As depression is a growing issue that affects our lifestyle, we will solve this issue with the notion of depression prediction via Gaussian Process modelling.
-	In this report, will be discussing about the desirable properties of the GP model as well as the technical details such as the 
-	GP model requirements for the proposed application and experimental evaluations. \\
+	Depression is a debiliatating mental illness that has good prognosis given early detection and treatment. However, detection is difficult with the various factors that raise the entry barrier and decrease the accuracy of a diagnostic test. In this study we aim to prove that prediction of depression severity on the PHQ-8 scale with voice acoustics is possible through the use of Gaussian Process, potentially lowering entry barriers to diagnostic tests and aiding early detection.\\
 	\end{quote}
 	\end{abstract}
 	
 	\section{Introduction}
-	Depression is a worrying issue in modern times. 
-	If left unregulated, it can be dentrimental both health and life.
-	According to surveys, approximately 7.2\% of the American household population suffered from depression between 2009-2012 \cite{nchs2014} and
-	in 2013, there were 41,149 recorded cases of suicide \cite{nvsr2016}. \\
+	Depression has a severe, and at times long-term, negative impact on an individual's quality of life. 
+	Major depression is 3rd leading cause of disability worldwide with 65 million life years spent living with the disability or lost due to early death \cite{who2004}.
+	Depression's annual toll on U.S businesses amounts to about \$80 billion in medical expenditures, lost productivity and suicide. Among the costs, close to \$10 billion accrued in lost workdays each year and more than \$33 billion in other costs accrue from decreased productivity due to symptoms that sap energy, affect work habits, cause problems with concentration, memory, and decision-making. \cite{tjcp2015}\\
+
+	Left unchecked, depression increases risk for morbidity, suicide, decreased cognitive and social functioning, self-neglect, and early death \cite{arcp2009}. Death from suicide is one of the top 10 causes of death, above the death rate for chronic liver disease, Alzheimer’s, homicide, arteriosclerosis or hypertension. \cite{nvsr2016}\\
+	
+	Despite the severe consequences, depression is one of the most treatable mental illnesses but it is also one of the most under-diagnosed globally. In general health-care, 48.4\% of 		patients suffering from depression go unrecognized \cite{jama2003}.\\
 
 	\subsection{Motivation and Hypothesis}
-	The rationale of depression prediction is enable authorities to take appropriate actions if an area or individual is depressed. 
-	For example, suicide and crime are often linked to high depression and stress levels. The data can help authorities to monitor and mitigate crime in areas with marked as 'depressed'. 
-	In addition, annual health checks may include psychiatrist recommendations which is given to individuals who falls into the depression category. \\
-	
-	Our assumption on using audio recordings as our dataset is that humans exhibit a common manner of speech when depressed.
-	For example, a depressed individual will give an incoherent speech, variations in loudness, slower and
-	provides unnecessary replies due to their difficulty in registering information.
-	By identifying this quality, we will be able to provide a baseline or a predictive mean.
-	Finally, we will be able to gauge the levels of depression through the variances in the output.
+	The Personal Health Questionaire depression scale (PHQ-8) is one of the many diagnostic tests for depressive disorders and it has been proven to be an effective severity measure for depression in large clinical studies\cite{jad2008}. Nevertheless, one of the biggest obstacles to successful diagnosis of depression is the unwillingness of patients to admit their predisposition to depression by seeking help.\\
+
+	People often subscribe to the social stigma that being depressed reflects a weakness in their character, a permanent defect in their personality. This stigma manifests itself particularly in a phenomenon known as social distancing whereby people with mental issues are more isolated from others \cite{tpcrp2011}.  People suffering from depression hence tend to be ashamed of their condition and are generally convinced that denying and hiding it from others gives them a better shot at integrating with society and living a normal life \cite{bmb2001}. Even if they do seek help, the accuracy of the PHQ-8 or just questionaires and surveys in general are often adversely affected by the Hawthorne Effect, a type of reactivity in which individuals modify or improve an aspect of their behavior in response to their awareness of being observed. \cite{jce2014}.\\
+
+	In the past decade, there have been research successfully correlating emotion with voice production and speech acoustics \cite{uwa2001}. Corollary to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen some success, proving that it is an effective indicator of depression severity \cite{jov2016}.\\
+
+	The aim of the present study is to determine if acoustic measures of voice, characterizing specific spectral and timing proerties, predict clinical ratings of depression severity in a sample of patients using an existing dataset of their voice recordings, on the PHQ-8 scale.\\
 	
 	\subsection{Future Applications}
-	The output is the level of depression an individual is currently experiencing, much like the PHQ-8 survey itself. 
-	This will enable both users and experts to gauge how depressed is an individual. If successful, the data collected can be contributed to the implementation of a depression calculator application. 
-	Instead of undergoing the standard Patient Health Questionnaire depression scale (PHQ-8), users will be able to check their depression scale objectively with the app. \\
-	With the ability to monitor depressions, psychiatrist and experts can identify and offer consultation to those who needs it before it reaches unhealthy levels. 
-	The application may even incorporate these feature such that the nearest psychiatrist's number will be displayed if depression levels exceed a certain threshold. 
-	Similar to diet and workout applications, this app and the data collected will be able to help users plan their lifestyle as well as offer help to those in need.
+	Findings from this experiment will reinforce results from similar experiments and make a stronger case for the possibility of lowering the entry barriers of depression diagnostic tests and at the same time, increasing the accuracy of depression diagnosis by abstracting the Hawthorne Effect. Diagnostic tests can be designed in a friendly way that does not require the patient to consciously answer questionaires such as the PHQ-8 or even to have complete awareness of the diagnostic process. By taking into account the Hawthorne Effect and the status quo of the social stigma and working around them, diagnoses can be made easier, faster and more accurately and with that, education and treatment can begin early before the mental condition of the patient deteriorates. \\
 	
 	\section{Gaussian Process Regression Model}
 	As all individuals have varying inherent stress management, the use of the GP model for depression prediction makes use of all samples and feature information to perform the prediction including training data with different or uneven sampling rates. 
@@ -91,9 +84,9 @@
 		\item \textbf{Mel Frequency Cepstral Coefficients (MFCC)} \\
 		Mel Frequency Cepstral (MFC) is a representation of short-term power spectrum of a sound, 
 		based on a linear cosine transform of a log power spectrum on a nonlinear Mel scale of frequency. 
-		MFCC are the coefficients that forms the MFC. The greatest benefit of using MFCC is that the scale approximates to the 
+		The greatest benefit of using MFCC is that the scale approximates the 
 		human's auditory system response more closely, hence it allows for a better representation of sound. 
-		In order to obtain MFCC, Fourier transformed is performed on the sound signals.	
+		In order to obtain MFCC, Fourier transform is performed on the sound signals.	
 	
 		\item \textbf{Magnitude Spectrum} \\
 		Magnitude spectrum can be produced by converting the input signal of an audio into frames. 
@@ -104,20 +97,20 @@
 	\end{enumerate}
 
 	\subsection{2.3 Important Machine Learning Methods}
-	Machine learning is about using model to learn from existing data for some improvement or prediction. 
+	Machine learning is about using models to learn from existing data for some improvement or predictions. 
 	The following is some methods used in machine learning:
 	\begin{enumerate}
 		\item \textbf{k-nearest neighbors algorithm} \\
 		The k-Nearest Neighbors algorithm (or k-NN for short) is a non-parametric method used for classification and regression. 
 		K is the user defined constant which classify the class of a vector data. The training examples are vectors in a multidimensional feature space, 
-		each with a class label. The classification process of this algorithm can be visualize as the graph below.
+		each with a class label. The classification process of this algorithm can be visualized using the graph below.[CROSS REF]
 	
-		\item \textbf{Support Vector Machine (SVM)} \\
-		Support Vector Machine (SVM), with the help of the libsvm, a developed library for SVM. 
-		SVM is a type of linear classiﬁers that aims at ﬁnding a unique solution in the form of an optimal hyperplane. 
-		This optimal hyperplane is deﬁned as the one that maximizes the margins between the two classes. 
+		\item \textbf{Support Vector Machines (SVM)} \\
+		Support Vector Machines (SVM), with the help of the libsvm, a developed library for SVM. 
+		SVM is a type of linear classiﬁer that aims at finding a unique solution in the form of an optimal hyperplane. 
+		This optimal hyperplane is defined as the one that maximizes the margins between the two classes. 
 		It will be positioned at equal distance between the closest points of each class and will create the largest possible corridor with no points 
-		from either classes inside. These closest points are on the border of the corridor and are called the support vectors.
+		from either classes inside. These closest points on the border of the corridor are called the support vectors.
 	
 		\item \textbf{Random Forest Regressor} \\
 		Random Forest is an ensemble of decision trees, whereas a decision tree is trying to separate the data into different
@@ -127,28 +120,28 @@
 		\item \textbf{AdaBoost} \\
 		AdaBoost is the short form of Adaptive Boost. The output of the other learning algorithms ('weak learners') is combined 
 		into a weighted sum that represents the final output of the boosted classifier. AdaBoost is adaptive in the sense that subsequent weak 
-		learners are tweaked in favor of those instances misclassified by previous classifiers. AdaBoost first find out the classifier with the least errors, 
-		then focus on those errors later by adding the weight to the outliers, then find out another classifier with least errors again. 
-		The process is repeated till the end then all the classifier will be combined to form a final classifier which will indicate the class of data. 
-		Therefore, AdaBoost is able to be sensitive to noisy data and outliers.
+		learners are tweaked in favor of those instances misclassified by previous classifiers. AdaBoost first determines the classifier with the least errors, 
+		then focuses on those errors later by adding a weight to the outliers, subsequently it searches for another classifier with least errors again. 
+		The process is repeated for all classifiers which will lastly be combined to form a final classifier which will specify the class of data. 
+		With this process, AdaBoost has the capacity to be sensitive to noisy data and outliers.
 	
 		\item \textbf{Naive Bayes} \\ 
-		Naive Bayes is a prediction algorithm that uses Bayes rule in assumption of all naive Bayes classifiers assume that the value of a particular feature is 
-		independent of the value of any other feature, given the class variable. Naive Bayes multiplies all the possibilities of a particular event occurs, then 
-		give the prediction of possibility that event. All the data are extracted from the dataset to represent the possibilities which are the number of times 
-		the particular event occurs in the dataset over the total number of events. Naive Bayes can produce great results if the features in the dataset is as 
-		independent as possible. 
+		Naive Bayes is a prediction algorithm that uses Bayes rule where the value of a particular feature is 
+		independent of the value of any other feature given the class variable. Naive Bayes takes the product of all the probabilities of a particular event, then 
+		gives a prediction of the probabilities of that event. All the data are extracted from the dataset to represent the probability which are the number of times 
+		the particular event occurs in the dataset out of the total number of events. Naive Bayes can produce great results if the features in the dataset is as close to being
+		independent as possible.
 	\end{enumerate}
 
 	\section{Technical Approach}
 	\subsection{Application of Gaussian Process model}
 	
 	\textbf{Using Gaussian Process model as a machine learning model}: 
-	When a person is depressed, no matter what time the person talks, we should also be able to determine the person is depressed according 
-	to the speech signal. And we assume that the speech signals extracted from different depreessed people should be similar and thus is suitable 
-	to use Gaussian Process Model.
+	When a person is depressed, no matter the time of the day, we should also be able to determine the person is depressed according 
+	to the speech signal. And we assume that the speech signals extracted from different depressed people should share some similarities and thus suitable 
+	for prediction with the Gaussian Process Model.
 
-	\subsection{Some Famous Mathematical Formula}
+	\subsection{Mathematical Axioms Used}
 	\subsubsection{Euclidean Distance}
 	Euclidean Distance is used to find the distance between two points in an Euclidean Space. Euclidean Distance is defined as:
 	\begin{equation}\label{eq:eucdis}
@@ -171,7 +164,7 @@
 	where \(\mu\) denotes a measure. A real kernel is said to be symmetric if k(x,x') = k(x',x); 
 	clearly covariance functions must be symmetric from the definition.\\\\
 	
-	For a kernel to be used in Gaussian Process, one kernel must be  positive semidenite:\\
+	For a kernel to be used in Gaussian Process, one kernel must be  positive semidefinite:\\
 	A real n x n matrix K which satisfies 
 	\begin{equation}\label{eq:psd_mat}
 		\text{Q(v)} = v^{T}Kv \geq 0 \text{, } \forall v  \epsilon R^{n}
@@ -184,7 +177,7 @@
 	\begin{equation}\label{eq:psd_kernel}
 		\int_{}^{} \text{k(x,x')f(x)f(x')d}\mu\text{(x) d}\mu\text{(x')} \geq 0 \text{, } \forall f  \epsilon L_{2}\text{(X,}\mu\text{)}
 	\end{equation}
-	Equivalently a kernel function which gives rise to PSD Gram matrices for any choice of n  N and D is positive semidefinite.\\\\
+	Equivalently a kernel function which gives rise to PSD Gram matrices for any choice of n, N and D is positive semidefinite.\\\\
 
 	The kernels that would be chosen as our kernel is shown below 
 	(The kernels are assumed to be defined on two samples \( x = ( x_{1} x_{2} x_{3} ... x_{n} ) \) and 
@@ -205,7 +198,7 @@
 		
 		\item \textbf{Matern}\\
 		The class of Matern kernels is a generalization of the RBF and the absolute exponential kernel parameterized 
-		by an additional parameter nu. The smaller nu, the less smooth the approximated function is. For nu=\(\infty\), 
+		by an additional parameter nu. The smaller the value of nu, the less smooth the approximated function is. For nu=\(\infty\), 
 		the kernel becomes equivalent to the RBF kernel and for nu=0.5 to the absolute exponential kernel. 
 		Important intermediate values are nu=1.5 (once differentiable functions) and nu=2.5 (twice differentiable functions).\\
 
@@ -263,7 +256,7 @@
 		The kernel is used to estimate the noise-level(\(\delta\)) of the input. 
 		The kernel is given by:
 		\begin{equation}\label{eq:kernel_noise}
-			if x == x', k(x,x') = \delta ; \text{else 0}
+			\text{if} x == x', k(x,x') = \delta ; \text{else 0}
 		\end{equation}
 		\\
 
@@ -275,7 +268,7 @@
 		where \(||x - x'||\) represents Euclidean Distance. \\
 
 		\item \textbf{Sum}\\
-		Sum-kernel k1 + k2 of two kernels k1 and k2.\\
+		Sum-kernel is the sum of two kernels k1 and k2.\\
 	\end{enumerate}
 
 	\subsection{Novel Modifications}
