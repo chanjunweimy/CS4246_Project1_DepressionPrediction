@@ -420,6 +420,9 @@ public class AudioFeaturesGenerator {
 			MFCC mfcc = new MFCC();
 			mfcc.process(signal);
 			double[] mean = mfcc.getMeanFeature();
+			
+			System.out.println(mean.length);
+			
 			StringBuffer buffer = new StringBuffer();
 			
 			//buffer.append(audioFiles[i].getName());
@@ -558,11 +561,17 @@ public class AudioFeaturesGenerator {
 		//File emotionMfccFile = featureGenerator.createFile(AudioFeaturesGenerator.EMOTION_DCAPSWOZ_MFCC);
 		//File emotionSpectrumFile = featureGenerator.createFile(AudioFeaturesGenerator.EMOTION_DCAPSWOZ_SPECTRUM);
 		
+		if (!featureGenerator.computeMFCC(emotionFiles,
+			    emotionAllFeaturesFile.getAbsolutePath())) {
+			System.exit(-1);
+		}	
+		
+		/*
 		if (!featureGenerator.computeMfccMsEnergyAndZcBiasAndUnbias(emotionFiles, 
 																    emotionBiasAllFeaturesFile.getAbsolutePath(),
 																    emotionAllFeaturesFile.getAbsolutePath())) {
 			System.exit(-1);
-		}
+		}*/
 			/* 
 		if (!featureGenerator.computeMfccMsEnergyAndZcBias(emotionFiles, emotionAllFeaturesFile.getAbsolutePath())) {
 			System.exit(-1);
