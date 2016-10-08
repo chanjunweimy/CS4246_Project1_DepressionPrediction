@@ -41,7 +41,7 @@
 	Major depression is 3rd leading cause of disability worldwide with 65 million life years spent living with the disability or lost due to early death \cite{who2004}.
 	Depression's annual toll on U.S businesses amounts to about \$80 billion in medical expenditures, lost productivity and suicide. Among the costs, close to \$10 billion accrued in lost workdays each year and more than \$33 billion in other costs accrue from decreased productivity due to symptoms that sap energy, affect work habits, cause problems with concentration, memory, and decision-making. \cite{tjcp2015}\\
 
-	Left unchecked, depression increases risk for morbidity, suicide, decreased cognitive and social functioning, self-neglect, and early death \cite{arcp2009}. Death from suicide is one of the top 10 causes of death, above the death rate for chronic liver disease, Alzheimer’s, homicide, arteriosclerosis or hypertension. \cite{nvsr2016}\\
+	Left unchecked, depression increases risk for morbidity, suicide, decreased cognitive and social functioning, self-neglect, and early death \cite{arcp2009}. Death from suicide is one of the top 10 causes of death, above the death rate for chronic liver disease, AlzheimerÃ¢â‚¬â„¢s, homicide, arteriosclerosis or hypertension. \cite{nvsr2016}\\
 	
 	Despite the severe consequences, depression is one of the most treatable mental illnesses but it is also one of the most under-diagnosed globally. In general health-care, 48.4\% of 		patients suffering from depression go unrecognized \cite{jama2003}.\\
 
@@ -76,24 +76,83 @@
 	\subsection{Requirements}
 	Aside from the audio recordings, our GP model makes use of the following:
 	\begin{enumerate}
-		\item \textbf{Energy}	\\
-		The Energy feature of a sound refers to the loudness of the sound at various timeframes, 
-		hence it is obvious that energy of a sound is directly proportional to the amplitude of the soundwave. 
-		This shows that the higher the energy, the louder the sound is going to be.	
-	
-		\item \textbf{Mel Frequency Cepstral Coefficients (MFCC)} \\
-		Mel Frequency Cepstral (MFC) is a representation of short-term power spectrum of a sound, 
-		based on a linear cosine transform of a log power spectrum on a nonlinear Mel scale of frequency. 
-		The greatest benefit of using MFCC is that the scale approximates the 
-		human's auditory system response more closely, hence it allows for a better representation of sound. 
-		In order to obtain MFCC, Fourier transform is performed on the sound signals.	
-	
-		\item \textbf{Magnitude Spectrum} \\
-		Magnitude spectrum can be produced by converting the input signal of an audio into frames. 
-		Fast Fourier Transform (FFT) is performed on each frames and this will form the Magnitude Spectrum.
+		\item \textbf{Audio Features}	\\
+		What are the differences between sounds? To differentiate between sounds, we need to learn about audio features, which will be described below:\\
+		\begin{enumerate}
+
+			\item \textbf{Energy}	\\
+			The Energy feature of a sound refers to the loudness of the sound at various timeframes, 
+			hence it is obvious that energy of a sound is directly proportional to the amplitude of the soundwave. 
+			This shows that the higher the energy, the louder the sound is going to be.	
 		
-		\item \textbf{Zero-Crossing Rate} \\
-		Zero crossing rate is the rate of sign-changes along a signal. This feature is extremely useful in speech recognition and music information retrieval.
+			\item \textbf{Mel Frequency Cepstral Coefficients (MFCC)} \\
+			Mel Frequency Cepstral (MFC) is a representation of short-term power spectrum of a sound, 
+			based on a linear cosine transform of a log power spectrum on a nonlinear Mel scale of frequency. 
+			The greatest benefit of using MFCC is that the scale approximates the 
+			human's auditory system response more closely, hence it allows for a better representation of sound. 
+			In order to obtain MFCC, Fourier transform is performed on the sound signals.	
+		
+			\item \textbf{Magnitude Spectrum} \\
+			Magnitude spectrum can be produced by converting the input signal of an audio into frames. 
+			Fast Fourier Transform (FFT) is performed on each frames and this will form the Magnitude Spectrum.
+			
+			\item \textbf{Zero-Crossing Rate} \\
+			Zero crossing rate is the rate of sign-changes along a signal. This feature is extremely useful in speech recognition and music information retrieval.
+		\end{enumerate}
+		
+		\item \textbf{Kernels}	\\
+		The similarity measure of all features is usually called kernel. As Gaussian Process uses Kernels to predict the value for an unseen point from training data, 
+		understanding different kernels that we are going to use is extremely useful. \\
+		The kernels that would we are intested in is shown below 
+		(The kernels are assumed to be defined on two samples \( x = ( x_{1} x_{2} x_{3} ... x_{n} ) \) and 
+		\( x' = ( {x_{1}}' {x_{2}}' {x_{3}}' ... {x_{n}}')\) ,  
+		represented as feature vectors in some input space):\\
+		\begin{enumerate}
+			\item \textbf{Radial Basis Function (RBF)}\\
+			The RBF kernel is defined as 
+			\begin{equation}\label{eq:kernel_rbf}
+				K(x,x') = \exp^{-\frac{||x-x'||^{2}}{2\sigma^{2}}}
+			\end{equation}
+			\(||x-x'||^{2}\) represents Squared Euclidean Distance 
+			And \( \sigma > 0 \) can either be a scalar (isotropic variant of the kernel) or a vector with the same number of dimensions 
+			as the inputs X (anisotropic variant of the kernel). \\
+			It is also known as the squared exponential kernel. This kernel is infinitely differentiable, 
+			which implies that GPs with this kernel as covariance function have mean square derivatives of all orders, 
+			and are thus very smooth.
+			
+			\item \textbf{Matern}\\
+			The class of Matern kernels is a generalization of the RBF and the absolute exponential kernel parameterized 
+			by an additional parameter nu. The smaller the value of nu, the less smooth the approximated function is. For nu=\(\infty\), 
+			the kernel becomes equivalent to the RBF kernel and for nu=0.5 to the absolute exponential kernel. 
+			Important intermediate values are nu=1.5 (once differentiable functions) and nu=2.5 (twice differentiable functions).
+
+			\item \textbf{Automatic Relevance Detection (ARD) Kernels}\\
+			If we chose the anisotropic variant of the RBF and Matern kernel, then these kernels would be also called as ARD kernels. 
+			So, what it means for the model is, (let's assume the numbe of dimensions of the input is N) for each \(\sigma_{i}\), where i = 1,2,3,...,N, 
+			might be different, depending the importance of the corresponding input features. \\
+
+			There are a few advantages for our project if we used ARD: \cite{Cawley2014}
+			\begin{enumerate}
+				\item Generalisation performance is potentially improved.
+				\item The data would be better explained.
+				\item Increase the efficiency of feature extraction for audio.
+			\end{enumerate}
+			
+			\item \textbf{Dot Product}\\
+			The Dot Product kernel is non-stationary and can be obtained from linear regression by putting N(0, 1) priors on the coefficients 
+			of \(x_{d}\) (d = 1, . . . , D) and a prior of N(0, \(\sigma_{0}^{2}\)) on the bias. 
+			The Dot Product kernel is invariant to a rotation of the coordinates about the origin, but not translations. 
+			It is parameterized by a parameter \(\sigma_{0}^{2}\). For \(\sigma_{0}^{2} = 0\), 
+			the kernel is called the homogeneous linear kernel, otherwise it is inhomogeneous. The kernel is given by
+			\begin{equation}\label{eq:kernel_dp}
+				K(x,x') = \sigma_{0}^{2} + x \cdot x'  
+			\end{equation}
+		\end{enumerate}
+
+		While Matern is a very generalized kernel, both isotropic and ARD variant of the Matern kernel is selected for our model. 
+		On the other hand, as dot product kernel is a very efficient and simple kernel, 
+		we decide to give it a try too. \\
+		As we favor simplicity, we actually think that dot product kernel would give us the best result.
 	\end{enumerate}
 
 	\subsection{2.3 Important Machine Learning Methods}
@@ -103,11 +162,11 @@
 		\item \textbf{k-nearest neighbors algorithm} \\
 		The k-Nearest Neighbors algorithm (or k-NN for short) is a non-parametric method used for classification and regression. 
 		K is the user defined constant which classify the class of a vector data. The training examples are vectors in a multidimensional feature space, 
-		each with a class label. The classification process of this algorithm can be visualized using the graph below.[CROSS REF]
+		each with a class label. 
 	
 		\item \textbf{Support Vector Machines (SVM)} \\
 		Support Vector Machines (SVM), with the help of the libsvm, a developed library for SVM. 
-		SVM is a type of linear classiﬁer that aims at finding a unique solution in the form of an optimal hyperplane. 
+		SVM is a type of linear classifier that aims at finding a unique solution in the form of an optimal hyperplane. 
 		This optimal hyperplane is defined as the one that maximizes the margins between the two classes. 
 		It will be positioned at equal distance between the closest points of each class and will create the largest possible corridor with no points 
 		from either classes inside. These closest points on the border of the corridor are called the support vectors.
@@ -133,147 +192,38 @@
 		independent as possible.
 	\end{enumerate}
 
-	\section{Technical Approach}
-	\subsection{Application of Gaussian Process model}
+
+	\subsection{Feature Selection}
+	Feature selection is the process of selecting a subset of relevant features including variables or predictors to be used in a model construction for machine learning. 
+	The usage of feature selection is to reduce the complexity of a model in machine learning to be interpreted easier. 
+	The objective of variable selection is three-fold: improving the prediction performance of the predictors, providing faster and most cost-effective predictors, 
+	and providing a better understanding of the underlying process that generated the data. \cite{Guyon2003} \\
+
+	In our audio dataset, we extracted many features including  MFCC, MS, Zero-Crossing rate and Energy level, and thus the dimension of our features are huge (about 100 columns).
+	While the number of datas we have are not large enough, having a large feature dimensions will lead to overfitting. 
+	As shown in the Figure \ref{fig:overfitting}, when the model is overfitting, it will produce a worse result. \\
+
+	Besides, having less features would significantly reduce the time amount of training the model.\\
+
+	Based on these rationale, we decided to do feature selection. \\
 	
-	\textbf{Using Gaussian Process model as a machine learning model}: 
-	When a person is depressed, no matter the time of the day, we should also be able to determine the person is depressed according 
-	to the speech signal. And we assume that the speech signals extracted from different depressed people should share some similarities and thus suitable 
-	for prediction with the Gaussian Process Model.
+	\begin{figure}[h]
+	 	\includegraphics[width=0.40\textwidth]{overfitting}
+		\caption{How Overfitting affects Prediction}
+		\label{fig:overfitting}
+	\end{figure}
 
-	\subsection{Mathematical Axioms Used}
-	\subsubsection{Euclidean Distance}
-	Euclidean Distance is used to find the distance between two points in an Euclidean Space. Euclidean Distance is defined as:
-	\begin{equation}\label{eq:eucdis}
-		||x-x'|| = \sqrt{(x_{1} - {x_{1}}')^{2} + (x_{2} - {x_{2}}')^{2} + ... + (x_{n} - {x_{n}}')^{2}}  
-	\end{equation}
+	\subsubsection{Hypothesis: Doing feature selection before applying to the ARD Kernel Gaussian Process model will improve the result.}
+	Without doing feature selections, as the feature dimensions would be huge, we would also have large number of kernel parameters. 
+	As a result, it is likely to lead to overfitting and generating poor result. \cite{Cawley2014} 
+	Thus, to increase the effectiveness of the Gaussian Process Model, we would apply feature selection to the data first.
 
-	\subsubsection{Squared Euclidean Distance}
-	It is just the squared of Euclidean Distance. Nothing special.
-	\begin{equation}\label{eq:sq_eucdis}
-		||x-x'||^{2} = (x_{1} - {x_{1}}')^{2} + (x_{2} - {x_{2}}')^{2} + ... + (x_{n} - {x_{n}}')^{2}  
-	\end{equation}
-
-	\subsection{Kernels}
-	A general name for a function k of two arguments mapping a pair of inputs \( x \epsilon X, x' \epsilon X\) into R is a kernel.
-	In other word, the similarity measure of all features is usually called kernel.\\
-	This term arises in the theory of integral operators, where the operator \(T_{k}\) is defined as
-	\begin{equation}\label{eq:Kernel_Tk}
-		(T_{k}f)(x) = \int_{X} k(x,x') f(x') d\mu(x'),
-	\end{equation}
-	where \(\mu\) denotes a measure. A real kernel is said to be symmetric if k(x,x') = k(x',x); 
-	clearly covariance functions must be symmetric from the definition.\\\\
-	
-	For a kernel to be used in Gaussian Process, one kernel must be  positive semidefinite:\\
-	A real n x n matrix K which satisfies 
-	\begin{equation}\label{eq:psd_mat}
-		\text{Q(v)} = v^{T}Kv \geq 0 \text{, } \forall v  \epsilon R^{n}
-	\end{equation}
-	is called positive semidefinite (PSD). 
-	If Q(v) = 0 only when v = 0 the matrix is positive definite. Q(v) is called a quadratic form. 
-	A symmetric matrix is PSD if and only if all of its eigenvalues are non negative. A Gram matrix corresponding to a covariance function is PSD.\\\\
-
-	A kernel is said to be positive semidefinite if 
-	\begin{equation}\label{eq:psd_kernel}
-		\int_{}^{} \text{k(x,x')f(x)f(x')d}\mu\text{(x) d}\mu\text{(x')} \geq 0 \text{, } \forall f  \epsilon L_{2}\text{(X,}\mu\text{)}
-	\end{equation}
-	Equivalently a kernel function which gives rise to PSD Gram matrices for any choice of n, N and D is positive semidefinite.\\\\
-
-	The kernels that would be chosen as our kernel is shown below 
-	(The kernels are assumed to be defined on two samples \( x = ( x_{1} x_{2} x_{3} ... x_{n} ) \) and 
-	\( x' = ( {x_{1}}' {x_{2}}' {x_{3}}' ... {x_{n}}')\) ,  
-	represented as feature vectors in some input space):\\
-	\begin{enumerate}
-		\item \textbf{Radial Basis Function (RBF)}\\
-		The RBF kernel is defined as 
-		\begin{equation}\label{eq:kernel_rbf}
-			K(x,x') = \exp^{-\frac{||x-x'||^{2}}{2\sigma^{2}}}
-		\end{equation}
-		\(||x-x'||^{2}\) represents Squared Euclidean Distance 
-		And \( \sigma > 0 \) can either be a scalar (isotropic variant of the kernel) or a vector with the same number of dimensions 
-		as the inputs X (anisotropic variant of the kernel). \\
-		It is also known as the squared exponential kernel. This kernel is infinitely differentiable, 
-		which implies that GPs with this kernel as covariance function have mean square derivatives of all orders, 
-		and are thus very smooth.\\
-		
-		\item \textbf{Matern}\\
-		The class of Matern kernels is a generalization of the RBF and the absolute exponential kernel parameterized 
-		by an additional parameter nu. The smaller the value of nu, the less smooth the approximated function is. For nu=\(\infty\), 
-		the kernel becomes equivalent to the RBF kernel and for nu=0.5 to the absolute exponential kernel. 
-		Important intermediate values are nu=1.5 (once differentiable functions) and nu=2.5 (twice differentiable functions).\\
-
-		\item \textbf{Dot Product}\\
-		The Dot Product kernel is non-stationary and can be obtained from linear regression by putting N(0, 1) priors on the coefficients 
-		of \(x_{d}\) (d = 1, . . . , D) and a prior of N(0, \(\sigma_{0}^{2}\)) on the bias. 
-		The Dot Product kernel is invariant to a rotation of the coordinates about the origin, but not translations. 
-		It is parameterized by a parameter \(\sigma_{0}^{2}\). For \(\sigma_{0}^{2} = 0\), 
-		the kernel is called the homogeneous linear kernel, otherwise it is inhomogeneous. The kernel is given by
-		\begin{equation}\label{eq:kernel_dp}
-			K(x,x') = \sigma_{0}^{2} + x \cdot x'  
-		\end{equation}
-		\\
-
-		\item \textbf{Constant Kernel}\\
-		The constant Kernel just set the similar measures to be a constant. The kernel is given by:
-		\begin{equation}\label{eq:kernel_const}
-			k(x,x') = C   
-		\end{equation}
-		where C is a constant, \(C \epsilon R and C \geq 0\)
-		\\
-
-		\item \textbf{Compound Kernel}\\
-		Kernel which is composed of a set of other kernels.
-		\\
-
-		\item \textbf{Exp-Sine-Squared Kernel}\\
-		The ExpSineSquared kernel allows modeling periodic functions. 
-		Therefore, it is also called Periodic Kernel.  
-		It is parameterized by a length-scale parameter, \(l > 0\) and a periodicity parameter \(p > 0\). 
-		The kernel given by:
-		\begin{equation}\label{eq:kernel_ess}
-			k(x,x') = \exp^{(\frac{-2 sin( \frac{\pi ||x - x'||}{p})}{l})^{2}}   
-		\end{equation}
-		where \(||x - x'||\) represents Euclidean Distance. \\
-
-		\item \textbf{Rational Quadratic Kernel}\\
-		The RationalQuadratic kernel can be seen as a scale mixture (an infinite sum) of RBF kernels with different characteristic length-scales. 
-		It is parameterized by a length-scale parameter \(l > 0\) and 
-		a scale mixture parameter \( \alpha > 0 \). The kernel given by:
-		\begin{equation}\label{eq:kernel_rq}
-			k(x,x') = (\frac{1 + ||x - x'||^{2})}{2 \alpha l^{2}})^{-\alpha}
-		\end{equation}
-		where \(||x-x'||^{2}\) represents Squared Euclidean Distance \\
-
-		\item \textbf{Linear Kernel}\\
-		Linear Kernel is a simpler kernel which can run efficiently. However, its linearity assumption is its downside.
-		The kernel is given by:
-		\begin{equation}\label{eq:kernel_linear}
-			k(x,x') = x^{T} x'
-		\end{equation}
-		\\
-
-		\item \textbf{White Kernel}\\
-		The kernel is used to estimate the noise-level(\(\delta\)) of the input. 
-		The kernel is given by:
-		\begin{equation}\label{eq:kernel_noise}
-			\text{if} x == x', k(x,x') = \delta ; \text{else 0}
-		\end{equation}
-		\\
-
-		\item \textbf{Ornstein–Uhlenbeck Kernel}\\
-		The kernel is given by:
-		\begin{equation}\label{eq:kernel_ou}
-			k(x,x') = \exp^{(\frac{-||x - x'||}{l})}
-		\end{equation}
-		where \(||x - x'||\) represents Euclidean Distance. \\
-
-		\item \textbf{Sum}\\
-		Sum-kernel is the sum of two kernels k1 and k2.\\
-	\end{enumerate}
-
-	\subsection{Novel Modifications}
-	\textbf{Using Gaussian Process model to optimize the parameters of the ensemble of different maching learning model}: 
-	The outcome of different machine learning model should be similar and thus is suitable to put inside Gaussian Process model.
+	\subsubsection{Hypothesis: MFCC is the most important feature.}
+	Depression is actually tied to emotions : it can either mean sadness or people who deny feeling sad. \cite{Stratou2015} 
+	On the other hand, as the baseline accuracy of using only MFCC to predict emotions is quite high, \cite{ElAyadi2011}, 
+	we actually guess that MFCC is the most important feature in depression prediction. 
+	In other words, since we have limited datas and large feature dimension, 
+	using MFCC feature only for the input vector of the model might actually improve the result.
 
 	\section{Evaluation}
 	In order to test our Gaussian Process model, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016) \cite{avec2016}. The goal of AEVC is to weigh-in on the various approaches(visual, audio) used to recognize emotions under unambiguous conditions. AVEC 2016 provided 2 pieces of data as input: visual and auditory data. However, we would be reducing the scope of the experiment, limiting the experiment to only the auditory data. Two Sub-Challenges are lised in AVEC 2016. We are only interested in the Depression Classification Sub-Challenge, which requires participants to classify inputs by the PHQ-8 score.
