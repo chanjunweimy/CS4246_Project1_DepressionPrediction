@@ -41,7 +41,7 @@
 	Major depression is 3rd leading cause of disability worldwide with 65 million life years spent living with the disability or lost due to early death \cite{who2004}.
 	Depression's annual toll on U.S businesses amounts to about \$80 billion in medical expenditures, lost productivity and suicide. Among the costs, close to \$10 billion accrued in lost workdays each year and more than \$33 billion in other costs accrue from decreased productivity due to symptoms that sap energy, affect work habits, cause problems with concentration, memory, and decision-making. \cite{tjcp2015}\\
 
-	Left unchecked, depression increases risk for morbidity, suicide, decreased cognitive and social functioning, self-neglect, and early death \cite{arcp2009}. Death from suicide is one of the top 10 causes of death, above the death rate for chronic liver disease, AlzheimerÃ¢â‚¬â„¢s, homicide, arteriosclerosis or hypertension. \cite{nvsr2016}\\
+	Left unchecked, depression increases risk for morbidity, suicide, decreased cognitive and social functioning, self-neglect, and early death \cite{arcp2009}. Death from suicide is one of the top 10 causes of death, above the death rate for chronic liver disease, AlzheimerÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s, homicide, arteriosclerosis or hypertension. \cite{nvsr2016}\\
 	
 	Despite the severe consequences, depression is one of the most treatable mental illnesses but it is also one of the most under-diagnosed globally. In general health-care, 48.4\% of 		patients suffering from depression go unrecognized \cite{jama2003}.\\
 
@@ -160,36 +160,29 @@
 	The following is some methods used in machine learning:
 	\begin{enumerate}
 		\item \textbf{k-nearest neighbors algorithm} \\
-		The k-Nearest Neighbors algorithm (or k-NN for short) is a non-parametric method used for classification and regression. 
-		K is the user defined constant which classify the class of a vector data. The training examples are vectors in a multidimensional feature space, 
-		each with a class label. 
+		The k-Nearest Neighbors algorithm is a non-parametric method for classification and regression. 
+		The training examples are vectors in a multidimensional feature space, each with a class label. 
+		The data will be classified into the class with most number of occurrence within the defined k radius.
 	
 		\item \textbf{Support Vector Machines (SVM)} \\
-		Support Vector Machines (SVM), with the help of the libsvm, a developed library for SVM. 
-		SVM is a type of linear classifier that aims at finding a unique solution in the form of an optimal hyperplane. 
-		This optimal hyperplane is defined as the one that maximizes the margins between the two classes. 
-		It will be positioned at equal distance between the closest points of each class and will create the largest possible corridor with no points 
-		from either classes inside. These closest points on the border of the corridor are called the support vectors.
+		Support Vector Machine (SVM), with the help of the libsvm, is a type of linear classiﬁers that aims at ﬁnding 
+		a unique solution in the form of an optimal hyperplane which is deﬁned as the one that maximizes the margins between the two classes.
+
 	
 		\item \textbf{Random Forest Regressor} \\
-		Random Forest is an ensemble of decision trees, whereas a decision tree is trying to separate the data into different
-		leaf nodes where the data points in each node have certain similarity. Each decision tree will predict a value and all of the values 
-		will be averaged. The average value would be the prediction result.
+		Random Forest is an ensemble of decision trees, whereas a decision tree tries to separate the data into different leaf nodes 
+		where the data points in each node have certain similarity. Each decision tree will predict a value and the values will be averaged to be the result.
 	
 		\item \textbf{AdaBoost} \\
-		AdaBoost is the short form of Adaptive Boost. The output of the other learning algorithms ('weak learners') is combined 
-		into a weighted sum that represents the final output of the boosted classifier. AdaBoost is adaptive in the sense that subsequent weak 
-		learners are tweaked in favor of those instances misclassified by previous classifiers. AdaBoost first determines the classifier with the least errors, 
-		then focuses on those errors later by adding a weight to the outliers, subsequently it searches for another classifier with least errors again. 
-		The process is repeated for all classifiers which will lastly be combined to form a final classifier which will specify the class of data. 
-		With this process, AdaBoost has the capacity to be sensitive to noisy data and outliers.
+		AdaBoost is the short form of Adaptive Boost which is sensitive to noisy data and outliers. 
+		AdaBoost first find out the classifier with the least errors, adding the weight to the outliers, then find out another classifier with least errors again.
+		A final classifier will be combined and indicate the class of data.
+
 	
 		\item \textbf{Naive Bayes} \\ 
-		Naive Bayes is a prediction algorithm that uses Bayes rule where the value of a particular feature is 
-		independent of the value of any other feature given the class variable. Naive Bayes takes the product of all the probabilities of a particular event, then 
-		gives a prediction of the probabilities of that event. All the data are extracted from the dataset to represent the probability which are the number of times 
-		the particular event occurs in the dataset out of the total number of events. Naive Bayes can produce great results if the features in the dataset is as close to being
-		independent as possible.
+		Naive Bayes is a prediction algorithm that uses Bayes rule. 
+		All naive Bayes classifiers assume that the value of a particular feature is independent of the value of any other feature, given the class variable. 
+		The possibilities is represented by the number of times the particular event occurs in the dataset over the total number of events. 
 	\end{enumerate}
 
 
