@@ -58,21 +58,43 @@
 	Findings from this experiment will reinforce results from similar experiments and make a stronger case for the possibility of lowering the entry barriers of depression diagnostic tests and at the same time, increasing the accuracy of depression diagnosis by abstracting the Hawthorne Effect. Diagnostic tests can be designed in a friendly way that does not require the patient to consciously answer questionaires such as the PHQ-8 or even to have complete awareness of the diagnostic process. By taking into account the Hawthorne Effect and the status quo of the social stigma and working around them, diagnoses can be made easier, faster and more accurately and with that, education and treatment can begin early before the mental condition of the patient deteriorates. \\
 	
 	\section{Gaussian Process Regression Model}
-	As all individuals have varying inherent stress management, the use of the GP model for depression prediction makes use of all samples and feature information to perform the prediction including training data with different or uneven sampling rates. 
-	From the mean and variance obtained from previous data, we are able to predict if an individual is depressed. \\	
+	As Gaussian Process Regression Model is a new state of the art machine learning model, we are trying to apply it for depression prediction 
+	with the hope that the accuracy of depression prediction will be improved. \\	
+	
+	We have made the following assumptions so that the Gaussian Process Regression Model is indeed suitable for depression prediction:
+	\begin{enumerate}
+		\item When a person is depressed, we should be able to determine the person is depressed according to the speech of the person.\cite{Cummins2015}
+		\item Depression Prediction is an event-based recognition which provides a single depression estimates over a certain amount of time. \cite{Valstar2016}
+		\item The speech signals extracted from different depressed people should share some similarities and thus suitable for prediction with the Gaussian Process Model. 
+		For example, a diminished prosody and monotonous and “lifeless” sounding speech is indicative of depression.\cite{Cummins2015}
+	\end{enumerate}
 
 	\subsection{Qualitative Advantages}
-	 GP is exceptionally useful in this application as it enables us to perform prediction on various training data including outliers or those with irregular sampling rates. 
-	As our experiment is based on individuals and their personality, the data is therefore subjective for each individual. This helps in our attempt to verify our hypothesis of the correlation between human behaviour and depression. \\
+	GP is exceptionally useful in this application as it enables us to perform prediction on various training data including outliers or 
+	those with irregular sampling rates. As our assumption of we are able to determine of depressed person according to the speech and all 
+	the signals extracted share some similarities, we could make use of the training data in GP to perform prediction for a depressed person based on the speech of the person.\\
 
-	One key advantage of GP is that it is able to give the confidence interval. 
-	Curve-fitting algorithms for interpolation of data do not accomodate well to noise, unlike GP as it can be optimized with the appropriate hyper-parameters and thus, allows a fine and precise trade-off between smoothing and fitting the data. \\
+	With GP, we can obtain a probability distribution such as the predictive mean and variance. 
+	These properties have a signiﬁcant role to play in estimating the depression levels. For instance, 
+	the mean could be use as the baseline for an average working-human mood. The variance here would give us a picture to how good our existing data is. 
+	So, if some area of the probability distribution gives very high variance, it means that we don’t have enough data for that area. 
+	Therefore, using the properties of GP we could determine how well our database is and we can find out what is the average depression level for 
+	everyone in the world nowadays. \\
 
-	With GP, we can also obtain a probability distribution such as the predicitve mean and variance. 
-	These properties have a significant role to play in estimating the depression levels. For instance, the mean could be use as the baseline for an average working-human mood. 
-	The variance here would give us a picture to how depressed is an individual or vice versa.
-	These properties allows us to gauge the depression 'levels' as well as measure the accuracy of the correlation between a subject's emotion and how depress they are feeling.
+	Besides, GP produces truly probabilistic outputs with an explicit degree of prediction uncertainty. 
+	The prediction uncertainty can be further analyse to produce useful results. In addition, there exist algorithms for GP hyperparameter 
+	learning—something the other Machine Learning methods like SVM framework lacks. It is very useful as hyperparameter estimation could provide 
+	improvement to the Machine Learning algorithm especially in sound/speech recognition. \cite{Hashimoto2015} \\
 
+	Previously,  SVM gave a very high accuracy of prediction in speech emotion recognition, scoring about 94 \% 
+	of accuracy in classification of emotions. \cite{Chavhan2010}. However, in a more recent research, GP actually beats SVM in emotion recognition. 
+	In the paper  “Music Genre and Emotion Recognition Using Gaussian Processes“ \cite{MARKOV2013}, 
+	both music genre classification and music emotion estimation tasks, the GP performed consistently better than the SVM. \\
+
+	Therefore, as we are trying to prediction on depression, we would like to use GP to process our data to produce a more accurate prediction result. 
+
+
+	
 	\subsection{Requirements}
 	Aside from the audio recordings, our GP model makes use of the following:
 	\begin{enumerate}
