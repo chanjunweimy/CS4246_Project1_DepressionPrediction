@@ -1,10 +1,10 @@
 from math import sqrt
 from sklearn import gaussian_process as gp
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor, AdaBoostRegressor
 from sklearn.ensemble import BaggingRegressor
 from sklearn.naive_bayes import GaussianNB
 #from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -69,6 +69,14 @@ def convertToBitVec(featSel):
         return len(feats),bitVec
     return wrapper
 
+mfccIntVec = [1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
+def returnMask(intVec):
+    def wrapper(X,y):
+        mask = intVec
+        mask = np.array(mask).astype('bool')
+        return np.sum(mask),mask
+    return wrapper
 
 # CIFE: index of selected features, F[1] is the most important feature
 # CFS: index of selected features
@@ -77,7 +85,8 @@ featSelectionFns = {
     "All": convertToBitVec(baselineProc),
     "Relief": convertToBitVec(reliefPostProc),
     "CIFE": convertToBitVec(CIFE.cife),
-    "CFS": convertToBitVec(CFS.cfs)
+    "CFS": convertToBitVec(CFS.cfs),
+    "MFCC": returnMask(mfccIntVec)
 }
 timeTaken = []
 bitVecs = {}
@@ -107,13 +116,13 @@ class RBF_ARD_WRAPPER:
         return self.m.predict(X)[0]
 
 
-classifiers = [("k-nearest Neighbors", None, KNeighborsClassifier(2)),
-               ("SVM - Linear", None, SVC(kernel="linear")),
-               ("SVM - RBF", None, SVC(gamma=2, C=1)),
-               ("Decision Tree", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
-               ("Random Forest", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
+regressors = [("k-nearest Neighbors", None, KNeighborsRegressor(2)),
+               ("SVM - Linear", None, SVR(kernel="linear")),
+               ("SVM - RBF", None, SVR(gamma=2, C=1)),
+               ("Decision Tree", None, DecisionTreeRegressor(min_samples_split=1024, max_depth=20)),
+               ("Random Forest", None, RandomForestRegressor(n_estimators=10, min_samples_split=1024,
                                                          max_depth=20)),
-               ("AdaBoost", None, AdaBoostClassifier()),
+               ("AdaBoost", None, AdaBoostRegressor(random_state=13370)),
                ("Naive Bayes", None, GaussianNB()),
                #("Bagging with DTRegg", ["All"], BaggingRegressor(DecisionTreeRegressor(min_samples_split=1024,
                 #                                                              max_depth=20))),
@@ -122,9 +131,9 @@ classifiers = [("k-nearest Neighbors", None, KNeighborsClassifier(2)),
                ("GP ARD", ["All"], gp.GaussianProcessRegressor(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*n_feats)))),
                #("GP isotropic matern nu=0.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=0.5))),
                #("GP isotropic matern nu=1.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=1.5))),
-               ("GP isotropic matern nu=2.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=2.5))),
+               ("GP Isotropic Matern", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=2.5))),
 # bad performance
-               ("GP dot product", ["CFS", "CIFE", "All"], gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())),
+               ("GP Dot Product", ["CFS", "CIFE", "MFCC", "All"], gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())),
                # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
                # GP beats SVM in our experiment (qualitative advantages)
                # only keep RBF, dot product and matern on the chart
@@ -144,7 +153,7 @@ classifiers = [("k-nearest Neighbors", None, KNeighborsClassifier(2)),
 ]
 
 models_rmse = []
-for name, featSelectionMode, model in classifiers:
+for name, featSelectionMode, model in regressors:
     modes = featSelectionMode
     if featSelectionMode==None:
         modes = featSelectionFns.keys()
