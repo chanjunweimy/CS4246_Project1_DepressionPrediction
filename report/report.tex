@@ -9,13 +9,16 @@
 \usepackage{graphicx}
 \usepackage{verbatim}
 \usepackage{url}
+\usepackage[utf8]{inputenc}
+\DeclareUnicodeCharacter{FB01}{fi}
 \graphicspath{ {images/} }
 \frenchspacing
 \setlength{\pdfpagewidth}{8.5in}
 \setlength{\pdfpageheight}{11in}
 
 \title{
-	CS4246 Project 1\\ Depression Prediction
+	CS4246 AI Planning and Decision Making - Project 1 \\
+	Depression Prediction
 }
 \author{
 	{\bf Team 01} \\
@@ -32,38 +35,50 @@
 
 	\begin{abstract}
 	\begin{quote}
-	Depression is a debiliatating mental illness that has good prognosis given early detection and treatment. However, detection is difficult with the various factors that raise the entry barrier and decrease the accuracy of a diagnostic test. In this study we aim to prove that prediction of depression severity on the PHQ-8 scale with voice acoustics is possible through the use of Gaussian Process, potentially lowering entry barriers to diagnostic tests and aiding early detection.\\
+	Depression is a debiliatating mental illness that has good prognosis given early detection and treatment. 
+	However, detection is difficult with the various factors that raise the entry barrier and decrease the accuracy of a diagnostic test. 
+	In this study we aim to prove that prediction of depression severity on the PHQ-8 scale with voice acoustics is possible through the use of Gaussian Process, potentially lowering entry barriers to diagnostic tests and aiding early detection.
 	\end{quote}
 	\end{abstract}
 	
 	\section{Introduction}
 	Depression has a severe, and at times long-term, negative impact on an individual's quality of life. 
 	Major depression is 3rd leading cause of disability worldwide with 65 million life years spent living with the disability or lost due to early death \cite{who2004}.
-	Depression's annual toll on U.S businesses amounts to about \$80 billion in medical expenditures, lost productivity and suicide. Among the costs, close to \$10 billion accrued in lost workdays each year and more than \$33 billion in other costs accrue from decreased productivity due to symptoms that sap energy, affect work habits, cause problems with concentration, memory, and decision-making. \cite{tjcp2015}\\
+	Depression's annual toll on U.S businesses amounts to about \$80 billion in medical expenditures, lost productivity and suicide. 
+	Among the costs, close to \$10 billion accrued in lost workdays each year and more than \$33 billion in other costs accrue from decreased productivity due to symptoms that sap energy, affect work habits, cause problems with concentration, memory, and decision-making \cite{tjcp2015}. \\
 
-	Left unchecked, depression increases risk for morbidity, suicide, decreased cognitive and social functioning, self-neglect, and early death \cite{arcp2009}. Death from suicide is one of the top 10 causes of death, above the death rate for chronic liver disease, Alzheimer's, homicide, arteriosclerosis or hypertension. \cite{nvsr2016}\\
-	
-	Despite the severe consequences, depression is one of the most treatable mental illnesses but it is also one of the most under-diagnosed globally. In general health-care, 48.4\% of 		patients suffering from depression go unrecognized \cite{jama2003}.\\
+	Left unchecked, depression increases risk for morbidity, suicide, decreased cognitive and social functioning, self-neglect, and early death \cite{arcp2009}. 
+	Death from suicide is one of the top 10 causes of death, above the death rate for chronic liver disease, Alzheimer's, homicide, arteriosclerosis or hypertension \cite{nvsr2016}. \\
 
-	\subsection{Motivation and Hypothesis}
-The Personal Health Questionaire depression scale (PHQ-8) is a self-administered, 8-question diagnostic test for depressive disorders that has proven to be an effective severity measure for depression in large clinical studies \cite{jad2008}. Nevertheless, one of the biggest obstacles to successful diagnosis of depression is the unwillingness of patients to admit their predisposition to depression by seeking help.\\
+	Despite the severe consequences, depression is one of the most treatable mental illnesses but it is also one of the most under-diagnosed globally. 
+	In general health-care, 48.4\% of patients suffering from depression go unrecognized \cite{jama2003}.
 
-	People often subscribe to the social stigma that being depressed reflects a weakness in their character, a permanent defect in their personality. This stigma manifests itself particularly in a phenomenon known as social distancing whereby people with mental issues are more isolated from others \cite{tpcrp2011}.  People suffering from depression hence tend to be ashamed of their condition and are generally convinced that denying and hiding it from others gives them a better shot at integrating with society and living a normal life \cite{bmb2001}. Even if they do seek help, the accuracy of the PHQ-8 or just questionaires and surveys in general are often adversely affected by the Hawthorne Effect, a type of reactivity in which individuals modify or improve an aspect of their behavior in response to their awareness of being observed. \cite{jce2014}.\\
+	\subsection{Motivation and Objective}
+	The Personal Health Questionaire depression scale (PHQ-8) is a self-administered, 8-question diagnostic test for depressive disorders that has proven to be an effective severity measure for depression in large clinical studies \cite{jad2008}. 
+	Nevertheless, one of the biggest obstacles to successful diagnosis of depression is the unwillingness of patients to admit their predisposition to depression by seeking help.\\
 
-	In the past decade, there have been research successfully correlating emotion with voice production and speech acoustics \cite{uwa2001}. Corollary to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen some success, proving that it is an effective indicator of depression severity \cite{jov2016}.\\
+	People often subscribe to the social stigma that being depressed reflects a weakness in their character, a permanent defect in their personality. 
+	This stigma manifests itself particularly in a phenomenon known as social distancing whereby people with mental issues are more isolated from others \cite{tpcrp2011}.  
+	People suffering from depression hence tend to be ashamed of their condition and are generally convinced that denying and hiding it from others gives them a better shot at integrating with society and living a normal life \cite{bmb2001}.
+	 Even if they do seek help, the accuracy of the PHQ-8 or just questionaires and surveys in general are often adversely affected by the Hawthorne Effect, a type of reactivity in which individuals modify or improve an aspect of their behavior in response to their awareness of being observed. \cite{jce2014}. \\
 
-	The aim of the present study is to determine if acoustic measures of voice, characterizing specific spectral and timing proerties, predict predetermined clinical ratings of depression severity on the PHQ-8 scale in a sample of patients, using an existing dataset of their voice recordings.\\
+	In the past decade, there have been research successfully correlating emotion with voice production and speech acoustics \cite{uwa2001}. 
+	Corollary to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen some success, proving that it is an effective indicator of depression severity \cite{jov2016}. \\
+
+	The aim of the present study is to determine if acoustic measures of voice, characterizing specific spectral and timing proerties, predict predetermined clinical ratings of depression severity on the PHQ-8 scale in a sample of patients, using an existing dataset of their voice recordings. \\
 	
 	\subsection{Future Applications}
-	Findings from this experiment will reinforce results from similar experiments and make a stronger case for the possibility of lowering the entry barriers of depression diagnostic tests and at the same time, increasing the accuracy of depression diagnosis by abstracting the Hawthorne Effect. Diagnostic tests can be designed in a friendly way that does not require the patient to consciously answer questionaires such as the PHQ-8 or even to have complete awareness of the diagnostic process. By taking into account the Hawthorne Effect and the status quo of the social stigma and working around them, diagnoses can be made easier, faster and more accurately and with that, education and treatment can begin early before the mental condition of the patient deteriorates. \\
+	Findings from this experiment will reinforce results from similar experiments and make a stronger case for the possibility of lowering the entry barriers of depression diagnostic tests and at the same time, increasing the accuracy of depression diagnosis by abstracting the Hawthorne Effect. 
+	Diagnostic tests can be designed in a friendly way that does not require the patient to consciously answer questionaires such as the PHQ-8 or even to have complete awareness of the diagnostic process. 
+	By taking into account the Hawthorne Effect and the status quo of the social stigma and working around them, diagnoses can be made easier, faster and more accurately and with that, education and treatment can begin early before the mental condition of the patient deteriorates. \\
 	
-	\section{Gaussian Process Regression Model}
+	\section{Modelling and Approach}
 	As Gaussian Process Regression Model is a new state of the art machine learning model, we are trying to apply it for depression prediction 
 	with the hope that the accuracy of depression prediction will be improved. \\	
 	
-	We have made the following assumptions so that the Gaussian Process Regression Model is indeed suitable for depression prediction:
+	The following assumptions have been made for the experiment so that the GP Regression Model is suitable for depression prediction:
 	\begin{enumerate}
-		\item When a person is depressed, we should be able to determine the person is depressed according to the speech of the person.\cite{Cummins2015}
+		\item For any depressed individual, it is possible to identify depression via his/her speech. \cite{Cummins2015}
 		\item Depression Prediction is an event-based recognition which provides a single depression estimates over a certain amount of time. \cite{Valstar2016}
 		\item The speech signals extracted from different depressed people should share some similarities and thus suitable for prediction with the Gaussian Process Model. 
 		For example, a diminished prosody and monotonous and “lifeless” sounding speech is indicative of depression.\cite{Cummins2015}
@@ -81,7 +96,7 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 	Therefore, using the properties of GP we could determine how well our database is and we can find out what is the average depression level for 
 	everyone in the world nowadays. \\
 
-	Besides, GP produces truly probabilistic outputs with an explicit degree of prediction uncertainty. 
+	In addition, GP produces truly probabilistic outputs with an explicit degree of prediction uncertainty. 
 	The prediction uncertainty can be further analyse to produce useful results. In addition, there exist algorithms for GP hyperparameter 
 	learning—something the other Machine Learning methods like SVM framework lacks. It is very useful as hyperparameter estimation could provide 
 	improvement to the Machine Learning algorithm especially in sound/speech recognition. \cite{Hashimoto2015} \\
@@ -92,16 +107,13 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 	both music genre classification and music emotion estimation tasks, the GP performed consistently better than the SVM. \\
 
 	Therefore, as we are trying to prediction on depression, we would like to use GP to process our data to produce a more accurate prediction result. 
-
-
 	
 	\subsection{Requirements}
 	Aside from the audio recordings, our GP model makes use of the following:
 	\begin{enumerate}
 		\item \textbf{Audio Features}	\\
-		What are the differences between sounds? To differentiate between sounds, we need to learn about audio features, which will be described below:\\
+		What are the differences between sounds? To differentiate between sounds, we need to learn about audio features, which will be described below:
 		\begin{enumerate}
-
 			\item \textbf{Energy}	\\
 			The Energy feature of a sound refers to the loudness of the sound at various timeframes, 
 			hence it is obvious that energy of a sound is directly proportional to the amplitude of the soundwave. 
@@ -128,7 +140,7 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 		The kernels that would we are intested in is shown below 
 		(The kernels are assumed to be defined on two samples \( x = ( x_{1} x_{2} x_{3} ... x_{n} ) \) and 
 		\( x' = ( {x_{1}}' {x_{2}}' {x_{3}}' ... {x_{n}}')\) ,  
-		represented as feature vectors in some input space):\\
+		represented as feature vectors in some input space):
 		\begin{enumerate}
 			\item \textbf{Radial Basis Function (RBF)}\\
 			The RBF kernel is defined as 
@@ -153,7 +165,7 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 			So, what it means for the model is, (let's assume the numbe of dimensions of the input is N) for each \(\sigma_{i}\), where i = 1,2,3,...,N, 
 			might be different, depending the importance of the corresponding input features. \\
 
-			There are a few advantages for our project if we used ARD: \cite{Cawley2014}
+			ARD is advantageous for the experiment such that: \cite{Cawley2014}
 			\begin{enumerate}
 				\item Generalisation performance is potentially improved.
 				\item The data would be better explained.
@@ -177,7 +189,7 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 		As we favor simplicity, we actually think that dot product kernel would give us the best result.
 	\end{enumerate}
 
-	\subsection{2.3 Important Machine Learning Methods}
+	\subsection{Machine Learning Methods Applied}
 	Machine learning is about using models to learn from existing data for some improvement or predictions. 
 	The following is some methods used in machine learning:
 	\begin{enumerate}
@@ -190,7 +202,6 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 		Support Vector Machine (SVM), with the help of the libsvm, is a type of linear classiﬁers that aims at ﬁnding 
 		a unique solution in the form of an optimal hyperplane which is deﬁned as the one that maximizes the margins between the two classes.
 
-	
 		\item \textbf{Random Forest Regressor} \\
 		Random Forest is an ensemble of decision trees, whereas a decision tree tries to separate the data into different leaf nodes 
 		where the data points in each node have certain similarity. Each decision tree will predict a value and the values will be averaged to be the result.
@@ -199,7 +210,6 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 		AdaBoost is the short form of Adaptive Boost which is sensitive to noisy data and outliers. 
 		AdaBoost first find out the classifier with the least errors, adding the weight to the outliers, then find out another classifier with least errors again.
 		A final classifier will be combined and indicate the class of data.
-
 	
 		\item \textbf{Naive Bayes} \\ 
 		Naive Bayes is a prediction algorithm that uses Bayes rule. 
@@ -216,10 +226,8 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 
 	In our audio dataset, we extracted many features including  MFCC, MS, Zero-Crossing rate and Energy level, and thus the dimension of our features are huge (about 100 columns).
 	While the number of datas we have are not large enough, having a large feature dimensions will lead to overfitting. 
-	As shown in the Figure \ref{fig:overfitting}, when the model is overfitting, it will produce a worse result. \\
-
-	Besides, having less features would significantly reduce the time amount of training the model.\\
-
+	As shown in the Figure \ref{fig:overfitting}, when the model is overfitting, it will produce a worse result. 
+	Moreover, having less features would significantly reduce the time amount of training the model. 
 	Based on these rationale, we decided to do feature selection. \\
 	
 	\begin{figure}[h]
@@ -238,10 +246,13 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 	On the other hand, as the baseline accuracy of using only MFCC to predict emotions is quite high, \cite{ElAyadi2011}, 
 	we actually guess that MFCC is the most important feature in depression prediction. 
 	In other words, since we have limited datas and large feature dimension, 
-	using MFCC feature only for the input vector of the model might actually improve the result.
+	using MFCC feature only for the input vector of the model might actually improve the result. \\
 
 	\section{Evaluation}
-	In order to test our Gaussian Process model, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016) \cite{avec2016}. The goal of AEVC is to weigh-in on the various approaches(visual, audio) used to recognize emotions under unambiguous conditions. AVEC 2016 provided 2 pieces of data as input: visual and auditory data. However, we would be reducing the scope of the experiment, limiting the experiment to only the auditory data. Two Sub-Challenges are lised in AVEC 2016. We are only interested in the Depression Classification Sub-Challenge, which requires participants to classify inputs by the PHQ-8 score.
+	In order to test our Gaussian Process model, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016) \cite{avec2016}. 
+	The goal of AEVC is to weigh-in on the various approaches(visual, audio) used to recognize emotions under unambiguous conditions. 
+	AVEC 2016 provided 2 pieces of data as input: visual and auditory data. However, we would be reducing the scope of the experiment, limiting the experiment to only the auditory data. 
+	Two Sub-Challenges are lised in AVEC 2016. We are only interested in the Depression Classification Sub-Challenge, which requires participants to classify inputs by the PHQ-8 score.
 
 	\subsection{Data}
 	\begin{figure}[h]
@@ -250,7 +261,11 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 	\label{histogram_phq8}
 	\end{figure}
 	
-	The depression data used in AVEC 2016 was obtained from the benchmarking database, the Distress Analysis Interview Corpus - Wizard of Oz(DAIC-WOZ). Data collected from DAIC-WOZ include audio and video recordings and the corresponsing PHQ-8 score[CITE:27](0-24), which is a frequently used self-report scheme to access severity of depression[CITE]. Henceforth, we would need to pre-process the auditory data before we use it in our Gaussian Process Model. The data is pre-processed as described in the Section [REF]. The distribution of the depression severity scores in both training and development set is given in Figure \ref{histogram_phq8}. The data provided are split into 2 sets: training and development. A summary of the data is given in Table \ref{summary_table}.
+	The depression data used in AVEC 2016 was obtained from the benchmarking database, the Distress Analysis Interview Corpus - Wizard of Oz (DAIC-WOZ). 
+	Data collected from DAIC-WOZ include audio and video recordings and the corresponsing PHQ-8 score[CITE:27](0-24), which is a frequently used self-report scheme to access severity of depression[CITE]. 
+	Henceforth, we would need to pre-process the auditory data before we use it in our Gaussian Process Model. The data is pre-processed as described in the Section [REF]. 
+	The distribution of the depression severity scores in both training and development set is given in Figure \ref{histogram_phq8}. The data provided are split into 2 sets: training and development. 
+	A summary of the data is given in Table \ref{summary_table}.
 
  	\begin{table}[h]
  		\begin{center}
@@ -267,14 +282,19 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
  	\end{table}
 
  	\subsection{Measure of Accuracy}
-	AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$[CITE]. In order to provide a meaningful and consistent comparison to the baseline provided, we would be only using Root Mean Square Deviation Error(RMSE) to measure the error rate on both Training and Development datasets. RMSE(Equation \ref{eq:rmse}) is a commonly used in machine learning communities to measure the differences between the values predicted by a model and the values actually observed. 
+	AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$[CITE]. 
+	In order to provide a meaningful and consistent comparison to the baseline provided, we would be only using Root Mean Square Deviation Error (RMSE) to measure the error rate on both Training and Development datasets. 
+	RMSE(Equation \ref{eq:rmse}) is a commonly used in machine learning communities to measure the differences between the values predicted by a model and the values actually observed. 
 	\begin{equation}\label{eq:rmse}
   	\text{RMSE} = \sqrt{\frac{\sum_{t=1}^n (\hat y_t - y_t)^2}{n}}
  	\end{equation}
 	[CITEDBLP:journals/corr/ValstarGSRLTSSC16]
 
 	\subsection{Experimental Setup}
-	We compared our Gaussian Model against commonly used machine learning algorithms. The list of algorithms and their hyperparameters are given in Table \ref{list_mls}. The hyper-parameters are either determined by the defaults used in the popular machine learning library, Scikit Learn[CITE] or some reasonable values were used. Each machine learning algorithm is trained against the training set and thereafter tested against the development set using RMSE as the error metric. The process used is shown in Figure \ref{process}.
+	We compared our Gaussian Model against commonly used machine learning algorithms. 
+	The list of algorithms and their hyperparameters are given in Table \ref{list_mls}. 
+	The hyper-parameters are either determined by the defaults used in the popular machine learning library, Scikit Learn[CITE] or some reasonable values were used. 
+	Each machine learning algorithm is trained against the training set and thereafter tested against the development set using RMSE as the error metric. The process used is shown in Figure \ref{process}.
 
 	\begin{table}[h]
   		\begin{center}
@@ -295,7 +315,7 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 		\label{list_mls}
 	\end{table}
 
-	\begin{figure} [h]
+	\begin{figure}[h]
  		\begin{center}
 		\includegraphics[width=0.20\textwidth]{process}
   		\end{center}
@@ -320,9 +340,9 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
  	\end{comment}
 
 	\subsection{Results}
-	The results of the experiment is shown in t
+	The results of the experiment is illustrated in Table \ref{rmse_results} below and Figure \ref{rmse_results_chart} in the following page.
 
-	\begin{table}
+	\begin{table}[h]
 		\begin{center}
 			\begin{tabular}{ | r | c | c |}
 			\hline
@@ -349,7 +369,6 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 	\label{rmse_results_chart}
 	\end{figure*}
 
-	\newpage
 	\section{Conclusion}	
 	Our work has succesfully modelled the various levels of depression with GP by taking audio recordings as our input. \\
 	
@@ -366,10 +385,11 @@ The Personal Health Questionaire depression scale (PHQ-8) is a self-administered
 		\item \textbf{Han Liang Wee, Eric}: 
 		Scripting the program, setting up machine learning libraries and running tests.
 		\item \textbf{Ho Wei Li}: 
-		Background research and writing up of the abstract, introduction, motivation, hypothesis and future applications.
+		Background research and writing up of the abstract and introduction section with its subsections.
 	\end{itemize}
 	
+	\newpage
 	\bibliographystyle{aaai}
-	\bibliography{references}
+	{\scriptsize \bibliography{references}}
 
 \end{document}
