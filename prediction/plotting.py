@@ -35,7 +35,7 @@ def plot_bar(models_rmse):
     plt.show()
 
 def plot_all_Y():
-    with open("allY.txt", 'rb') as allY:
+    with open("data/all/allY.txt", 'rb') as allY:
         cont = allY.readlines()
     cont = [ int(ea.strip()) for ea in cont]
     counter = Counter(cont)
