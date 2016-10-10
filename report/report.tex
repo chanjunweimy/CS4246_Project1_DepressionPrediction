@@ -108,7 +108,7 @@
 
 	Therefore, as we are trying to prediction on depression, we would like to use GP to process our data to produce a more accurate prediction result. 
 	
-	\subsection{Requirements}
+	\subsection{Requirements}\label{audio_feats}
 	Aside from the audio recordings, our GP model makes use of the following:
 	\begin{enumerate}
 		\item \textbf{Audio Features}	\\
@@ -217,25 +217,6 @@
 		The possibilities is represented by the number of times the particular event occurs in the dataset over the total number of events. 
 	\end{enumerate}
 
-
-	\subsection{Feature Selection}
-	Feature selection is the process of selecting a subset of relevant features including variables or predictors to be used in a model construction for machine learning. 
-	The usage of feature selection is to reduce the complexity of a model in machine learning to be interpreted easier. 
-	The objective of variable selection is three-fold: improving the prediction performance of the predictors, providing faster and most cost-effective predictors, 
-	and providing a better understanding of the underlying process that generated the data. \cite{Guyon2003} \\
-
-	In our audio dataset, we extracted many features including  MFCC, MS, Zero-Crossing rate and Energy level, and thus the dimension of our features are huge (about 100 columns).
-	While the number of datas we have are not large enough, having a large feature dimensions will lead to overfitting. 
-	As shown in the Figure \ref{fig:overfitting}, when the model is overfitting, it will produce a worse result. 
-	Moreover, having less features would significantly reduce the time amount of training the model. 
-	Based on these rationale, we decided to do feature selection. \\
-	
-	\begin{figure}[h]
-	 	\includegraphics[width=0.40\textwidth]{overfitting}
-		\caption{How Overfitting affects Prediction}
-		\label{fig:overfitting}
-	\end{figure}
-
 	\subsubsection{Hypothesis: Doing feature selection before applying to the ARD Kernel Gaussian Process model will improve the result.}
 	Without doing feature selections, as the feature dimensions would be huge, we would also have large number of kernel parameters. 
 	As a result, it is likely to lead to overfitting and generating poor result. \cite{Cawley2014} 
@@ -249,21 +230,25 @@
 	using MFCC feature only for the input vector of the model might actually improve the result. \\
 
 	\section{Evaluation}
-	In order to test our Gaussian Process model, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016) \cite{avec2016}. 
-	The goal of AEVC is to weigh-in on the various approaches(visual, audio) used to recognize emotions under unambiguous conditions. 
-	AVEC 2016 provided 2 pieces of data as input: visual and auditory data. However, we would be reducing the scope of the experiment, limiting the experiment to only the auditory data. 
-	Two Sub-Challenges are lised in AVEC 2016. We are only interested in the Depression Classification Sub-Challenge, which requires participants to classify inputs by the PHQ-8 score.
+	In order to test our proposed Gaussian Process models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016) 
+	\cite{avec2016}. The goal of AEVC is to weigh-in on the various approaches(visual, audio) used to recognize emotions under unambiguous conditions. 
+	AVEC 2016 provided 2 pieces of data as input: visual and auditory data from each of the participants. However, we would be reducing the scope of 
+	the experiment, limiting the experiment to only the auditory data. Two Sub-Challenges were lised in AVEC 2016. We are only interested in the Depression Classification Sub-Challenge, which 
+	requires participants to classify inputs by the PHQ-8 score.
+	
+	In this experiment, we would be using the audio data along with their corresponding PHQ-8 to test our hypotheses.
 
 	\subsection{Data}
 	\begin{figure}[h]
- 	\includegraphics[width=0.40\textwidth]{histogram_phq8}
-	\caption{PHQ-8 scores' histogram of the PHQ-8 scores}
+	\center
+ 	\includegraphics[width=0.35\textwidth]{histogram_phq8}
+	\caption{Histogram of the PHQ-8 scores}
 	\label{histogram_phq8}
 	\end{figure}
 	
 	The depression data used in AVEC 2016 was obtained from the benchmarking database, the Distress Analysis Interview Corpus - Wizard of Oz (DAIC-WOZ). 
-	Data collected from DAIC-WOZ include audio and video recordings and the corresponsing PHQ-8 score[CITE:27](0-24), which is a frequently used self-report scheme to access severity of depression[CITE]. 
-	Henceforth, we would need to pre-process the auditory data before we use it in our Gaussian Process Model. However, the code to extract the data will be provided along with the report.
+	Data collected from DAIC-WOZ include raw audio and video recordings and the corresponsing PHQ-8 score(from 0 to 24)\cite{jad2008}. Hence, we would 
+	need to pre-process the auditory data before we use it in our experiment. The pre-processing is briefly discussed in the section below.
 	The distribution of the depression severity scores in the dataset is given in Figure \ref{histogram_phq8}. The data provided are split into 2 sets: training and development.
 	A summary of the data is given in Table \ref{summary_table}.
 
@@ -271,7 +256,7 @@
  		\begin{center}
   			\begin{tabular}{ | r | c | c || c | }
     			\hline
-			 & Training & Development & All \\ \hline
+			 & Training & Development & All \\ \hline\hline
 			 n               & 95 & 31 & 126 \\ \hline
 			 $\mu$           & 6.326 & 7.548 & 6.626 \\ \hline
 			 $\sigma$        & 5.597 & 6.690 & 5.909 \\ \hline
@@ -282,112 +267,152 @@
  	\end{table}
 
     \subsection{Pre-processed data}
-	Since the focus of this paper is the prediction of the PHQ-8 score, we will not describe in detail the pre-processing of the audio files.
-	We used standard signal processing techniques to extract the 4 audio features (Energy, MFCC, Magnitude Spectrum, Zero-crossing) presented in section [REF].
-	Each audio features is composed of several individual features.
+	Since the focus of this paper is the prediction of the PHQ-8 score, we will not describe the pre-processing step in detail.
+	We used standard signal processing techniques to extract the 4 audio features (Energy, MFCC, Magnitude Spectrum, Zero-crossing) as presented in section above titled Audio Features.
+	Each audio features is composed of several individual features, the breakdown of the actual number of feature columns are as follows.
 
  	\begin{table}[h]
  		\begin{center}
   			\begin{tabular}{ | r | c | }
     			\hline
-			 Audio Feature & Number of features \\ \hline
+			 Audio Feature & Number of features \\ \hline\hline
 			 Magnitude Spectrum               & 512 \\ \hline
-			 Mel Frequency Cepstral Coefficients           & 12 \\ \hline
+			 MFCC           & 12 \\ \hline
 			 Energy        & 1 \\ \hline
 			 Zero-Crossing Rate & 1 \\ \hline \hline
 			 Total & 526 \\ \hline
 			 \end{tabular}
 		\end{center}
- 	\caption{Number of features in processed data}
+ 	\caption{Number of features extracted}
  	\label{no_features}
  	\end{table}
 
  	\subsection{Measure of Accuracy}
-	AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$[CITE]. 
-	In order to provide a meaningful and consistent comparison to the baseline provided, we would be only using Root Mean Square Deviation Error (RMSE) to measure the error rate on both Training and Development datasets. 
-	RMSE(Equation \ref{eq:rmse}) is a commonly used in machine learning communities to measure the differences between the values predicted by a model and the values actually observed. 
+	AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$\cite{avec2016}. 
+	In order to provide a meaningful and consistent comparison to the baseline provided, we would also use Root Mean Square Deviation Error (RMSE) to measure the error rate on both 
+	Training and Development datasets. RMSE(Equation \ref{eq:rmse}) is a commonly used in machine learning communities to measure the differences between the values predicted by a model 
+	and the ground truth\cite{Dhanani:EECS-2014-131}. 
 	\begin{equation}\label{eq:rmse}
   	\text{RMSE} = \sqrt{\frac{\sum_{t=1}^n (\hat y_t - y_t)^2}{n}}
- 	\end{equation}
-	[CITEDBLP:journals/corr/ValstarGSRLTSSC16]
+ 	\end{equation} 
 
+	\subsection{Feature Selection}
+	Feature selection is the process of selecting a subset of relevant features including variables or predictors to be used in a model construction for machine learning. 
+	The usage of feature selection is to reduce the complexity of a model in machine learning to be interpreted easier. 
+	The objective of variable selection is three-fold: improving the prediction performance of the predictors, providing faster and most cost-effective predictors, 
+	and providing a better understanding of the underlying process that generated the data. \cite{Guyon2003} Since we have more features than data points, it leads to overfitting\cite{Smith2011}. We would
+	 need to perform feature selection on the data before using the machine learning algorithm.
+	 
+	The litany of feature selection algorithms used are popular and are taken from scikit-feature, a feature selection library\cite{li2016feature}: CIFE\cite{Lin2006}, reliefF\cite{Rob2003}, CFS\cite{HALLHALL}. We will not go into detail as feature selection is not the main focus of the report.
+	
 	\subsection{Experimental Setup}
-	We compared the proposed Gaussian Models (ARD RBF, Matern, and dot-product) against commonly used machine learning algorithms.
-	The list of algorithms and their hyperparameters are given in Table \ref{list_mls}. 
-	The hyper-parameters are either determined by the defaults used in the popular machine learning library, Scikit Learn[CITE] or some reasonable values were used. 
-	Each machine learning algorithm is trained against the training set and thereafter tested against the development set using RMSE as the error metric. The process used is shown in Figure \ref{process}.
-
+	We compared the proposed Gaussian Models against commonly used machine learning algorithms as mentioned in the previous section. For the ease of testing, all implementations of the algorithms except for GP ARD come from the popular machine learning library, Scikit Learn\cite{scikit-learn}. We used the 
+	implementation of GP ARD from GPy, a Gaussian Processes framework in Python\cite{gpy2014}.
+	The hyper-parameters are either determined by the defaults used in either libraries or some reasonable defaults were used.
+	Each machine learning algorithm is trained against the training set and thereafter tested against the development set using RMSE as the error metric. 
+	The entire experimental process is shown in Figure \ref{process}.
+ 
+ 	\begin{comment}
 	\begin{table}[h]
   		\begin{center}
    			\begin{tabular}{ | r | c |}
 	    		\hline
 			Algorithm & Hyper-parameters \\ \hline\hline
 			K-Nearest Neighbors        & x \\ \hline
-			Linear SVM                 & x \\ \hline
-			RBF SVM                    & x \\ \hline
+			SVM - Linear               & x \\ \hline
+			SVM - RBF                  & x \\ \hline
 			Decision Tree              & x \\ \hline
 			Random Forest              & x \\ \hline
 			AdaBoost                   & x \\ \hline
 			Naive Bayes                & x \\ \hline
+			GP ARD  	           & x \\ \hline
+			GP Isotropic Matern        & x \\ \hline
+			GP Dot Product 	           & x \\ \hline
 			\end{tabular}
 		\end{center}
 		\caption{List of Machine Learning Algorithms with their corresponding hyper-parameters}
 		\label{list_mls}
 	\end{table}
-
+ 	\end{comment}
+ 	
 	\begin{figure}[h]
  		\begin{center}
-		\includegraphics[width=0.20\textwidth]{process}
+		\includegraphics[width=0.45\textwidth]{process} 
   		\end{center}
   		\caption{Experimental process}
-  		\label{process}
+  		\label{process} 
  	\end{figure}
  	\begin{comment}
- 	DO NOT REMOVE
 	@startuml
- 	digraph g {
+	digraph g {
+		graph [rankdir=LR];
 	 	ML,RMSE[shape=square];
 		Model[shape=circle];
+		ap[shape=rect label="Audio Processing"];
+		Train_AudioData,Dev_AudioData[shape=egg];
+		Train_AudioData -> ap;
+		ap -> Train_X;
+		ap -> Train_y;
+		ap -> Dev_X;
+		Dev_AudioData -> ap;
+		ap -> Dev_y;
 		Train_X -> ML;
 		Train_y -> ML;
 		ML -> Model
 		Dev_X -> Model
 		Model -> RMSE[label=Prediction]
 		Dev_y -> RMSE[label=Actual]
-		RMSE -> Score
 	}
- 	@enduml
+	@enduml
  	\end{comment}
 
 	\subsection{Results}
-	The results of the experiment is illustrated in Table \ref{rmse_results} below and Figure \ref{rmse_results_chart} in the following page.
+	We first run the experiment across the dataset across all 526 features, without feature selection. As we would expect\cite{Cawley2014}, the results are terrible as the number of features is more than the number of 
+	data points, potentially
+	 causing overfitting. The results of the experiment is illustrated in figure \ref{results_all}. We would expect the GP ARD would be able to theoritcally extract relevant features and improve
+	  prediction. However, we have seen experimentally that GP ARD performs poorly, along with other GPs. The results for all the features are shown in figure \ref{rmse_results}.
+
+	\begin{figure}[h]
+ 		\begin{center}
+		\includegraphics[width=0.45\textwidth]{results_all} 
+  		\end{center}
+  		\caption{Results across all features}
+  		\label{results_all}
+ 	\end{figure}
+	
+	We re-run the experiment across the data with feature selection. We run each of the feature subset gathered from the feature selection algorithms against each of the machine learning algorithm. 
+	We observe that reliefF, CIFE and CFS selected a large number of MFCC features. This confirms our hypothesis that MFCC gives the best predictive power to predict PHQ-8. Hence, in addition we also ran 
+	the experiment on MFCC features, and are represented as MFCC alongside the feature subsets obtained from feature selection. The best results across all feature subsets are shown in figure \ref{results_best} and in table \ref{rmse_results}. 
+
+	\begin{figure}[h]
+ 		\begin{center}
+		\includegraphics[width=0.45\textwidth]{results_best} 
+  		\end{center}
+  		\caption{Best Results across all feature subsets}
+  		\label{results_best}
+ 	\end{figure}
 
 	\begin{table}[h]
 		\begin{center}
-			\begin{tabular}{ | r | c | c |}
+			\begin{tabular}{ | r | c | c | c | }
 			\hline
-			& \multicolumn{2}{c|}{RMSE} \\ \hline
-			Algorithm & Training & Development \\ \hline\hline
+			&& \multicolumn{2}{c|}{RMSE} \\ \hline
+			Algorithm 		   & Subset& Train & Dev \\ \hline\hline
 			K-Nearest Neighbors        & x & x \\ \hline
-			Linear SVM                 & x & x \\ \hline
-			RBF SVM                    & x & x \\ \hline
+			SVM - Linear               & x & x \\ \hline
+			SVM - RBF                  & x & x \\ \hline
 			Decision Tree              & x & x \\ \hline
 			Random Forest              & x & x \\ \hline
 			AdaBoost                   & x & x \\ \hline
 			Naive Bayes                & x & x \\ \hline
-			Decision Tree              & x & x \\ \hline
-			Gaussian Process           & x & x \\ \hline
+			GP ARD                     & x & x \\ \hline
+			GP Isotropic Matern        & x & x \\ \hline 
+			GP Dot Product             & x & x \\ \hline
 			\end{tabular}
 		\end{center}
 		\caption{RMSE results of the different machine learning algorithms}
 		\label{rmse_results}
 	\end{table}
- 
-	\begin{figure*}
-	\includegraphics[height=105mm, keepaspectratio]{results}
-	\caption{Chart showing RMSE(Training and Development) for the different classifiers}
-	\label{rmse_results_chart}
-	\end{figure*}
 
 	\section{Conclusion}	
 	Our work has succesfully modelled the various levels of depression with GP by taking audio recordings as our input. \\
