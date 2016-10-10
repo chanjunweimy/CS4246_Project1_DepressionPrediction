@@ -10,7 +10,7 @@ from sklearn.naive_bayes import GaussianNB
 #from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 #from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.metrics import mean_squared_error
-#from sklearn.model_selection import cross_val_score#, ShuffleSplit
+from sklearn.model_selection import cross_val_score#, ShuffleSplit
 from skfeature.function.statistical_based import CFS
 from skfeature.function.information_theoretical_based import CIFE
 from skfeature.function.similarity_based import reliefF
@@ -24,10 +24,10 @@ import GPy.models as models
 import time
 from math import sqrt,ceil
 
-x_train_file_name = "data/sampled/X/urop/train/train_x.txt"
-x_dev_file_name = "data/sampled/dev/dev_x.txt"
-y_train_file_name = "data/sampled/train/train_y.txt"
-y_dev_file_name = "data/sampled/dev/dev_y.txt"
+x_train_file_name = "data/splitted/X/urop/trainX.txt"
+x_dev_file_name = "data/splitted/X/urop/devX.txt"
+y_train_file_name = "data/splitted/y/trainY.txt"
+y_dev_file_name = "data/splitted/y/devY.txt"
 
 if len(sys.argv) == 5:
     x_train_file_name = sys.argv[1]
@@ -55,8 +55,8 @@ def baselineProc(X,y):
 
 def ml(X, y):
     ml = gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=0.5))
-    #scores = cross_val_score(ml, X, y, cv=5, n_jobs=-1, scoring='mean_squared_error') #problem
-    scores = 0
+    scores = cross_val_score(ml, X, y, cv=5, n_jobs=-1, scoring='mean_squared_error') #problem
+    #scores = 0
     return sqrt(-1*np.mean(scores))
 
 def convertToBitVec(featSel):
@@ -75,14 +75,12 @@ def convertToBitVec(featSel):
 # RELIEF: index of selected features, F[1] is the most important feature
 featSelectionFns = {
     "All": convertToBitVec(baselineProc),
-    "Relief": convertToBitVec(reliefPostProc)
-    #"CIFE": convertToBitVec(CIFE.cife)
-    #"CFS": convertToBitVec(CFS.cfs)
+    "Relief": convertToBitVec(reliefPostProc),
+    "CIFE": convertToBitVec(CIFE.cife),
+    "CFS": convertToBitVec(CFS.cfs)
 }
 timeTaken = []
 bitVecs = {}
-
-print 'ok1'
 
 for featSelName, featSel in featSelectionFns.iteritems():
     start = time.clock()    
