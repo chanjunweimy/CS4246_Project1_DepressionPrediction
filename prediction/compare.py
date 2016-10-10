@@ -1,16 +1,16 @@
 from math import sqrt
 from sklearn import gaussian_process as gp
-from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.ensemble import RandomForestRegressor, AdaBoostRegressor
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.ensemble import BaggingRegressor
 from sklearn.naive_bayes import GaussianNB
 #from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 #from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.metrics import mean_squared_error
-from sklearn.cross_validation import cross_val_score, ShuffleSplit
+#from sklearn.model_selection import cross_val_score#, ShuffleSplit
 from skfeature.function.statistical_based import CFS
 from skfeature.function.information_theoretical_based import CIFE
 from skfeature.function.similarity_based import reliefF
@@ -24,10 +24,10 @@ import GPy.models as models
 import time
 from math import sqrt,ceil
 
-x_train_file_name = "data/splitted/X/urop/trainX.txt"
-x_dev_file_name = "data/splitted/X/urop/devX.txt"
-y_train_file_name = "data/splitted/y/trainY.txt"
-y_dev_file_name = "data/splitted/y/devY.txt"
+x_train_file_name = "data/sampled/X/urop/train/train_x.txt"
+x_dev_file_name = "data/sampled/dev/dev_x.txt"
+y_train_file_name = "data/sampled/train/train_y.txt"
+y_dev_file_name = "data/sampled/dev/dev_y.txt"
 
 if len(sys.argv) == 5:
     x_train_file_name = sys.argv[1]
@@ -55,7 +55,8 @@ def baselineProc(X,y):
 
 def ml(X, y):
     ml = gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=0.5))
-    scores = cross_val_score(ml, X, y, cv=5, n_jobs=-1, scoring='mean_squared_error')
+    #scores = cross_val_score(ml, X, y, cv=5, n_jobs=-1, scoring='mean_squared_error') #problem
+    scores = 0
     return sqrt(-1*np.mean(scores))
 
 def convertToBitVec(featSel):
@@ -68,36 +69,29 @@ def convertToBitVec(featSel):
         return len(feats),bitVec
     return wrapper
 
-mfccIntVec = [1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-
-def returnMask(intVec):
-    def wrapper(X,y):
-        mask = intVec
-        mask = np.array(mask).astype('bool')
-        return np.sum(mask),mask
-    return wrapper
 
 # CIFE: index of selected features, F[1] is the most important feature
 # CFS: index of selected features
 # RELIEF: index of selected features, F[1] is the most important feature
 featSelectionFns = {
     "All": convertToBitVec(baselineProc),
-    "Relief": convertToBitVec(reliefPostProc), 
-    "CIFE": convertToBitVec(CIFE.cife), 
-    "CFS": convertToBitVec(CFS.cfs),
-    "MFCC": returnMask(mfccIntVec)
+    "Relief": convertToBitVec(reliefPostProc)
+    #"CIFE": convertToBitVec(CIFE.cife)
+    #"CFS": convertToBitVec(CFS.cfs)
 }
 timeTaken = []
 bitVecs = {}
+
+print 'ok1'
 
 for featSelName, featSel in featSelectionFns.iteritems():
     start = time.clock()    
     numFeats,bitVec = featSel(X_train,y_train)
     timeTaken = time.clock() - start
-    score = ml(X_train[:,bitVec], y_train)
+    score = ml(X_train[:,bitVec], y_train) #problem
     bitVecs[featSelName] = bitVec
     print(featSelName+ "," + str(numFeats) + ": " + str(score) + " in "+ str(timeTaken) + "seconds")
-    print(bitVec)
+
 
 class RBF_ARD_WRAPPER:
     def __init__(self, kernel_ardIn):
@@ -112,14 +106,17 @@ class RBF_ARD_WRAPPER:
     def predict(self, X):
         return self.m.predict(X)[0]
 
-regressors = [("Nearest Neighbors", None, KNeighborsRegressor(2)),
+
+classifiers = [("Nearest Neighbors", None, KNeighborsClassifier(2)),
                ("Linear SVM", None, SVC(kernel="linear")),
-               ("RBF SVM", None, SVC(gamma=2, C=1)),
-               ("Decision Tree", None, DecisionTreeRegressor(min_samples_split=1024, max_depth=20)),
-               ("Random Forest-UROP", ["All"], RandomForestRegressor(n_estimators=10, min_samples_split=1024,
-                                                         max_features=60, max_depth=20)),
-               ("AdaBoost", None, AdaBoostRegressor()),
+               #("RBF SVM", None, SVC(gamma=2, C=1)),
+               ("Decision Tree", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
+               ("Random Forest", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
+                                                         max_depth=20)),
+               ("AdaBoost", None, AdaBoostClassifier()),
                ("Naive Bayes", None, GaussianNB()),
+               ("Bagging with DTRegg", ["All"], BaggingRegressor(DecisionTreeRegressor(min_samples_split=1024,
+                                                                              max_depth=20))),
                ("GP isotropic RBF", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RBF())),
                ("GP anisotropic RBF", ["All"], gp.GaussianProcessRegressor(kernel=gp.kernels.RBF(length_scale=np.array([1]*n_feats)))),
                ("GP ARD", ["All"], gp.GaussianProcessRegressor(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*n_feats)))),
@@ -127,7 +124,7 @@ regressors = [("Nearest Neighbors", None, KNeighborsRegressor(2)),
                ("GP isotropic matern nu=1.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=1.5))),
                ("GP isotropic matern nu=2.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=2.5))),
 # bad performance
-               ("GP dot product", ["CFS", "CIFE", "MFCC", "All"], gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())),
+               ("GP dot product", ["CFS", "CIFE", "All"], gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())),
 #  3-th leading minor not positive definite
 #    ("GP exp sine squared", gp.GaussianProcessRegressor(kernel=gp.kernels.ExpSineSquared())),
                ("GP rational quadratic", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RationalQuadratic())),
@@ -140,7 +137,7 @@ regressors = [("Nearest Neighbors", None, KNeighborsRegressor(2)),
 
 
 models_rmse = []
-for name, featSelectionMode, model in regressors:
+for name, featSelectionMode, model in classifiers:
     modes = featSelectionMode
     if featSelectionMode==None:
         modes = featSelectionFns.keys()
