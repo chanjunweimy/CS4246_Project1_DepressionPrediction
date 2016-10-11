@@ -75,15 +75,14 @@
 	By taking into account the Hawthorne Effect and the status quo of the social stigma and working around them, diagnoses can be made easier, faster and more accurately and with that, education and treatment can begin early before the mental condition of the patient deteriorates. \\
 	
 	\section{Modelling and Approach}
-	As Gaussian Process Regression Model is a new state of the art machine learning model, we are trying to apply it for depression prediction 
+	As Gaussian Process (GP) Regression Model is a new state of the art machine learning model, we are trying to apply it for depression prediction 
 	with the hope that the accuracy of depression prediction will be improved. \\	
 	
-	The following assumptions have been made for the experiment so that the GP Regression Model is suitable for depression prediction:
+	The following premises have to hold true so that the GP Regression Model is suitable for depression prediction:
 	\begin{enumerate}
-		\item For any depressed individual, it is possible to identify depression via his/her speech. \cite{Cummins2015}
 		\item Depression Prediction is an event-based recognition which provides a single depression estimates over a certain amount of time. \cite{Valstar2016}
 		\item The speech signals extracted from different depressed people should share some similarities and thus suitable for prediction with the Gaussian Process Model. 
-		For example, a diminished prosody and monotonous and “lifeless” sounding speech is indicative of depression.\cite{Cummins2015}
+		For example, diminished, prosodic and monotonous speech is often strongly correlated with depression.\cite{Cummins2015}
 	\end{enumerate}
 
 	\subsection{Qualitative Advantages}
