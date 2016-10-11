@@ -303,7 +303,7 @@
 	and providing a better understanding of the underlying process that generated the data. \cite{Guyon2003} Since we have more features than data points, it leads to overfitting\cite{Smith2011}. We would
 	 need to perform feature selection on the data before using the machine learning algorithm.
 	 
-	The litany of feature selection algorithms used are popular and are taken from scikit-feature, a feature selection library\cite{li2016feature}: CIFE\cite{Lin2006}, reliefF\cite{Rob2003}, CFS\cite{HALLHALL}. We will not go into detail as feature selection is not the main focus of the report.
+	The litany of feature selection algorithms used are popular and are taken from scikit-feature, a feature selection library\cite{li2016feature}: CIFE\cite{Lin2006}, Relief\cite{Rob2003}, CFS\cite{HALLHALL}. We will not go into detail as feature selection is not the main focus of the report.
 	
 	\subsection{Experimental Setup}
 	We compared the proposed Gaussian Models against commonly used machine learning algorithms as mentioned in the previous section. For the ease of testing, all implementations of the algorithms except for GP ARD come from the popular machine learning library, Scikit Learn\cite{scikit-learn}. We used the 
@@ -381,8 +381,24 @@
  	\end{figure}
 	
 	We re-run the experiment across the data with feature selection. We run each of the feature subset gathered from the feature selection algorithms against each of the machine learning algorithm. 
-	We observe that reliefF, CIFE and CFS selected a large number of MFCC features. This confirms our hypothesis that MFCC gives the best predictive power to predict PHQ-8. Hence, in addition we also ran 
-	the experiment on MFCC features, and are represented as MFCC alongside the feature subsets obtained from feature selection. The best results across all feature subsets are shown in figure \ref{results_best} and in table \ref{rmse_results}. 
+	We observe that Relief, CIFE and CFS selected a large number of MFCC features. This confirms our hypothesis that MFCC gives the best predictive power to predict PHQ-8. Hence, in addition we also ran 
+	the experiment on MFCC features, and are represented as MFCC alongside the feature subsets obtained from feature selection. The best results across all feature subsets are shown in figure \ref{results_best} and in table \ref{rmse_results}. The number of features in each feature subset is given in the table \ref{feat_subset}.
+
+ 	\begin{table}[h]
+ 		\begin{center}
+  			\begin{tabular}{ | r | c | }
+    			\hline
+			 Feature Selection & Number of features \\ \hline\hline
+			 MFCC           & 12 \\ \hline
+			 CIFE        & 3 \\ \hline
+			 Relief & 23 \\ \hline
+			 CFS & 6 \\ \hline
+			 All & 526 \\ \hline
+			 \end{tabular}
+		\end{center}
+ 	\caption{Feature subsets}
+ 	\label{feat_subset}
+ 	\end{table}
 
 	\begin{figure}[h]
  		\begin{center}
@@ -398,24 +414,38 @@
 			\hline
 			&& \multicolumn{2}{c|}{RMSE} \\ \hline
 			Algorithm 		   & Subset& Train & Dev \\ \hline\hline
-			K-Nearest Neighbors        & x & x \\ \hline
-			SVM - Linear               & x & x \\ \hline
-			SVM - RBF                  & x & x \\ \hline
-			Decision Tree              & x & x \\ \hline
-			Random Forest              & x & x \\ \hline
-			AdaBoost                   & x & x \\ \hline
-			Naive Bayes                & x & x \\ \hline
-			GP ARD                     & x & x \\ \hline
-			GP Isotropic Matern        & x & x \\ \hline 
-			GP Dot Product             & x & x \\ \hline
+			K-Nearest Neighbors   & CFS   & 3.75 & 6.53 \\ \hline
+			SVM - Linear          & MFCC  & 5.29 & 6.63 \\ \hline
+			SVM - RBF             & CIFE  & 4.91 & 6.91 \\ \hline
+			Decision Tree         & MFCC  & 5.60 & 6.80 \\ \hline
+			Random Forest         & CFS   & 5.61 & 6.75 \\ \hline
+			AdaBoost              & Relief& 3.55 & 6.52 \\ \hline
+			Naive Bayes           & Relief& 6.87 & 7.59 \\ \hline
+			GP ARD                & All   & 3.72 & 10.09 \\ \hline
+			GP Isotropic Matern   & CFS   & 0.00 & 7.18 \\ \hline 
+			\bfseries GP Dot Product  & \bfseries MFCC  & \bfseries 5.03 & \bfseries 6.34 \\ \hline
 			\end{tabular}
 		\end{center}
-		\caption{RMSE results of the different machine learning algorithms}
+		\caption{RMSE Results}
 		\label{rmse_results}
 	\end{table}
 
+As expected, the models perform better with the MFCC feature subset. To our suprise, GP dot product is better compared with all other machine 
+learning algorithms. The GP dot product model was trained with 12 features and 95 data points, outperforms all other machine learning models in 
+our tests. Hence, our results also support our hypothesis that MFCC is a apporpriate feature subset to be used in prediction and that GP can be used 
+to predict PHQ-8 scores.
+
 	\section{Conclusion}	
-	Our work has succesfully modelled the various levels of depression with GP by taking audio recordings as our input. \\
+	Our work has succesfully shown that GP is a good model to this problem and can predict PHQ-8 better than the algorithms presented. In addition to 
+	being on par or better at prediction, GP can provide the predictive mean and varianace for each prediction. In our experiement, we measured 
+	the predictive mean and variance. They range from $0.0 - 0.889$ and $0.024 - 15.532$ respectively. We can use these values to inform the user the 
+	level of confidence of the prediction. With all that in mind, we conclude the GP Dot Product trained using MFCC features is a good model for depression
+	prediction.\\
+	
+	\subsection{Further Work}
+	In our experiment, we only used machine learning algorithms with their default parameters. We hope to expand our experiment to perform automatic 
+	hyper-parameter optimization across all the machine learning algorithms to fine-tune each model's performance. In particular, we can try 
+	Hyperopt-sklearn\cite{Komer2014HyperoptsklearnAH} or GP based hyper-parameter tuner. We opine that with hyper-parameter tuning, we can predict PHQ-8 scores better and can have a better comparison	of the different learning algorithms.
 	
 	\section{Contributions}
 	\begin{itemize}
