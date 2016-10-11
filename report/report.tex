@@ -7,6 +7,7 @@
 \usepackage{helvet}
 \usepackage{courier}
 \usepackage{graphicx}
+\usepackage{multirow}
 \usepackage{verbatim}
 \usepackage{url}
 \usepackage[utf8]{inputenc}
@@ -15,6 +16,7 @@
 \frenchspacing
 \setlength{\pdfpagewidth}{8.5in}
 \setlength{\pdfpageheight}{11in}
+
 
 \title{
 	CS4246 AI Planning and Decision Making - Project 1 \\
@@ -405,18 +407,18 @@
 		\begin{center}
 			\begin{tabular}{ | r | c | c | c | }
 			\hline
-			&& \multicolumn{2}{c|}{RMSE} \\ \hline
-			Algorithm 		   & Subset& Train & Dev \\ \hline\hline
-			K-Nearest Neighbors   & CFS   & 3.75 & 6.53 \\ \hline
-			SVM - Linear          & MFCC  & 5.29 & 6.63 \\ \hline
-			SVM - RBF             & CIFE  & 4.91 & 6.91 \\ \hline
-			Decision Tree         & MFCC  & 5.60 & 6.80 \\ \hline
-			Random Forest         & CFS   & 5.61 & 6.75 \\ \hline
-			AdaBoost              & Relief& 3.55 & 6.52 \\ \hline
-			Naive Bayes           & Relief& 6.87 & 7.59 \\ \hline
-			GP ARD                & All   & 3.72 & 10.09 \\ \hline
-			GP Isotropic Matern   & CFS   & 0.00 & 7.18 \\ \hline 
-			\bfseries GP Dot Product  & \bfseries MFCC  & \bfseries 5.03 & \bfseries 6.34 \\ \hline
+			\multirow{2}{*}{\bfseries Algorithm}	& \multirow{2}{*}{\bfseries Subset}	& \multicolumn{2}{c|}{RMSE} \\\cline{3-4}
+									&						& \bfseries Train 	& \bfseries Dev \\ \hline
+			K-Nearest Neighbors   			& CFS 					& 3.75 		& 6.53 \\ \hline
+			SVM - Linear          				& MFCC  					& 5.29 		& 6.63 \\ \hline
+			SVM - RBF             				& CIFE  					& 4.91 		& 6.91 \\ \hline
+			Decision Tree         				& MFCC  					& 5.60 		& 6.80 \\ \hline
+			Random Forest         			& CFS   					& 5.61 		& 6.75 \\ \hline
+			AdaBoost              				& Relief					& 3.55 		& 6.52 \\ \hline
+			Naive Bayes           				& Relief					& 6.87 		& 7.59 \\ \hline
+			GP ARD                				& All   						& 3.72 		& 10.09 \\ \hline
+			GP Isotropic Matern   			& CFS   					& 0.00 		& 7.18 \\ \hline 
+			\bfseries GP Dot Product  	& \bfseries MFCC  & \bfseries 5.03 & \bfseries 6.34 \\ \hline
 			\end{tabular}
 		\end{center}
 		\caption{RMSE Results}
