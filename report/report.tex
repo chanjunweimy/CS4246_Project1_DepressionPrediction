@@ -249,12 +249,12 @@
 
  	\begin{table}[h]
  		\begin{center}
-  			\begin{tabular}{ | r | c | c || c | }
+  			\begin{tabular}{ | r | c | c | c | }
     			\hline
-			 & Training & Development & All \\ \hline\hline
-			 n               & 95 & 31 & 126 \\ \hline
-			 $\mu$           & 6.326 & 7.548 & 6.626 \\ \hline
-			 $\sigma$        & 5.597 & 6.690 & 5.909 \\ \hline
+			 		& \bfseries Training	& \bfseries Development 	& \bfseries All \\ \hline
+			 $n$		& 95 			& 31 				& 126 \\ \hline
+			 $\mu$	& 6.326 		& 7.548			& 6.626 \\ \hline
+			 $\sigma$	& 5.597 		& 6.690 			& 5.909 \\ \hline
 			 \end{tabular}
 		\end{center}
  	\caption{Summary of Datasets provided}
@@ -270,12 +270,12 @@
  		\begin{center}
   			\begin{tabular}{ | r | c | }
     			\hline
-			 Audio Feature & Number of features \\ \hline\hline
-			 Magnitude Spectrum               & 512 \\ \hline
-			 MFCC           & 12 \\ \hline
-			 Energy        & 1 \\ \hline
-			 Zero-Crossing Rate & 1 \\ \hline \hline
-			 Total & 526 \\ \hline
+			 \bfseries Audio Feature 	& \bfseries Number of features \\ \hline
+			 Magnitude Spectrum	& 512 \\ \hline
+			 MFCC 			& 12 \\ \hline
+			 Energy 			& 1 \\ \hline
+			 Zero-Crossing Rate 	& 1 \\ \hline
+			 \bfseries Total		& \bfseries 526 \\ \hline
 			 \end{tabular}
 		\end{center}
  	\caption{Number of features extracted}
@@ -383,12 +383,12 @@
  		\begin{center}
   			\begin{tabular}{ | r | c | }
     			\hline
-			 Feature Selection & Number of features \\ \hline\hline
-			 MFCC           & 12 \\ \hline
-			 CIFE        & 3 \\ \hline
-			 Relief & 23 \\ \hline
-			 CFS & 6 \\ \hline
-			 All & 526 \\ \hline
+			 \bfseries Feature Selection 	&\bfseries Number of features \\ \hline
+			 MFCC           			& 12 \\ \hline
+			 CIFE        				& 3 \\ \hline
+			 Relief 				& 23 \\ \hline
+			 CFS 					& 6 \\ \hline
+			 All 					& 526 \\ \hline
 			 \end{tabular}
 		\end{center}
  	\caption{Feature subsets}
@@ -407,7 +407,7 @@
 		\begin{center}
 			\begin{tabular}{ | r | c | c | c | }
 			\hline
-			\multirow{2}{*}{\bfseries Algorithm}	& \multirow{2}{*}{\bfseries Subset}	& \multicolumn{2}{c|}{RMSE} \\\cline{3-4}
+			\multirow{2}{*}{\bfseries Algorithm}	& \multirow{2}{*}{\bfseries Subset}	& \multicolumn{2}{c|}{\bfseries RMSE} \\\cline{3-4}
 									&						& \bfseries Train 	& \bfseries Dev \\ \hline
 			K-Nearest Neighbors   			& CFS 					& 3.75 		& 6.53 \\ \hline
 			SVM - Linear          				& MFCC  					& 5.29 		& 6.63 \\ \hline
