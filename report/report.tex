@@ -222,11 +222,10 @@
 	On the other hand, as the baseline accuracy of using only MFCC to predict emotions is quite high, \cite{ElAyadi2011}, 
 	we actually guess that MFCC is the most important feature in depression prediction. 
 	In other words, since we have limited datas and large feature dimension, 
-	using MFCC feature only for the input vector of the model might actually improve the result. \\
+	using MFCC feature only for the input vector of the model might actually improve the result.\\
 
 	\section{Evaluation}
-	In order to test our proposed Gaussian Process models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016) 
-	\cite{avec2016}. The goal of AEVC is to weigh-in on the various approaches(visual, audio) used to recognize emotions under unambiguous conditions. 
+	In order to test our proposed Gaussian Process models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016) \cite{avec2016}. The goal of AEVC is to weigh-in on the various approaches(visual, audio) used to recognize emotions under unambiguous conditions. 
 	AVEC 2016 provided 2 pieces of data as input: visual and auditory data from each of the participants. However, we would be reducing the scope of 
 	the experiment, limiting the experiment to only the auditory data. Two Sub-Challenges were lised in AVEC 2016. We are only interested in the Depression Classification Sub-Challenge, which 
 	requires participants to classify inputs by the PHQ-8 score.
@@ -242,7 +241,7 @@
 	\end{figure}
 	
 	The depression data used in AVEC 2016 was obtained from the benchmarking database, the Distress Analysis Interview Corpus - Wizard of Oz (DAIC-WOZ). 
-	Data collected from DAIC-WOZ include raw audio and video recordings and the corresponsing PHQ-8 score(from 0 to 24)\cite{jad2008}. Hence, we would 
+	Data collected from DAIC-WOZ include raw audio and video recordings and the corresponsing PHQ-8 score(from 0 to 24) \cite{jad2008}. Hence, we would 
 	need to pre-process the auditory data before we use it in our experiment. The pre-processing is briefly discussed in the section below.
 	The distribution of the depression severity scores in the dataset is given in Figure \ref{histogram_phq8}. The data provided are split into 2 sets: training and development.
 	A summary of the data is given in Table \ref{summary_table}.
@@ -283,10 +282,10 @@
  	\end{table}
 
  	\subsection{Measure of Accuracy}
-	AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$\cite{avec2016}. 
+	AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$ \cite{avec2016}. 
 	In order to provide a meaningful and consistent comparison to the baseline provided, we would also use Root Mean Square Deviation Error (RMSE) to measure the error rate on both 
 	Training and Development datasets. RMSE(Equation \ref{eq:rmse}) is a commonly used in machine learning communities to measure the differences between the values predicted by a model 
-	and the ground truth\cite{Dhanani:EECS-2014-131}. 
+	and the ground truth \cite{Dhanani:EECS-2014-131}. 
 	\begin{equation}\label{eq:rmse}
   	\text{RMSE} = \sqrt{\frac{\sum_{t=1}^n (\hat y_t - y_t)^2}{n}}
  	\end{equation} 
@@ -295,15 +294,12 @@
 	Feature selection is the process of selecting a subset of relevant features including variables or predictors to be used in a model construction for machine learning. 
 	The usage of feature selection is to reduce the complexity of a model in machine learning to be interpreted easier. 
 	The objective of variable selection is three-fold: improving the prediction performance of the predictors, providing faster and most cost-effective predictors, 
-	and providing a better understanding of the underlying process that generated the data. \cite{Guyon2003} Since we have more features than data points, it leads to overfitting\cite{Smith2011}. We would
-	 need to perform feature selection on the data before using the machine learning algorithm.
+	and providing a better understanding of the underlying process that generated the data. \cite{Guyon2003} Since we have more features than data points, it leads to overfitting \cite{Smith2011}. We would need to perform feature selection on the data before using the machine learning algorithm.
 	 
-	The litany of feature selection algorithms used are popular and are taken from scikit-feature, a feature selection library\cite{li2016feature}: CIFE\cite{Lin2006}, Relief\cite{Rob2003}, CFS\cite{HALLHALL}. We will not go into detail as feature selection is not the main focus of the report.
+	The litany of feature selection algorithms used are popular and are taken from scikit-feature, a feature selection library \cite{li2016feature}: CIFE \cite{Lin2006}, Relief \cite{Rob2003}, CFS \cite{HALLHALL}. We will not go into detail as feature selection is not the main focus of the report.
 	
 	\subsection{Experimental Setup}
-	We compared the proposed Gaussian Models against commonly used machine learning algorithms as mentioned in the previous section. For the ease of testing, all implementations of the algorithms except for GP ARD come from the popular machine learning library, Scikit Learn\cite{scikit-learn}. We used the 
-	implementation of GP ARD from GPy, a Gaussian Processes framework in Python\cite{gpy2014}.
-	The hyper-parameters are either determined by the defaults used in either libraries or some reasonable defaults were used.
+	We compared the proposed Gaussian Models against commonly used machine learning algorithms as mentioned in the previous section. For the ease of testing, all implementations of the algorithms except for GP ARD come from the popular machine learning library, Scikit Learn \cite{scikit-learn}. We used the implementation of GP ARD from GPy, a Gaussian Processes framework in Python \cite{gpy2014}. The hyper-parameters are either determined by the defaults used in either libraries or some reasonable defaults were used.
 	Each machine learning algorithm is trained against the training set and thereafter tested against the development set using RMSE as the error metric. 
 	The entire experimental process is shown in Figure \ref{process}.
  
@@ -362,10 +358,7 @@
  	\end{comment}
 
 	\subsection{Results}
-	We first run the experiment across the dataset across all 526 features, without feature selection. As we would expect\cite{Cawley2014}, the results are terrible as the number of features is more than the number of 
-	data points, potentially
-	 causing overfitting. The results of the experiment is illustrated in figure \ref{results_all}. We would expect the GP ARD would be able to theoritcally extract relevant features and improve
-	  prediction. However, we have seen experimentally that GP ARD performs poorly, along with other GPs. The results for all the features are shown in figure \ref{rmse_results}.
+	We first run the experiment across the dataset across all 526 features, without feature selection. As we would expect \cite{Cawley2014}, the results are terrible as the number of features is more than the number of data points, potentially causing overfitting. The results of the experiment is illustrated in figure \ref{results_all}. We would expect the GP ARD would be able to theoritcally extract relevant features and improve prediction. However, we have seen experimentally that GP ARD performs poorly, along with other GPs. The results for all the features are shown in figure \ref{rmse_results}.\\
 
 	\begin{figure}[h]
  		\begin{center}
@@ -375,9 +368,7 @@
   		\label{results_all}
  	\end{figure}
 	
-	We re-run the experiment across the data with feature selection. We run each of the feature subset gathered from the feature selection algorithms against each of the machine learning algorithm. 
-	We observe that Relief, CIFE and CFS selected a large number of MFCC features. This confirms our hypothesis that MFCC gives the best predictive power to predict PHQ-8. Hence, in addition we also ran 
-	the experiment on MFCC features, and are represented as MFCC alongside the feature subsets obtained from feature selection. The best results across all feature subsets are shown in figure \ref{results_best} and in table \ref{rmse_results}. The number of features in each feature subset is given in the table \ref{feat_subset}.
+	We re-run the experiment across the data with feature selection. We run each of the feature subset gathered from the feature selection algorithms against each of the machine learning algorithm. We observe that Relief, CIFE and CFS selected a large number of MFCC features. This confirms our hypothesis that MFCC gives the best predictive power to predict PHQ-8. Hence, in addition we also ran the experiment on MFCC features, and are represented as MFCC alongside the feature subsets obtained from feature selection. The best results across all feature subsets are shown in figure \ref{results_best} and in table \ref{rmse_results}. The number of features in each feature subset is given in the table \ref{feat_subset}.\\
 
  	\begin{table}[h]
  		\begin{center}
@@ -437,7 +428,7 @@ to predict PHQ-8 scores.
 	\subsection{Further Work}
 	In our experiment, we only used machine learning algorithms with their default parameters. We hope to expand our experiment to perform automatic 
 	hyper-parameter optimization across all the machine learning algorithms to fine-tune each model's performance. In particular, we can try 
-	Hyperopt-sklearn\cite{Komer2014HyperoptsklearnAH} or GP based hyper-parameter tuner. We opine that with hyper-parameter tuning, we can predict PHQ-8 scores better and can have a better comparison	of the different learning algorithms.
+	Hyperopt-sklearn \cite{Komer2014HyperoptsklearnAH} or GP based hyper-parameter tuner. We opine that with hyper-parameter tuning, we can predict PHQ-8 scores better and can have a better comparison	of the different learning algorithms.
 	
 	\section{Contributions}
 	\begin{itemize}
