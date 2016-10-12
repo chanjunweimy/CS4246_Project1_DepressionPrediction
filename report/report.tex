@@ -89,9 +89,14 @@
 	those with irregular sampling rates. As our assumption of we are able to determine of depressed person according to the speech and all 
 	the signals extracted share some similarities, we could make use of the training data in GP to perform prediction for a depressed person based on the speech of the person.\\
 
-	In addition, GP produces truly probabilistic outputs with an explicit degree of prediction uncertainty. 
-	The prediction uncertainty can be further analyse to produce useful results. In addition, there exist algorithms for GP hyperparameter 
-	learning—something the other Machine Learning methods like SVM framework lacks. It is very useful as hyperparameter estimation could provide 
+	GP provides prediction with a clear probabilistic interpretation with an estimate of prediction uncertainty. 
+	From the prediction uncertainty, we are able to intelligently add data to improve the GP model. 
+	Moreover, we are able to get a sense of the quality of each prediction from the prediction uncertainty. These properties are inherent from a GP model and are lacking in many other machine learning
+	models. In our context, a person would be able to obtain both the predicted PHQ-8 score and also prediction confidence when he uses a GP model. Hence, he would be able to get a
+	sense of the accuracy of the PHQ-8 score and take the appropriate action with greater confidence.
+	
+	 In addition, there exist algorithms for GP hyperparameter 	learning—something the other Machine Learning methods like SVM framework lacks. It is very useful as 
+	 hyperparameter estimation could provide 
 	improvement to the Machine Learning algorithm especially in sound/speech recognition. \cite{Hashimoto2015} \\
 
 	Previously, SVM gave a very high accuracy of prediction in speech emotion recognition, scoring about 94\% 
@@ -409,16 +414,17 @@
 			\hline
 			\multirow{2}{*}{\bfseries Algorithm}	& \multirow{2}{*}{\bfseries Subset}	& \multicolumn{2}{c|}{\bfseries RMSE} \\\cline{3-4}
 									&						& \bfseries Train 	& \bfseries Dev \\ \hline
+			\bfseries GP Dot Product  	& \bfseries MFCC  & \bfseries 5.03 & \bfseries 6.34 \\ \hline
+			AdaBoost              				& Relief					& 3.55 		& 6.52 \\ \hline
 			K-Nearest Neighbors   			& CFS 					& 3.75 		& 6.53 \\ \hline
 			SVM - Linear          				& MFCC  					& 5.29 		& 6.63 \\ \hline
-			SVM - RBF             				& CIFE  					& 4.91 		& 6.91 \\ \hline
-			Decision Tree         				& MFCC  					& 5.60 		& 6.80 \\ \hline
 			Random Forest         			& CFS   					& 5.61 		& 6.75 \\ \hline
-			AdaBoost              				& Relief					& 3.55 		& 6.52 \\ \hline
+			Decision Tree         				& MFCC  					& 5.60 		& 6.80 \\ \hline
+			SVM - RBF             				& CIFE  					& 4.91 		& 6.91 \\ \hline
+			GP Isotropic Matern   			& CFS   					& 0.00 		& 7.18 \\ \hline 
 			Naive Bayes           				& Relief					& 6.87 		& 7.59 \\ \hline
 			GP ARD                				& All   						& 3.72 		& 10.09 \\ \hline
-			GP Isotropic Matern   			& CFS   					& 0.00 		& 7.18 \\ \hline 
-			\bfseries GP Dot Product  	& \bfseries MFCC  & \bfseries 5.03 & \bfseries 6.34 \\ \hline
+
 			\end{tabular}
 		\end{center}
 		\caption{RMSE Results}
@@ -431,8 +437,11 @@
 	Hence, our results also support our hypothesis that MFCC is a apporpriate feature subset to be used in prediction and that GP can be used to predict PHQ-8 scores.
 
 	\section{Conclusion}	
-	Our work has succesfully shown that GP is a good model for this problem and can predict PHQ-8 better than the algorithms presented.
-	Overall, we conclude the GP Dot Product trained using MFCC features is a good model for depression prediction.
+	Our work has succesfully shown that GP is a good model for this problem and can predict PHQ-8 better than the algorithms presented. 
+	In addition to being on par or better at prediction, GP can inherently provide an estimate of prediction uncertainty. This allows the user to gauge the model's 
+	confidence of the prediction, and to take appropriate action based on both the prediction and its uncertainty. We can also intelligently add data to our training set based on 
+	the prediction uncertaintly. Therefore, after considering both results and GP's advantages, we conclude the GP Dot Product trained using MFCC feature set is a good model for 
+	depression prediction.
 	
 	\section{Further Work}
 	For this experiment, we only used machine learning algorithms with their default parameters. 
