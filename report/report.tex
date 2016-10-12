@@ -99,8 +99,8 @@
 	In the paper  “Music Genre and Emotion Recognition Using Gaussian Processes“ \cite{MARKOV2013}, 
 	both music genre classification and music emotion estimation tasks, the GP performed consistently better than the SVM. \\
 	
-	\subsection{Requirements}\label{audio_feats}
-	Aside from the audio recordings, our GP model makes use of the following:
+	\subsection{Gaussian Process Model}\label{audio_feats}
+	In our model, we consider the following
 	\begin{enumerate}
 		\item \textbf{Audio Features}	\\
 		What are the differences between sounds? To differentiate between sounds, we need to learn about audio features, which will be described below:
@@ -124,6 +124,12 @@
 			\item \textbf{Zero-Crossing Rate} \\
 			Zero crossing rate is the rate of sign-changes along a signal. This feature is extremely useful in speech recognition and music information retrieval.
 		\end{enumerate}
+	
+	Depression is actually tied to emotions: it can either mean sadness or people who deny feeling sad. \cite{Stratou2015} 
+	On the other hand, as the baseline accuracy of using only MFCC to predict emotions is quite high, 
+	we actually guess that MFCC is the most important feature in depression prediction \cite{ElAyadi2011}. 
+	In other words, since we have limited datas and large feature dimension, 
+	using MFCC feature only for the input vector of the model might actually improve the result.
 		
 		\item \textbf{Kernels}	\\
 		The similarity measure of all features is usually called kernel. As GP uses Kernels to predict the value for an unseen point from training data, 
@@ -179,7 +185,11 @@
 		As we favor simplicity, we actually think that dot product kernel would give us the best result.
 	\end{enumerate}
 
-	\subsection{Machine Learning Methods Applied}
+	Without doing feature selections, the feature dimensions would be huge. 
+	As a result, it is likely to lead to overfitting and poor generalisation of the model. \cite{Cawley2014} 
+	Thus, to increase the effectiveness of the GP model, we would apply feature selection to the data first.
+
+	\subsection{State-of-art Machine Learning Models}
 	Machine learning is about using models to learn from existing data for some improvement or predictions. 
 	The following is some methods used in machine learning:
 	\begin{enumerate}
@@ -206,18 +216,6 @@
 		All naive Bayes classifiers assume that the value of a particular feature is independent of the value of any other feature, given the class variable. 
 		The possibilities is represented by the number of times the particular event occurs in the dataset over the total number of events. 
 	\end{enumerate}
-
-	\subsubsection{Hypothesis: Doing feature selection before applying to the ARD Kernel GP model will improve the result.}
-	Without doing feature selections, as the feature dimensions would be huge, we would also have large number of kernel parameters. 
-	As a result, it is likely to lead to overfitting and generating poor result. \cite{Cawley2014} 
-	Thus, to increase the effectiveness of the GP Model, we would apply feature selection to the data first.
-
-	\subsubsection{Hypothesis: MFCC is the most important feature.}
-	Depression is actually tied to emotions : it can either mean sadness or people who deny feeling sad. \cite{Stratou2015} 
-	On the other hand, as the baseline accuracy of using only MFCC to predict emotions is quite high, \cite{ElAyadi2011}, 
-	we actually guess that MFCC is the most important feature in depression prediction. 
-	In other words, since we have limited datas and large feature dimension, 
-	using MFCC feature only for the input vector of the model might actually improve the result.
 
 	\section{Evaluation}
 	In order to test our proposed GP models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016) \cite{avec2016}. 
@@ -265,12 +263,12 @@
  		\begin{center}
   			\begin{tabular}{ | r | c | }
     			\hline
-			 \bfseries Audio Feature 	& \bfseries Number of features \\ \hline
-			 Magnitude Spectrum	& 512 \\ \hline
-			 MFCC 			& 12 \\ \hline
-			 Energy 			& 1 \\ \hline
-			 Zero-Crossing Rate 	& 1 \\ \hline
-			 \bfseries Total		& \bfseries 526 \\ \hline
+			 \bfseries Audio Feature Sets 	& \bfseries Number of features \\ \hline
+			 Magnitude Spectrum		& 512 \\ \hline
+			 MFCC 				& 12 \\ \hline
+			 Energy 				& 1 \\ \hline
+			 Zero-Crossing Rate 		& 1 \\ \hline
+			 \bfseries Total			& \bfseries 526 \\ \hline
 			 \end{tabular}
 		\end{center}
  	\caption{Number of features extracted}
@@ -376,7 +374,7 @@
 	
 	We re-ran the experiment across the data with feature selection and ran each of the feature subset gathered from the feature selection algorithms against each of the machine learning algorithm. 
 	We observed that Relief, CIFE and CFS selected a large number of MFCC features. 
-	This confirms our hypothesis that MFCC gives the best predictive power to predict PHQ-8. 
+	This confirms our suspicion that MFCC gives the best predictive power to predict PHQ-8. 
 	Hence, in addition we also ran the experiment on MFCC features, and are represented as MFCC alongside the feature subsets obtained from feature selection. 
 	The best results across all feature subsets are shown in figure \ref{results_best} and in table \ref{rmse_results}. 
 	The number of features in each feature subset is given in the table \ref{feat_subset}. \\

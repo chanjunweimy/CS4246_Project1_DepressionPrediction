@@ -8,6 +8,13 @@ Well written intro and abstract.
 I think we need to add in the words GP inside ^ the sentence, that its not just using the acoustic measures but also using GP model to perform the prediction. And I think when we mention GP we can go the -
 Gaussian Process(GP)
 
+WHICH MACHINE LEARNING ALGO CAN MODEL THIS THE BEST NOT WHETHER WE CAN PREDICT IT OR NOT.
+
+BEFORE AIM:
+GP IS USED IN EMOTION PREDICTION; GP IS ALSO SUCCESSFUL IN MANY APPLICATIONS, 
+
+AIM: SEE IF GP IS A GOOD MODEL FOR PREDICTING DEPRESSING COMPARED WITH OTHER STATE OF THE ART ALGORITHMS.
+
 Page 2
 ======
 A new state of the art machine learning model?
