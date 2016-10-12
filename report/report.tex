@@ -93,17 +93,17 @@
 	From the prediction uncertainty, we are able to intelligently add data to improve the GP model. 
 	Moreover, we are able to get a sense of the quality of each prediction from the prediction uncertainty. These properties are inherent from a GP model and are lacking in many other machine learning
 	models. In our context, a person would be able to obtain both the predicted PHQ-8 score and also prediction confidence when he uses a GP model. Hence, he would be able to get a
-	sense of the accuracy of the PHQ-8 score and take the appropriate action with greater confidence.
+	sense of the accuracy of the PHQ-8 score and take the appropriate action with greater confidence.\\
 	
-	 In addition, there exist algorithms for GP hyperparameter 	learning—something the other Machine Learning methods like SVM framework lacks. It is very useful as 
+	 In addition, there exists algorithms for GP hyperparameter 	learning—something the other Machine Learning methods like SVM framework lacks. It is very useful as 
 	 hyperparameter estimation could provide 
 	improvement to the Machine Learning algorithm especially in sound/speech recognition. \cite{Hashimoto2015} \\
 	
 	\subsection{Gaussian Process Model}\label{audio_feats}
-	In our model, we consider the following
+	In our model, we first analyse the following aspects
 	\begin{enumerate}
-		\item \textbf{Audio Features}	\\
-		What are the differences between sounds? To differentiate between sounds, we need to learn about audio features, which will be described below:
+		\item \textbf{Audio Feature Subsets}	\\
+		An audio signature can be uniquely defined by the following feature subsets:
 		\begin{enumerate}
 			\item \textbf{Energy}	\\
 			The Energy feature of a sound refers to the loudness of the sound at various timeframes, 
@@ -122,7 +122,7 @@
 			Fast Fourier Transform (FFT) is performed on each frames and this will form the Magnitude Spectrum.
 			
 			\item \textbf{Zero-Crossing Rate} \\
-			Zero crossing rate is the rate of sign-changes along a signal. This feature is extremely useful in speech recognition and music information retrieval.
+			Zero crossing rate is the rate of sign-changes along a signal.
 		\end{enumerate}
 	
 	Depression is actually tied to emotions: it can either mean sadness or people who deny feeling sad. \cite{Stratou2015} 
@@ -190,8 +190,7 @@
 	Thus, to increase the effectiveness of the GP model, we would apply feature selection to the data first.
 
 	\subsection{State-of-art Machine Learning Models}
-	Machine learning is about using models to learn from existing data for some improvement or predictions. 
-	The following is some methods used in machine learning:
+	The following machine learning models are used:
 	\begin{enumerate}
 		\item \textbf{k-nearest neighbors algorithm} \\
 		The k-Nearest Neighbors algorithm is a non-parametric method for classification and regression. 
@@ -256,8 +255,8 @@
 
 	\subsection{Pre-processed data}
 	Since the focus of this paper is the prediction of the PHQ-8 score, we will not describe the pre-processing step in detail.
-	We used standard signal processing techniques to extract the 4 audio features (Energy, MFCC, Magnitude Spectrum, Zero-crossing) as presented in the Modelling and Approach section.
-	Each audio feature composes of several individual features and the breakdown of the actual number of feature columns are as follows:
+	We used standard signal processing techniques to extract the 4 audio feature subsets (Energy, MFCC, Magnitude Spectrum, Zero-crossing) as presented in the Modelling and Approach section.
+	Each audio feature subset comprises of several individual features and the breakdown of the actual number of feature columns are as follows:
 
  	\begin{table}[h]
  		\begin{center}
@@ -297,7 +296,7 @@
 	\subsection{Experimental Setup}
 	We compared the proposed Gaussian Models against commonly used machine learning algorithms as mentioned in the previous section. 
 	For the ease of testing, all implementations of the algorithms except for GP ARD come from the popular machine learning library, Scikit Learn \cite{scikit-learn}. 
-	We used the implementation of GP ARD from GPy, a Gaussian Processes framework in Python \cite{gpy2014}. 
+	We used the implementation of GP ARD from GPy, a Gaussian Processes framework in Python \cite{gpy2014}.
 	The hyper-parameters are either determined by the defaults used in either libraries or some reasonable defaults were used.
 	Each machine learning algorithm is trained against the training set and thereafter tested against the development set using RMSE as the error metric. 
 	The entire experimental process is shown in Figure \ref{process}. \\
