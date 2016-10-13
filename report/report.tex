@@ -80,17 +80,20 @@
 	\begin{enumerate}
 		\item Depression prediction is an event-based recognition which provides a single depression estimate over a certain amount of time. \cite{Valstar2016}
 		\item The speech signals extracted from different people suffering from depression should share some similarities and thus admissible for prediction with the Gaussian Process models. 
-		For example, diminished, prosodic and monotonous speech is often strongly correlated with depression.\cite{Cummins2015}
+		For example, diminished, prosodic and monotonous speech is often strongly correlated with depression. \cite{Cummins2015}
 	\end{enumerate}
 
 	\subsection{Qualitative Advantages}
 	GP is exceptionally useful in this application as it's noise tolerance takes into account outliers in our dataset such as recordings with irregular sampling rates. \\
 
-GP also provides predictions with a clear probabilistic interpretation by also providing an estimate of prediction uncertainty. From the prediction uncertainty, we are able to intelligently supplement more data in aspects with higher uncertainty to improve the GP model. Moreover, we are able to get a sense of the quality of each prediction from the prediction uncertainty. These properties are unique to a GP models and are missing in many other machine learning
-	models. In our context, an individual would be able to obtain both the predicted PHQ-8 score and also prediction confidence when using a GP model. Hence, he would be able to get a
-	sense of whether or not to trust the predicted PHQ-8 score and make informed decisions from there.\\
+	GP also provides predictions with a clear probabilistic interpretation by also providing an estimate of prediction uncertainty. 
+	From the prediction uncertainty, we are able to intelligently supplement more data in aspects with higher uncertainty to improve the GP model. 
+	Moreover, we are able to get a sense of the quality of each prediction from the prediction uncertainty. 
+	These properties are unique to a GP models and are missing in many other machine learning models.
+	In our context, an individual would be able to obtain both the predicted PHQ-8 score and also prediction confidence when using a GP model. 
+	Hence, he would be able to get a sense of whether or not to trust the predicted PHQ-8 score and make informed decisions from there.\\
 	
-	\subsection{Gaussian Process Model}\label{audio_feats}
+	\subsection{Gaussian Process Model} \label{audio_feats}
 	In our model, we first analyse the following aspects:
 	\begin{enumerate}
 		\item \textbf{Audio Feature Sets}	\\
@@ -116,7 +119,8 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 			Zero crossing rate is the rate of sign-changes along a signal.
 		\end{enumerate}
 	
-	Depression is characterized by a pervasive and persistent low mood and the difficulty in diagnosis lies in detecting the subtle but clear-cut changes in the baseline of a patient's voice \cite{Stratou2015}.
+	Depression is characterized by a pervasive and persistent low mood and the difficulty in diagnosis 
+	lies in detecting the subtle but clear-cut changes in the baseline of a patient's voice \cite{Stratou2015}.
 	Given the task and the fact that the baseline accuracy of using MFCC to predict emotions in audio is relatively high, 
 	we postulate that MFCC is the most important feature in depression prediction \cite{ElAyadi2011}. 
 	Consequently, since we have limited data and large feature dimension, 
@@ -139,8 +143,8 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 			\(||x-x'||^{2}\) represents the squared Euclidean distance 
 			And \( \sigma > 0 \) can either be a scalar (isotropic variant of the kernel) or a vector with the same number of dimensions 
 			as the inputs X (anisotropic variant of the kernel). \\
-			It is also known as the squared exponential kernel. This kernel is infinitely differentiable, 
-			which implies that GPs with this kernel as covariance function have mean square derivatives of all orders, 
+			It is also known as the squared exponential kernel. 
+			This kernel is infinitely differentiable, which implies that GPs with this kernel as covariance function have mean square derivatives of all orders, 
 			and are thus very smooth.
 			
 			\item \textbf{Matern}\\
@@ -150,7 +154,9 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 			Important intermediate values are $\nu=1.5$ (once differentiable functions) and $\nu=2.5$ (twice differentiable functions).
 
 			\item \textbf{Automatic Relevance Detection (ARD)}\\
-			If we chose the anisotropic variant of the RBF and Matern kernel, then these kernels are also known as ARD kernels. For the model, the difference is that each \(\sigma_{i}\), where $i = 1,2,3,...,n$ might be different, depending the importance of the corresponding input features.\\
+			If we chose the anisotropic variant of the RBF and Matern kernel, then these kernels are also known as ARD kernels.
+			For the model, the difference is that each \(\sigma_{i}\), where $i = 1,2,3,...,n$ might be different, 
+			depending the importance of the corresponding input features.\\
 
 			ARD is advantageous for the experiment as: 
 			\begin{enumerate}
@@ -176,7 +182,7 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 	\end{enumerate}
 
 	Without doing feature selections, the feature dimensions would be huge. 
-	As a result, it is likely to lead to overfitting and poor generalisation of the model. \cite{Cawley2014} 
+	As a result, it is likely to lead to overfitting and poor generalisation of the model \cite{Cawley2014}. 
 	Thus, to increase the effectiveness of the GP model, we would apply feature selection to the data first.
 
 	\subsection{State-of-art Machine Learning Models}
@@ -207,10 +213,11 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 	\end{enumerate}
 
 	\section{Evaluation}
-	In order to test our proposed GP models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016) \cite{avec2016}. 
+	In order to test our proposed GP models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}. 
 	The goal of AVEC is to weigh-in on the various approaches used to recognize emotions under unambiguous conditions. 
 	AVEC 2016 provided 2 pieces of data as input: visual and auditory data from each of the participants. 
-	However, we would be reducing the scope of the experiment, limiting the experiment to only the auditory data. Two Sub-Challenges were lised in AVEC 2016. 
+	However, we would be reducing the scope of the experiment, limiting the experiment to only the auditory data. 
+	Two Sub-Challenges were lised in AVEC 2016. 
 	We are only interested in the Depression Classification Sub-Challenge, which requires participants to classify inputs by the PHQ-8 score. 
 	In this experiment, we would be using the audio data along with their corresponding PHQ-8 scores to test our assumptions and confirm our hypothesis.
 
@@ -245,7 +252,8 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 
 	\subsection{Pre-processed data}
 	Since the focus of this paper is the prediction of the PHQ-8 score, we will not describe the pre-processing step in detail.
-	We used standard signal processing techniques to extract the 4 audio feature sets (Energy, MFCC, Magnitude Spectrum, Zero-crossing) as presented in the Modelling and Approach section.
+	We used standard signal processing techniques to extract the 4 audio feature sets (Energy, MFCC, Magnitude Spectrum, Zero-crossing) as presented in the Modelling 
+	and Approach section.
 	Each audio feature set comprises of several individual features and the breakdown of the actual number of feature columns is summarized in Table \ref{no_features}.
 
  	\begin{table}[h]
@@ -266,7 +274,8 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 
  	\subsection{Measure of Accuracy}
 	AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$ \cite{avec2016}. 
-	In order to provide a meaningful and consistent comparison to the baseline provided, we used the same Root Mean Square Deviation Error (RMSE) to measure the error rate on both Training and Development datasets. 
+	In order to provide a meaningful and consistent comparison to the baseline provided, we used the same Root Mean Square Deviation Error (RMSE) to measure the 
+	error rate on both Training and Development datasets. 
 	RMSE (Equation \ref{eq:rmse}) is a commonly used in the machine learning community to measure the differences between the values predicted by a model 
 	and the ground truth \cite{Dhanani:EECS-2014-131}. 
 	\begin{equation}\label{eq:rmse}
@@ -279,8 +288,10 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 	The benefit is three-fold: improving the prediction performance of the predictors, providing faster and most cost-effective predictors, 
 	and providing a better understanding of the underlying process that generated the data \cite{Guyon2003}.\\
 	
-Since we have more features than data points, it tends to lead to overfitting \cite{Smith2011}. Therefore feature selection is first performed on the data before applying machine learning. 
-	The feature selection algorithms used are popular and are taken from scikit-feature, a feature selection library \cite{li2016feature}: CIFE \cite{Lin2006}, Relief \cite{Rob2003}, CFS \cite{HALLHALL}. 
+	Since we have more features than data points, it tends to lead to overfitting \cite{Smith2011}. 
+	Therefore feature selection is first performed on the data before applying machine learning. 
+	The feature selection algorithms used are popular and are taken from scikit-feature, a feature selection library \cite{li2016feature}: CIFE \cite{Lin2006}, Relief 	
+	\cite{Rob2003}, CFS \cite{HALLHALL}. 
 	We will not go into detail as feature selection is not the main focus of the report.
 	
 	\subsection{Experimental Setup}
@@ -347,7 +358,8 @@ Since we have more features than data points, it tends to lead to overfitting \c
 
 	\subsection{Results}
 	We first ran the experiment across the dataset using all 526 features, without feature selection. 
-	As we would expect \cite{Cawley2014}, the results are unacceptable as the ratio of the number of features to the number of data points is too high, resulting in possible overfitting. 
+	As we would expect \cite{Cawley2014}, the results are unacceptable as the ratio of the number of features to the number of data points is too high,
+	resulting in possible overfitting. 
 	The results of the initial experiment is illustrated in Figure \ref{results_all}. 
 	We would expect the GP ARD would be able to theoritcally extract relevant features and improve prediction.
 	However, we have observed experimentally that GP ARD performs poorly, along with other GPs. \\
@@ -360,8 +372,13 @@ Since we have more features than data points, it tends to lead to overfitting \c
   		\label{results_all}
  	\end{figure}
 	
-	We repeated the experiment with feature selection and ran each of the feature subset gathered from the feature selection algorithms against each of the machine learning algorithms. 
-	We observed that Relief, CIFE and CFS selected a large number of MFCC features. The number of features in each feature subset is shown in Table \ref{feat_subset}. This confirms our assumption that MFCC gives the best predictive power in PHQ-8 depression severity prediction. Hence, we also ran the experiment using only MFCC features. The best results across all feature subsets are shown in Figure \ref{results_best} and in Table \ref{rmse_results}. \\
+	We repeated the experiment with feature selection and ran each of the feature subset gathered from the feature selection algorithms against each of the machine 
+	learning algorithms. 
+	We observed that Relief, CIFE and CFS selected a large number of MFCC features. 
+	The number of features in each feature subset is shown in Table \ref{feat_subset}. 
+	This confirms our assumption that MFCC gives the best predictive power in PHQ-8 depression severity prediction. 
+	Hence, we also ran the experiment using only MFCC features. 
+	The best results across all feature subsets are shown in Figure \ref{results_best} and in Table \ref{rmse_results}. \\
 
  	\begin{table}[h]
  		\begin{center}
@@ -412,18 +429,21 @@ Since we have more features than data points, it tends to lead to overfitting \c
 	
 	As expected, the models perform better with the MFCC feature set. 
 	Unexpectedly, the simple GP dot product model, trained with 12 features and 95 data points, outperforms all other machine learning models in our tests. 
-	Our results also confirms the initial assumption that MFCC is an appropriate feature set to be used in emotion and therefore depression prediction and that GP is applicable and feasible in predicting PHQ-8 scores.
+	Our results also confirms the initial assumption that MFCC is an appropriate feature set to be used in emotion and therefore depression prediction and that GP is 
+	applicable and feasible in predicting PHQ-8 scores.
 
 	\section{Conclusion}	
-	Our work has succesfully shown that Gaussian Process is a good model for this problem and can predict PHQ-8 better than state-of-the-art machine learning models. 
-	In addition to being on par or better at prediction, GP can inherently provide an estimate of prediction uncertainty. This allows the user to gauge the model's 
-	confidence of the prediction, and to make more informed decisions based on both the prediction and its uncertainty. We can also intelligently supplement more data to our training set based on 
-	the prediction uncertaintly. Therefore, after considering both results and GP's advantages, we conclude the GP Dot Product trained using MFCC feature set is a good model for 
+	Our work has succesfully shown that GP is a good model for this problem and can predict PHQ-8 better than state-of-the-art machine learning models. 
+	In addition to being on par or better at prediction, GP can inherently provide an estimate of prediction uncertainty. 
+	This allows the user to gauge the model's confidence of the prediction, and to make more informed decisions based on both the prediction and its uncertainty. 
+	We can also intelligently supplement more data to our training set based on the prediction uncertaintly. 
+	Therefore, after considering both results and GP's advantages, we conclude the GP Dot Product trained using MFCC feature set is a good model for 
 	depression prediction.
 	
 	\section{Further Work}
 	For this experiment, we only used machine learning algorithms with their default parameters. 
-	An aspect that deserves further exploration is to perform automatic hyper-parameter optimization across all the machine learning algorithms to fine-tune each model's performance. 
+	An aspect that deserves further exploration is to perform automatic hyper-parameter optimization
+	across all the machine learning algorithms to fine-tune each model's performance. 
 	In particular, we can try Hyperopt-sklearn \cite{Komer2014HyperoptsklearnAH} or GP based hyper-parameter tuner. 
 	We opine that with hyper-parameter tuning, we can predict PHQ-8 scores better and can have a more objective comparison of the different learning algorithms.
 	
