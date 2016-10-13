@@ -275,13 +275,13 @@ GP also provides predictions with a clear probabilistic interpretation by also p
  	\end{equation} 
 
 	\subsection{Feature Selection}
-	Feature selection is the process of selecting a subset of relevant features including variables or predictors to be used in a model construction for machine learning. 
-	The usage of feature selection is to reduce the complexity of a model in machine learning to be interpreted easier. 
-	The objective of variable selection is three-fold: improving the prediction performance of the predictors, providing faster and most cost-effective predictors, 
-	and providing a better understanding of the underlying process that generated the data \cite{Guyon2003}.
-	Since we have more features than data points, it leads to overfitting \cite{Smith2011}. 
-	We would need to perform feature selection on the data before using the machine learning algorithm. 
-	The litany of feature selection algorithms used are popular and are taken from scikit-feature, a feature selection library \cite{li2016feature}: CIFE \cite{Lin2006}, Relief \cite{Rob2003}, CFS \cite{HALLHALL}. 
+	Feature selection is the process of selecting a subset of relevant features including variables or predictors to be used in a model for machine learning. 
+	The purpose of feature selection is to reduce the complexity of a model to more easily be interpreted. 
+	The benefit is three-fold: improving the prediction performance of the predictors, providing faster and most cost-effective predictors, 
+	and providing a better understanding of the underlying process that generated the data \cite{Guyon2003}.\\
+	
+Since we have more features than data points, it tends to lead to overfitting \cite{Smith2011}. Therefore feature selection is first performed on the data before applying machine learning. 
+	The feature selection algorithms used are popular and are taken from scikit-feature, a feature selection library \cite{li2016feature}: CIFE \cite{Lin2006}, Relief \cite{Rob2003}, CFS \cite{HALLHALL}. 
 	We will not go into detail as feature selection is not the main focus of the report.
 	
 	\subsection{Experimental Setup}
