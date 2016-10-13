@@ -116,11 +116,11 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 			Zero crossing rate is the rate of sign-changes along a signal.
 		\end{enumerate}
 	
-	Depression is actually tied to emotions: it can either mean sadness or people who deny feeling sad. \cite{Stratou2015} 
-	On the other hand, as the baseline accuracy of using only MFCC to predict emotions is quite high, 
-	we actually guess that MFCC is the most important feature in depression prediction \cite{ElAyadi2011}. 
-	In other words, since we have limited datas and large feature dimension, 
-	using MFCC feature only for the input vector of the model might actually improve the result.
+	Depression is characterized by a pervasive and persistent low mood and the difficulty in diagnosis lies in detecting the subtle but clear-cut changes in the baseline of a patient's voice \cite{Stratou2015}.
+	Given the task and the fact that the baseline accuracy of using MFCC to predict emotions in audio is relatively high, 
+	we postulate that MFCC is the most important feature in depression prediction \cite{ElAyadi2011}. 
+	Consequently, since we have limited data and large feature dimension, 
+	using only the MFCC feature set as the input vector of the model is expected improve the result.
 		
 		\item \textbf{Kernels}	\\
 		The similarity measure of all features is usually called kernel. As GP uses Kernels to predict the value for an unseen point from training data, 
