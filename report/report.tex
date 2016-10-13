@@ -209,11 +209,11 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 
 	\section{Evaluation}
 	In order to test our proposed GP models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop(AVEC 2016) \cite{avec2016}. 
-	The goal of AEVC is to weigh-in on the various approaches used to recognize emotions under unambiguous conditions. 
+	The goal of AVEC is to weigh-in on the various approaches used to recognize emotions under unambiguous conditions. 
 	AVEC 2016 provided 2 pieces of data as input: visual and auditory data from each of the participants. 
 	However, we would be reducing the scope of the experiment, limiting the experiment to only the auditory data. Two Sub-Challenges were lised in AVEC 2016. 
 	We are only interested in the Depression Classification Sub-Challenge, which requires participants to classify inputs by the PHQ-8 score. 
-	In this experiment, we would be using the audio data along with their corresponding PHQ-8 to test our hypotheses.
+	In this experiment, we would be using the audio data along with their corresponding PHQ-8 scores to test our assumptions and confirm our hypothesis.
 
 	\subsection{Data}
 	\begin{figure}[h]
@@ -223,12 +223,12 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 	\label{histogram_phq8}
 	\end{figure}
 	
-	The depression data used in AVEC 2016 was obtained from the benchmarking database, the Distress Analysis Interview Corpus - Wizard of Oz (DAIC-WOZ). 
-	Data collected from DAIC-WOZ include raw audio and video recordings and the corresponsing PHQ-8 score(from 0 to 24) \cite{jad2008}. Hence, we would 
+	The depression data used in AVEC 2016 was obtained from the benchmarking database, Distress Analysis Interview Corpus - Wizard of Oz (DAIC-WOZ). 
+	Data collected from DAIC-WOZ include raw audio and video recordings and the corresponsing PHQ-8 score (from 0 to 24) \cite{jad2008}. Hence, we would 
 	need to pre-process the auditory data before we use it in our experiment. The pre-processing is briefly discussed in the section below.
 	The distribution of the depression severity scores in the dataset is given in Figure \ref{histogram_phq8}. 
 	The data provided are split into 2 sets: training and development.
-	A summary of the data is given in Table \ref{summary_table}.
+	An overview of the data is given in Table \ref{summary_table}.
 
  	\begin{table}[h]
  		\begin{center}
@@ -247,7 +247,7 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 	\subsection{Pre-processed data}
 	Since the focus of this paper is the prediction of the PHQ-8 score, we will not describe the pre-processing step in detail.
 	We used standard signal processing techniques to extract the 4 audio feature sets (Energy, MFCC, Magnitude Spectrum, Zero-crossing) as presented in the Modelling and Approach section.
-	Each audio feature set comprises of several individual features and the breakdown of the actual number of feature columns are as follows:
+	Each audio feature set comprises of several individual features and the breakdown of the actual number of feature columns is summarized in Table \ref{no_features}.
 
  	\begin{table}[h]
  		\begin{center}
@@ -267,8 +267,8 @@ GP also provides predictions with a clear probabilistic interpretation by also p
 
  	\subsection{Measure of Accuracy}
 	AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$ \cite{avec2016}. 
-	In order to provide a meaningful and consistent comparison to the baseline provided, we used the Root Mean Square Deviation Error (RMSE) to measure the error rate on both Training and Development datasets. 
-	RMSE(Equation \ref{eq:rmse}) is a commonly used in machine learning communities to measure the differences between the values predicted by a model 
+	In order to provide a meaningful and consistent comparison to the baseline provided, we used the same Root Mean Square Deviation Error (RMSE) to measure the error rate on both Training and Development datasets. 
+	RMSE (Equation \ref{eq:rmse}) is a commonly used in the machine learning community to measure the differences between the values predicted by a model 
 	and the ground truth \cite{Dhanani:EECS-2014-131}. 
 	\begin{equation}\label{eq:rmse}
   	\text{RMSE} = \sqrt{\frac{\sum_{t=1}^n (\hat y_t - y_t)^2}{n}}
