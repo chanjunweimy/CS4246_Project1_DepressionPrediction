@@ -415,17 +415,17 @@ Since we have more features than data points, it tends to lead to overfitting \c
 	Our results also confirms the initial assumption that MFCC is an appropriate feature set to be used in emotion and therefore depression prediction and that GP is applicable and feasible in predicting PHQ-8 scores.
 
 	\section{Conclusion}	
-	Our work has succesfully shown that GP is a good model for this problem and can predict PHQ-8 better than the algorithms presented. 
+	Our work has succesfully shown that Gaussian Process is a good model for this problem and can predict PHQ-8 better than state-of-the-art machine learning models. 
 	In addition to being on par or better at prediction, GP can inherently provide an estimate of prediction uncertainty. This allows the user to gauge the model's 
-	confidence of the prediction, and to take appropriate action based on both the prediction and its uncertainty. We can also intelligently add data to our training set based on 
+	confidence of the prediction, and to make more informed decisions based on both the prediction and its uncertainty. We can also intelligently supplement more data to our training set based on 
 	the prediction uncertaintly. Therefore, after considering both results and GP's advantages, we conclude the GP Dot Product trained using MFCC feature set is a good model for 
 	depression prediction.
 	
 	\section{Further Work}
 	For this experiment, we only used machine learning algorithms with their default parameters. 
-	We hope to expand our experiment to perform automatic hyper-parameter optimization across all the machine learning algorithms to fine-tune each model's performance. 
+	An aspect that deserves further exploration is to perform automatic hyper-parameter optimization across all the machine learning algorithms to fine-tune each model's performance. 
 	In particular, we can try Hyperopt-sklearn \cite{Komer2014HyperoptsklearnAH} or GP based hyper-parameter tuner. 
-	We opine that with hyper-parameter tuning, we can predict PHQ-8 scores better and can have a better comparison of the different learning algorithms.
+	We opine that with hyper-parameter tuning, we can predict PHQ-8 scores better and can have a more objective comparison of the different learning algorithms.
 	
 	\section{Contributions}
 	\begin{itemize}
@@ -440,7 +440,7 @@ Since we have more features than data points, it tends to lead to overfitting \c
 		\item \textbf{Han Liang Wee, Eric}: 
 		Scripting the program, setting up machine learning libraries and running tests.
 		\item \textbf{Ho Wei Li}: 
-		Background research and writing up of the abstract and introduction section with its subsections. \\
+		Background research, writing up of the abstract and introduction section, vetting the flow and editing and standardization of the entire report. \\
 	\end{itemize}
 	
 	\bibliographystyle{aaai}
