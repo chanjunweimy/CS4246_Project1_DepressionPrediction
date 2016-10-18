@@ -115,6 +115,26 @@ class RBF_ARD_WRAPPER:
     def predict(self, X):
         return self.m.predict(X)[0]
 
+class RatialEnsemble:
+    def __init__(self, learners):
+        self.learners = learners
+    #todo: bayesian optimization when fitting
+    def fit(self, X, Y):
+        for learner in self.learners:
+            learner['model'].fit(X,Y)
+    def predict(self, X):
+        scores = []
+        for learner in self.learners:
+            predictions = learner['model'].predict(X)
+            tempY = []
+            for prediction in predictions:
+                tempY.append(prediction * learner['weight'])
+            scores.append(tempY)
+        npScores = np.array(scores)
+        y = np.mean(npScores, axis = 0)
+        return y
+        
+
 
 regressors = [("k-nearest Neighbors", None, KNeighborsRegressor(2)),
                ("SVM - Linear", None, SVR(kernel="linear")),
@@ -153,6 +173,7 @@ regressors = [("k-nearest Neighbors", None, KNeighborsRegressor(2)),
 ]
 
 models_rmse = []
+learners = []
 for name, featSelectionMode, model in regressors:
     modes = featSelectionMode
     if featSelectionMode==None:
@@ -164,9 +185,27 @@ for name, featSelectionMode, model in regressors:
         rmse_train = sqrt(mean_squared_error(y_train, model.predict(X_train[:,bitVec])))
         rmse_predict = sqrt(mean_squared_error(y_dev, model.predict(X_dev[:,bitVec])))
         rmses.append([name + '('+eaMode+')', rmse_train, rmse_predict])
+        
+        if eaMode == "MFCC":
+            learner = {'model': model, 'weight': 1 / len(regressors)}
+            learners.append(learner)
         print(name + '('+eaMode+')')
         print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
     rmses=sorted(rmses, key=lambda l: l[2])
     models_rmse.append(rmses[0])
+  
+ensemble = RatialEnsemble(learners)
+bitVec = bitVecs["MFCC"]
+ensemble.fit(X_train[:,bitVec], y_train)
+rmse_train = sqrt(mean_squared_error(y_train, ensemble.predict(X_train[:,bitVec])))
+rmse_predict = sqrt(mean_squared_error(y_dev, ensemble.predict(X_dev[:,bitVec])))
+rmse = ["RatialEnsemble(MFCC)", rmse_train, rmse_predict]
+
+models_rmse.append(rmse)
+
+print("RatialEnsemble(MFCC)")
+print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
 plot_bar(models_rmse)
 #plot_all_Y()
+
+
