@@ -10,3 +10,6 @@ Make you have them: matplotlib, sklearn, numpy and scipy.
 
 ## Run the code
 Go in the folder "prediction", and run "python compare.py"
+
+## Bayesian Optimization
+Todo: Try the library: https://github.com/SheffieldML/GPyOpt
