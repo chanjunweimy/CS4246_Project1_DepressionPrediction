@@ -6,7 +6,7 @@ The project will be downloaded to your working repository.
 
 ##  Requirements
 Some Python libraries are required in order to run the code.
-Make you have them: matplotlib, sklearn, numpy and scipy.
+Make you have them: matplotlib, sklearn, numpy and scipy, [GPy](https://github.com/SheffieldML/GPy), [GPyOpt](https://github.com/SheffieldML/GPyOpt).
 
 ## Run the code
 Go in the folder "prediction", and run "python compare.py"
