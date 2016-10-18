@@ -104,51 +104,51 @@ class RBF_ARD_WRAPPER:
     def predict(self, X):
         return self.m.predict(X)[0]
 
+if __name__ == "__main__":
+    classifiers = [("Nearest Neighbors", None, KNeighborsClassifier(2)),
+                   ("Linear SVM", None, SVC(kernel="linear")),
+                   #("RBF SVM", None, SVC(gamma=2, C=1)),
+                   ("Decision Tree", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
+                   ("Random Forest", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
+                                                             max_depth=20)),
+                   ("AdaBoost", None, AdaBoostClassifier()),
+                   ("Naive Bayes", None, GaussianNB()),
+                   ("Bagging with DTRegg", ["All"], BaggingRegressor(DecisionTreeRegressor(min_samples_split=1024,
+                                                                                  max_depth=20))),
+                   ("GP isotropic RBF", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RBF())),
+                   ("GP anisotropic RBF", ["All"], gp.GaussianProcessRegressor(kernel=gp.kernels.RBF(length_scale=np.array([1]*n_feats)))),
+                   ("GP ARD", ["All"], gp.GaussianProcessRegressor(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*n_feats)))),
+                   ("GP isotropic matern nu=0.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=0.5))),
+                   ("GP isotropic matern nu=1.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=1.5))),
+                   ("GP isotropic matern nu=2.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=2.5))),
+    # bad performance
+                   ("GP dot product", ["CFS", "CIFE", "All"], gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())),
+    #  3-th leading minor not positive definite
+    #    ("GP exp sine squared", gp.GaussianProcessRegressor(kernel=gp.kernels.ExpSineSquared())),
+                   ("GP rational quadratic", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RationalQuadratic())),
+                   ("GP white kernel", None, gp.GaussianProcessRegressor(kernel=gp.kernels.WhiteKernel())),
+                   ("GP abs_exp", None, gp.GaussianProcess(corr='absolute_exponential')),
+                   ("GP squared_exp", ["All"], gp.GaussianProcess(corr='squared_exponential')),
+                   ("GP cubic", None, gp.GaussianProcess(corr='cubic')),
+                   ("GP linear", None, gp.GaussianProcess(corr='linear')),
+                   ("GP RBF ARD", ["All"], RBF_ARD_WRAPPER(kern.RBF(input_dim=n_feats, variance=1., lengthscale=np.array([1]*n_feats), ARD=True)))]
 
-classifiers = [("Nearest Neighbors", None, KNeighborsClassifier(2)),
-               ("Linear SVM", None, SVC(kernel="linear")),
-               #("RBF SVM", None, SVC(gamma=2, C=1)),
-               ("Decision Tree", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
-               ("Random Forest", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
-                                                         max_depth=20)),
-               ("AdaBoost", None, AdaBoostClassifier()),
-               ("Naive Bayes", None, GaussianNB()),
-               ("Bagging with DTRegg", ["All"], BaggingRegressor(DecisionTreeRegressor(min_samples_split=1024,
-                                                                              max_depth=20))),
-               ("GP isotropic RBF", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RBF())),
-               ("GP anisotropic RBF", ["All"], gp.GaussianProcessRegressor(kernel=gp.kernels.RBF(length_scale=np.array([1]*n_feats)))),
-               ("GP ARD", ["All"], gp.GaussianProcessRegressor(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*n_feats)))),
-               ("GP isotropic matern nu=0.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=0.5))),
-               ("GP isotropic matern nu=1.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=1.5))),
-               ("GP isotropic matern nu=2.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=2.5))),
-# bad performance
-               ("GP dot product", ["CFS", "CIFE", "All"], gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())),
-#  3-th leading minor not positive definite
-#    ("GP exp sine squared", gp.GaussianProcessRegressor(kernel=gp.kernels.ExpSineSquared())),
-               ("GP rational quadratic", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RationalQuadratic())),
-               ("GP white kernel", None, gp.GaussianProcessRegressor(kernel=gp.kernels.WhiteKernel())),
-               ("GP abs_exp", None, gp.GaussianProcess(corr='absolute_exponential')),
-               ("GP squared_exp", ["All"], gp.GaussianProcess(corr='squared_exponential')),
-               ("GP cubic", None, gp.GaussianProcess(corr='cubic')),
-               ("GP linear", None, gp.GaussianProcess(corr='linear')),
-               ("GP RBF ARD", ["All"], RBF_ARD_WRAPPER(kern.RBF(input_dim=n_feats, variance=1., lengthscale=np.array([1]*n_feats), ARD=True)))]
 
-
-models_rmse = []
-for name, featSelectionMode, model in classifiers:
-    modes = featSelectionMode
-    if featSelectionMode==None:
-        modes = featSelectionFns.keys()
-    rmses = []
-    for eaMode in modes:
-        bitVec = bitVecs[eaMode]
-        model.fit(X_train[:,bitVec], y_train[:])
-        rmse_train = sqrt(mean_squared_error(y_train, model.predict(X_train[:,bitVec])))
-        rmse_predict = sqrt(mean_squared_error(y_dev, model.predict(X_dev[:,bitVec])))
-        rmses.append([name + '('+eaMode+')', rmse_train, rmse_predict])
-        print(name + '('+eaMode+')')
-        print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
-    rmses=sorted(rmses, key=lambda l: l[2])
-    models_rmse.append(rmses[0])
-plot_bar(models_rmse)
-#plot_all_Y()
+    models_rmse = []
+    for name, featSelectionMode, model in classifiers:
+        modes = featSelectionMode
+        if featSelectionMode==None:
+            modes = featSelectionFns.keys()
+        rmses = []
+        for eaMode in modes:
+            bitVec = bitVecs[eaMode]
+            model.fit(X_train[:,bitVec], y_train[:])
+            rmse_train = sqrt(mean_squared_error(y_train, model.predict(X_train[:,bitVec])))
+            rmse_predict = sqrt(mean_squared_error(y_dev, model.predict(X_dev[:,bitVec])))
+            rmses.append([name + '('+eaMode+')', rmse_train, rmse_predict])
+            print(name + '('+eaMode+')')
+            print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
+        rmses=sorted(rmses, key=lambda l: l[2])
+        models_rmse.append(rmses[0])
+    plot_bar(models_rmse)
+    #plot_all_Y()
