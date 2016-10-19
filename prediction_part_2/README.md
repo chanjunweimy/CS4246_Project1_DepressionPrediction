@@ -5,6 +5,7 @@ Go to a terminal and run "git clone https://github.com/chanjunweimy/CS4246_Proje
 The project will be downloaded to your working repository.
 
 ##  Requirements
+We are using Python 2.7.
 Some Python libraries are required in order to run the code.
 Make you have them: 
 - numpy, scipy(basic libraries),
