@@ -115,7 +115,7 @@ class RBF_ARD_WRAPPER:
     def predict(self, X):
         return self.m.predict(X)[0]
 
-class RatialEnsemble:
+class RacialEnsemble:
     def __init__(self, learners):
         self.learners = learners
     #todo: bayesian optimization when fitting
@@ -130,11 +130,29 @@ class RatialEnsemble:
             for prediction in predictions:
                 tempY.append(prediction * learner['weight'])
             scores.append(tempY)
+        #print scores
         npScores = np.array(scores)
-        y = np.mean(npScores, axis = 0)
+        y = np.sum(npScores, axis = 0)
+        print y
         return y
         
-
+def trainModels(regressors, models_rmse): 
+    for name, featSelectionMode, model in regressors:
+        modes = featSelectionMode
+        if featSelectionMode==None:
+            modes = featSelectionFns.keys()
+        rmses = []
+        for eaMode in modes:
+            bitVec = bitVecs[eaMode]
+            model.fit(X_train[:,bitVec], y_train[:])
+            rmse_train = sqrt(mean_squared_error(y_train, model.predict(X_train[:,bitVec])))
+            rmse_predict = sqrt(mean_squared_error(y_dev, model.predict(X_dev[:,bitVec])))
+            rmses.append([name + '('+eaMode+')', rmse_train, rmse_predict])
+            print(name + '('+eaMode+')')
+            print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
+        rmses=sorted(rmses, key=lambda l: l[2])
+        models_rmse.append(rmses[0])
+    return models_rmse
 
 regressors = [("k-nearest Neighbors", None, KNeighborsRegressor(2)),
                ("SVM - Linear", None, SVR(kernel="linear")),
@@ -143,15 +161,15 @@ regressors = [("k-nearest Neighbors", None, KNeighborsRegressor(2)),
                ("Random Forest", None, RandomForestRegressor(n_estimators=10, min_samples_split=1024,
                                                          max_depth=20)),
                ("AdaBoost", None, AdaBoostRegressor(random_state=13370)),
-               ("Naive Bayes", None, GaussianNB()),
+               #("Naive Bayes", None, GaussianNB()),
                #("Bagging with DTRegg", ["All"], BaggingRegressor(DecisionTreeRegressor(min_samples_split=1024,
                 #                                                              max_depth=20))),
                #("GP isotropic RBF", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RBF())),
                #("GP anisotropic RBF", ["All"], gp.GaussianProcessRegressor(kernel=gp.kernels.RBF(length_scale=np.array([1]*n_feats)))),
-               ("GP ARD", ["All"], gp.GaussianProcessRegressor(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*n_feats)))),
+               #("GP ARD", ["All"], gp.GaussianProcessRegressor(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*n_feats)))),
                #("GP isotropic matern nu=0.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=0.5))),
                #("GP isotropic matern nu=1.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=1.5))),
-               ("GP Isotropic Matern", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=2.5))),
+               #("GP Isotropic Matern", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=2.5))),
 # bad performance
                ("GP Dot Product", ["CFS", "CIFE", "MFCC", "All"], gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())),
                # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
@@ -170,41 +188,37 @@ regressors = [("k-nearest Neighbors", None, KNeighborsRegressor(2)),
                #("GP cubic", None, gp.GaussianProcess(corr='cubic')),
                #("GP linear", None, gp.GaussianProcess(corr='linear')),
                #("GP RBF ARD", ["All"], RBF_ARD_WRAPPER(kern.RBF(input_dim=n_feats, variance=1., lengthscale=np.array([1]*n_feats), ARD=True)))]
+               
 ]
 
-models_rmse = []
+RacialEnsembles = []
+
 learners = []
+averageWeight = 1.0 / len(regressors)
+weights = [averageWeight, averageWeight, averageWeight, averageWeight, averageWeight, averageWeight, averageWeight]
+i = 0
 for name, featSelectionMode, model in regressors:
-    modes = featSelectionMode
-    if featSelectionMode==None:
-        modes = featSelectionFns.keys()
-    rmses = []
-    for eaMode in modes:
-        bitVec = bitVecs[eaMode]
-        model.fit(X_train[:,bitVec], y_train[:])
-        rmse_train = sqrt(mean_squared_error(y_train, model.predict(X_train[:,bitVec])))
-        rmse_predict = sqrt(mean_squared_error(y_dev, model.predict(X_dev[:,bitVec])))
-        rmses.append([name + '('+eaMode+')', rmse_train, rmse_predict])
-        
-        if eaMode == "MFCC":
-            learner = {'model': model, 'weight': 1 / len(regressors)}
-            learners.append(learner)
-        print(name + '('+eaMode+')')
-        print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
-    rmses=sorted(rmses, key=lambda l: l[2])
-    models_rmse.append(rmses[0])
+    learner = {'weight': weights[i], 'model': model}
+    learners.append(learner)
+    i += 1
+
+RacialEnsembles.append(("RacialEnsemble", ["CFS", "CIFE", "MFCC", "All"], RacialEnsemble(learners)))
+
+models_rmse = []
+models_rmse = trainModels(regressors, models_rmse)
+models_rmse = trainModels(RacialEnsembles, models_rmse)
   
-ensemble = RatialEnsemble(learners)
-bitVec = bitVecs["MFCC"]
-ensemble.fit(X_train[:,bitVec], y_train)
-rmse_train = sqrt(mean_squared_error(y_train, ensemble.predict(X_train[:,bitVec])))
-rmse_predict = sqrt(mean_squared_error(y_dev, ensemble.predict(X_dev[:,bitVec])))
-rmse = ["RatialEnsemble(MFCC)", rmse_train, rmse_predict]
+#ensemble = RacialEnsemble(learners)
+#bitVec = bitVecs["MFCC"]
+#ensemble.fit(X_train[:,bitVec], y_train)
+#rmse_train = sqrt(mean_squared_error(y_train, ensemble.predict(X_train[:,bitVec])))
+#rmse_predict = sqrt(mean_squared_error(y_dev, ensemble.predict(X_dev[:,bitVec])))
+#rmse = ["RacialEnsemble(MFCC)", rmse_train, rmse_predict]
 
-models_rmse.append(rmse)
+#models_rmse.append(rmse)
 
-print("RatialEnsemble(MFCC)")
-print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
+#print("RacialEnsemble(MFCC)")
+#print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
 plot_bar(models_rmse)
 #plot_all_Y()
 
