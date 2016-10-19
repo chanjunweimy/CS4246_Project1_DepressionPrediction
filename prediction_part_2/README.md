@@ -15,4 +15,4 @@ sklearn (for different models),
 [SKFeature](https://github.com/jundongl/scikit-feature) (For Feature Selection).
 
 ## Run the code
-Go in the folder "prediction", and run "python compare.py"
+Go in the folder "prediction_part_2", and run "python ensemble.py"
