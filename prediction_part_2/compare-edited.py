@@ -133,7 +133,7 @@ class RacialEnsemble:
         #print scores
         npScores = np.array(scores)
         y = np.sum(npScores, axis = 0)
-        print y
+        #print y
         return y
         
 def trainModels(regressors, models_rmse): 
