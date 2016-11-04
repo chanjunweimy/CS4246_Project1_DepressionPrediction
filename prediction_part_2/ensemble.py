@@ -23,6 +23,11 @@ import GPy.kern as kern
 import GPy.models as models
 import time
 from math import sqrt,ceil
+import GPy
+import GPyOpt
+import matplotlib.mlab as mlab
+import math
+import matplotlib.pyplot as plt
 
 x_train_file_name = "data/splitted/X/urop/trainX.txt"
 x_dev_file_name = "data/splitted/X/urop/devX.txt"
@@ -114,15 +119,172 @@ class RBF_ARD_WRAPPER:
         self.m.optimize()
     def predict(self, X):
         return self.m.predict(X)[0]
+        
+def createModelBasedOnName(name):
+    if name == "KNN":
+        return KNeighborsRegressor(2)
+    elif name == "Linear SVR":
+        return SVR(kernel="linear")
+    elif name == "RBF SVR":
+        return SVR(gamma=2, C=1)
+    elif name == "DT":
+        return DecisionTreeRegressor(min_samples_split=1024, max_depth=20)
+    elif name == "RF":
+        return RandomForestRegressor(n_estimators=10, min_samples_split=1024, max_depth=20)
+    elif name == "AB":
+        return AdaBoostRegressor(random_state=13370)
+    elif name == "GP-DP":
+        return gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())
+    
+    return None
+               
 
-class RacialEnsemble:
+class AverageRacialEnsemble:
     def __init__(self, learners):
         self.learners = learners
+    
     #todo: bayesian optimization when fitting
     def fit(self, X, Y):
         for learner in self.learners:
             learner['model'].fit(X,Y)
+    
     def predict(self, X):
+        scores = []
+        for learner in self.learners:
+            predictions = learner['model'].predict(X)
+            tempY = []
+            for prediction in predictions:
+                tempY.append(prediction * learner['weight'])
+            scores.append(tempY)
+        #print scores
+        npScores = np.array(scores)
+        y = np.sum(npScores, axis = 0)
+        #print y
+        return y
+
+class GaussianEnsembleExtended:
+    def __init__(self, learners):
+        self.learners = []
+        self.modelsSpecified = learners
+        self.gp = gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())
+    
+    def fit(self, X, Y):    
+        newX = []
+        for i in range(len(X)):
+            newX.append([])
+        
+        for modelSpecified in self.modelsSpecified:
+            modes = modelSpecified['modes']
+            if modes == None:
+                modes = featSelectionFns.keys()
+            for eaMode in modes:
+                bitVec = bitVecs[eaMode]
+                model = createModelBasedOnName(modelSpecified['name'])
+                if model == None:
+                    print modelSpecified['name']
+                    continue
+                model.fit(X[:,bitVec], Y[:])
+                tempYs = model.predict(X[:,bitVec])
+                for i in range(len(tempYs)):
+                    tempY = tempYs[i]
+                    newX[i].append(tempY)
+                learner = {"mode": eaMode, "model": model}
+                self.learners.append(learner)
+        
+        self.gp.fit(newX,Y)
+    
+    def predict(self, X):
+        newX = []
+        for i in range(len(X)):
+            newX.append([])
+        
+        for learner in self.learners:
+            mode = learner['mode']
+            bitVec = bitVecs[mode]
+            model = learner['model']
+            tempYs = model.predict(X[:,bitVec])
+            for i in range(len(tempYs)):
+                tempY = tempYs[i]
+                newX[i].append(tempY)
+        y = self.gp.predict(newX)
+        return y    
+        
+        
+class GaussianEnsemble:
+    def __init__(self, learners):
+        self.learners = learners
+        self.gp = gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())
+    
+    def fit(self, X, Y):      
+        for learner in self.learners:
+            learner['model'].fit(X,Y)
+        newX = []
+        for eachX in X:
+            newXRow = []
+            for learner in self.learners:
+                tempY = learner['model'].predict(eachX)
+                newXRow.append(tempY[0])
+            newX.append(newXRow)
+        self.gp.fit(newX,Y)
+    
+    def predict(self, X):
+        newX = []
+        for eachX in X:
+            newXRow = []
+            for learner in self.learners:
+                tempY = learner['model'].predict(eachX)
+                newXRow.append(tempY[0])
+            newX.append(newXRow)
+        y = self.gp.predict(newX)
+        return y        
+        
+class GaussianAverageEnsemble:
+    def __init__(self, learners):
+        self.gp = gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())
+        self.avg = AverageRacialEnsemble(learners)
+    
+    def fit(self, X, Y):
+        self.avg.fit(X,Y)
+        avg_y = self.avg.predict(X)
+        newX = []
+        for eachY in avg_y:
+            newRow = []
+            newRow.append(eachY)
+            newX.append(newRow)
+        self.gp.fit(newX,Y)
+    
+    def predict(self, X):
+        avg_y = self.avg.predict(X)
+        newX = []
+        for eachY in avg_y:
+            newRow = []
+            newRow.append(eachY)
+            newX.append(newRow)
+        y = self.gp.predict(newX)
+        return y        
+        
+class BasesianOptimisationRacialEnsemble:    
+    learners = []
+    weights = []
+    
+    @staticmethod
+    def setLearners(learners):
+        learners = learners
+    
+    @staticmethod
+    def fit(X, Y):
+        for learner in learners:
+            learner['model'].fit(X,Y)
+        
+        for i in range(len(learners)):
+            weights.append(1.0 / len(learners))
+            
+    @staticmethod
+    def ensembleFunction(w0, w1, w2, w3, w4, w5, w6):
+        return w0 * learners[0]['model'].predict(X)
+    
+    @staticmethod
+    def predict(X):
         scores = []
         for learner in self.learners:
             predictions = learner['model'].predict(X)
@@ -154,13 +316,13 @@ def trainModels(regressors, models_rmse):
         models_rmse.append(rmses[0])
     return models_rmse
 
-regressors = [("k-nearest Neighbors", None, KNeighborsRegressor(2)),
-               ("SVM - Linear", None, SVR(kernel="linear")),
-               ("SVM - RBF", None, SVR(gamma=2, C=1)),
-               ("Decision Tree", None, DecisionTreeRegressor(min_samples_split=1024, max_depth=20)),
-               ("Random Forest", None, RandomForestRegressor(n_estimators=10, min_samples_split=1024,
+regressors = [("KNN", None, KNeighborsRegressor(2)),
+               ("Linear SVR", None, SVR(kernel="linear")),
+               ("RBF SVR", None, SVR(gamma=2, C=1)),
+               ("DT", None, DecisionTreeRegressor(min_samples_split=1024, max_depth=20)),
+               ("RF", None, RandomForestRegressor(n_estimators=10, min_samples_split=1024,
                                                          max_depth=20)),
-               ("AdaBoost", None, AdaBoostRegressor(random_state=13370)),
+               ("AB", None, AdaBoostRegressor(random_state=13370)),
                #("Naive Bayes", None, GaussianNB()),
                #("Bagging with DTRegg", ["All"], BaggingRegressor(DecisionTreeRegressor(min_samples_split=1024,
                 #                                                              max_depth=20))),
@@ -171,7 +333,7 @@ regressors = [("k-nearest Neighbors", None, KNeighborsRegressor(2)),
                #("GP isotropic matern nu=1.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=1.5))),
                #("GP Isotropic Matern", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=2.5))),
 # bad performance
-               ("GP Dot Product", ["CFS", "CIFE", "MFCC", "All"], gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())),
+               ("GP-DP", ["MFCC","All","CIFE","CFS"], gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())),
                # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
                # GP beats SVM in our experiment (qualitative advantages)
                # only keep RBF, dot product and matern on the chart
@@ -198,28 +360,30 @@ averageWeight = 1.0 / len(regressors)
 weights = [averageWeight, averageWeight, averageWeight, averageWeight, averageWeight, averageWeight, averageWeight]
 i = 0
 for name, featSelectionMode, model in regressors:
-    learner = {'weight': weights[i], 'model': model}
+    learner = {'weight': weights[i], 'model': model, 'modes': featSelectionMode, 'name': name}
     learners.append(learner)
     i += 1
 
-RacialEnsembles.append(("RacialEnsemble", ["CFS", "CIFE", "MFCC", "All"], RacialEnsemble(learners)))
+RacialEnsembles.append(("ARE", ["MFCC","All","CIFE","CFS"], AverageRacialEnsemble(learners)))
+RacialEnsembles.append(("GE", ["MFCC","All","CIFE","CFS"], GaussianEnsemble(learners)))
+RacialEnsembles.append(("GAE", ["MFCC","All","CIFE","CFS"], GaussianAverageEnsemble(learners)))
+#RacialEnsembles.append(("GEE", ["All"], GaussianEnsembleExtended(learners))) #GEE doesn't work well
+
 
 models_rmse = []
 models_rmse = trainModels(regressors, models_rmse)
 models_rmse = trainModels(RacialEnsembles, models_rmse)
-  
-#ensemble = RacialEnsemble(learners)
-#bitVec = bitVecs["MFCC"]
-#ensemble.fit(X_train[:,bitVec], y_train)
-#rmse_train = sqrt(mean_squared_error(y_train, ensemble.predict(X_train[:,bitVec])))
-#rmse_predict = sqrt(mean_squared_error(y_dev, ensemble.predict(X_dev[:,bitVec])))
-#rmse = ["RacialEnsemble(MFCC)", rmse_train, rmse_predict]
 
-#models_rmse.append(rmse)
+# Give some general prior distributions for model parameters
+# m.kern.lengthscale.set_prior(GPy.priors.Gamma.from_EV(1.,10.))
+# m.kern.variance.set_prior(GPy.priors.Gamma.from_EV(1.,10.))
+# m.likelihood.variance.set_prior(GPy.priors.Gamma.from_EV(1.,10.))
+# _=m.plot()
 
-#print("RacialEnsemble(MFCC)")
+#print("AverageRacialEnsemble(MFCC)")
 #print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
 plot_bar(models_rmse)
 #plot_all_Y()
+
 
 
