@@ -161,6 +161,13 @@ def getClassifieresPerformances(classifiers, models_f1, models_performances):
         models_performances.append(performances[0])
     return models_f1, models_performances
     
+def getClassifieresPerformancesByDefinedX(classifiers, eaMode, models_f1, models_performances, X, Y, Xstar): 
+    for name, featSelectionMode, model in classifiers:
+        f1, performance = getClassifierPerformance(model, name, eaMode, X, Y, Xstar)
+        models_f1.append(f1)
+        models_performances.append(performance)
+    return models_f1, models_performances
+    
 def getClassifierPerformance(model, name, eaMode, X, Y, X_star):
     model.fit(X, Y)
     #pt_f1, pt_precision, pt_recall, pt_accuracy = classifyForF1(model, X, 1)
@@ -327,13 +334,13 @@ for i in range(len(tempDevY)):
     newDevX.append(tempX)
 
 
-depressionClassifer = gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct())
+#depressionClassifer = gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct())
 
 models_f1 = []
 models_performances = []
-f1, performance = getClassifierPerformance(depressionClassifer, 'GP-DP', 'predict', newTrainX, y_bin_train, newDevX)
-models_f1.append(f1)
-models_performances.append(performance)
+#f1, performance = getClassifierPerformance(depressionClassifer, 'GP-DP', 'predict', newTrainX, y_bin_train, newDevX)
+#models_f1.append(f1)
+#models_performances.append(performance)
 
 classifiers = [("KNN", None, KNeighborsClassifier(2)),
                ("Linear SVM", None, SVC(kernel="linear")),
@@ -342,7 +349,7 @@ classifiers = [("KNN", None, KNeighborsClassifier(2)),
                ("RF", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
                                                          max_depth=20)),
                ("AB", None, AdaBoostClassifier(random_state=13370)),
-               ("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*11)))),
+               #("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*1)))),
                ("GP-DP", ["MFCC","All","CIFE","CFS"], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
                # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
                # GP beats SVM in our experiment (qualitative advantages)
@@ -353,7 +360,8 @@ classifiers = [("KNN", None, KNeighborsClassifier(2)),
                
 ]
 #classify(X_train[:,bitVec], X_dev[:,bitVec])
-models_f1, models_performances = getClassifieresPerformances(classifiers, models_f1, models_performances)
+#models_f1, models_performances = getClassifieresPerformances(classifiers, models_f1, models_performances)
+models_f1, models_performances = getClassifieresPerformancesByDefinedX(classifiers, 'predict', models_f1, models_performances, newTrainX, y_bin_train, newDevX)
 models_f1, models_performances = addRelatedWork(models_f1, models_performances)
 models_f1=sorted(models_f1, key=lambda l: l[1])
 models_performances=sorted(models_performances, key=lambda l: l[1])
