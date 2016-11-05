@@ -3,6 +3,37 @@ from matplotlib import pylab
 import matplotlib.pyplot as plt
 from collections import Counter
 
+def plot_f1(models_f1):
+    ind = np.arange(len(models_f1))
+    width = 0.42
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    plt.axhline(0.41, color='k', linestyle='solid', label="Baseline")    
+
+    model_names, f1_depressed, f1_normal = zip(*models_f1)
+    rects_normal = ax.bar(ind, f1_normal, width, color='b')
+    rects_depressed = ax.bar(ind+width, f1_depressed, width, color='g')
+
+    ax.set_ylabel('F1')
+    ax.set_xticks(ind+width)
+    ax.set_xticklabels(model_names)
+    labels = ax.get_xticklabels()
+    plt.setp(labels, rotation=30, fontsize=10)
+    ax.legend((rects_normal[0], rects_depressed[0]), ('normal', 'depresed'), loc=2)
+
+    def autolabel(rects):
+        for rect in rects:
+            h = rect.get_height()
+            ax.text(rect.get_x()+rect.get_width()/2., 1.05*h, '%.2f'%h,
+                    ha='center', va='bottom')
+
+    autolabel(rects_normal)
+    autolabel(rects_depressed)
+
+    plt.show()
+
 def plot_bar(models_rmse):
     ind = np.arange(len(models_rmse))
     width = 0.42
