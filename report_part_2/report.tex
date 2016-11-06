@@ -19,8 +19,8 @@
 
 
 \title{
-	CS4246 AI Planning and Decision Making - Project 1 \\
-	Depression Prediction
+	CS4246 AI Planning and Decision Making - Project 2 \\
+	Planning and Decision Making Automation on Depression
 }
 \author{
 	{\bf Team 01} \\
@@ -38,7 +38,8 @@
 	\begin{abstract}
 	\begin{quote}
 	Depression is a debiliatating mental illness that has good prognosis given early detection and treatment. 
-	However, detection is difficult with the various factors that raise the entry barriers and decrease the accuracy of a diagnostic test. Research have shown that accurate predictions of emotions can be made with Gaussian Process models. This study explores the novel use Gaussian Process in predicting depression severity using acoustic measures of voice.
+	However, detection is difficult with the various factors that raise the entry barriers and decrease the accuracy of a diagnostic test. Research have shown that accurate predictions of emotions can be made with Gaussian Process models. 
+	This study explores the novel use Gaussian Process in predicting depression severity using acoustic measures of voice.
 	Our work has succesfully shown that Gaussian Process Dot Product trained using MFCC feature set is a good model for depression prediction and can predict PHQ-8 better than other state-of-the-art models at RMSE of 6.34.\\
 	\end{quote}
 	\end{abstract}
@@ -62,21 +63,25 @@
 	People often subscribe to the social stigma that being depressed reflects a weakness in their character, a permanent defect in their personality. 
 	This stigma manifests itself particularly in a phenomenon known as social distancing whereby people with mental issues are more isolated from others \cite{tpcrp2011}.  
 	People suffering from depression hence tend to be ashamed of their condition and are generally convinced that denying and hiding it from others gives them a better shot at integrating with society and living a normal life \cite{bmb2001}.
-	Even if they do seek help, the accuracy of the PHQ-8 or just questionaires and surveys in general are often adversely affected by the Hawthorne Effect, a type of reactivity in which individuals modify or improve an aspect of their behavior in response to their awareness of being observed. \cite{jce2014}.\\
+	Even if they do seek help, the accuracy of the PHQ-8 or just questionaires and surveys in general are often adversely affected by the Hawthorne Effect, 
+	a type of reactivity in which individuals modify or improve an aspect of their behavior in response to their awareness of being observed. \cite{jce2014}.\\
 
-	In the past decade, there have been research successfully correlating emotion with voice production and speech acoustics \cite{uwa2001}. Corollary to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen success, proving that it is an effective indicator of depression severity \cite{jov2016}.\\
+	In the past decade, there have been research successfully correlating emotion with voice production and speech acoustics \cite{uwa2001}. 
+	Corollary to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen success, proving that it is an effective indicator of depression severity \cite{jov2016}.\\
 
-	In this paper, we investigate the applicability and feasibility of Gaussian Process (GP) models in predicting clinical ratings of depression severity on the PHQ-8 scale with acoustic measures of voice from a sample of patients and compare their performance with current state-of-the-art machine learning models. Some of our preliminary studies have shown that despite consensus among the scientific community that Support Vector Machine (SVM) models have a very high predictive accuracy specifically in speech emotion recognition \cite{Chavhan2010}, GP models have been proven to consistently outperform SVM models on the task of music emotion recognition \cite{MARKOV2013}. Nevertheless, there are no studies on the use of GP in predicting depression severity. The findings of this paper will hopefully open up new frontiers and fuel further research interest on this topic.
+	In this paper, we investigate the applicability and feasibility of Gaussian Process (GP) models in predicting clinical ratings of depression severity on the PHQ-8 scale with acoustic measures of voice from a sample of patients and compare their performance with current state-of-the-art machine learning models. 
+	Some of our preliminary studies have shown that despite consensus among the scientific community that Support Vector Machine (SVM) models have a 
+	very high predictive accuracy specifically in speech emotion recognition \cite{Chavhan2010}, GP models have been proven to consistently outperform SVM models on the task of music emotion recognition \cite{MARKOV2013}. 
+	Nevertheless, there are no studies on the use of GP in predicting depression severity. 
+	The findings of this paper will hopefully open up new frontiers and fuel further research interest on this topic.
 	
-	\subsection{Future Applications}
-	Results from this experiment will reinforce results from similar experiments and make a stronger case for the possibility of lowering the entry barriers of depression diagnostic tests and at the same time, increasing the accuracy of depression diagnosis by abstracting the Hawthorne Effect. 
-	Diagnostic tests can be designed in a friendly way that does not require the patient to consciously answer questionaires such as the PHQ-8 or even to have complete awareness of the diagnostic process. 
-	By taking into account the Hawthorne Effect and the status quo of the social stigma and working around them, diagnoses can be made easier, faster and more accurately and with that, education and treatment can begin early before the mental condition of the patient deteriorates.
+	\subsection{Important Requirements}
+	...
 	
 	\section{Modelling and Approach}
-	Studies have proven that Gaussian Process is a applicable model for emotion prediction in voice acoustics. As an extrapolation of emotion prediction, we posit that GP is also applicable for prediction of depression. \\	
+	As  stated in the Future Applications subsection of Project 1, we replicate a similar application which not only offers higher accessibility, more user-friendly approach and reduced social stigma, but in addition, to give a reasonable and acceptable prediction of users' depression levels. \\	
 	
-	The following premises have to hold true so that the GP model is suitable for depression prediction:
+	The following premises have to hold true so that the GP model planning and decision making is suitable for depression prediction:
 	\begin{enumerate}
 		\item Depression prediction is an event-based recognition which provides a single depression estimate over a certain amount of time. \cite{Valstar2016}
 		\item The speech signals extracted from different people suffering from depression should share some similarities and thus admissible for prediction with the Gaussian Process models. 
@@ -84,133 +89,20 @@
 	\end{enumerate}
 
 	\subsection{Qualitative Advantages}
-	GP is exceptionally useful in this application as it's noise tolerance takes into account outliers in our dataset such as recordings with irregular sampling rates. \\
-
-	GP also provides predictions with a clear probabilistic interpretation by also providing an estimate of prediction uncertainty. 
-	From the prediction uncertainty, we are able to intelligently supplement more data in aspects with higher uncertainty to improve the GP model. 
-	Moreover, we are able to get a sense of the quality of each prediction from the prediction uncertainty. 
-	These properties are unique to a GP models and are missing in many other machine learning models.
-	In our context, an individual would be able to obtain both the predicted PHQ-8 score and also prediction confidence when using a GP model. 
-	Hence, he would be able to get a sense of whether or not to trust the predicted PHQ-8 score and make informed decisions from there.\\
+	As seen in our Motivation and Objective section of Project 1, good prognosis comes with early detection of depression. 
+	Although it is known that depression or rather emotions is general, are subjective and is difficult to predict, the capability of GP in retrieving the confidence intervals of the prediction and a continuous measurement over time may offset the uncertainty.
+	Accurate prediction is essential to not only licensed authorities but will also help more users to harbour acceptance towards their affliction to seek medical attention.
+	In addition, planning and decision making is also inline with our Future Applications subsection in Project 1 and thus, extending from there allows us to demonstrate the high feasibilty of our experiment.
 	
-	\subsection{Gaussian Process Model} \label{audio_feats}
-	In our model, we first analyse the following aspects:
-	\begin{enumerate}
-		\item \textbf{Audio Feature Sets}	\\
-		An audio signature can be uniquely defined by the following feature sets:
-		\begin{enumerate}
-			\item \textbf{Energy}	\\
-			The Energy feature of a sound refers to the loudness of the sound at various timeframes, 
-			hence the energy of a sound is directly proportional to the amplitude of the soundwave. 
-			The louder the sound, the higher the energy.
-		
-			\item \textbf{Mel Frequency Cepstral Coefficients (MFCC)} \\
-			Mel Frequency Cepstral (MFC) is a representation of short-term power spectrum of a sound, 
-			based on a linear cosine transform of a log power spectrum on a nonlinear Mel scale of frequency. 
-			The greatest benefit of using MFCC is that the scale approximates the 
-			human's auditory system response more closely, hence it allows for a better representation of sound. 
-			In order to obtain MFCC, Fourier transform is performed on the sound signals.	
-		
-			\item \textbf{Magnitude Spectrum} \\
-			Magnitude spectrum can be produced by converting the input signal of an audio into frames. 
-			Fast Fourier Transform is performed on each frames and this will form the Magnitude Spectrum.
-			
-			\item \textbf{Zero-Crossing Rate} \\
-			Zero crossing rate is the rate of sign-changes along a signal.
-		\end{enumerate}
+	\subsection{Planning and Decision Making} \label{pdm}
+	In our previous report, we have demonstrated that we are able to predict depression with GP. 
+	With the data obtained, we will extend our experiment to demonstrate how our model can plan and make decisions accordingly. \\
 	
-	Depression is characterized by a pervasive and persistent low mood and the difficulty in diagnosis 
-	lies in detecting the subtle but clear-cut changes in the baseline of a patient's voice \cite{Stratou2015}.
-	Given the task and the fact that the baseline accuracy of using MFCC to predict emotions in audio is relatively high, 
-	we postulate that MFCC is the most important feature in depression prediction \cite{ElAyadi2011}. 
-	Consequently, since we have limited data and large feature dimension, 
-	using only the MFCC feature set as the input vector of the model is expected improve the result.
-		
-		\item \textbf{Kernels}\\
-		The similarity measure of all features is known as the kernel and are used to predict the value of an unobserved point from the training data. \\
+	\subsection{Reinforcement Learning (RL)}
+	...
 
-		The kernels tested are shown below:\\
-		The kernels are assumed to be defined on two samples \( x = ( x_{1} x_{2} x_{3} ... x_{n} ) \) and 
-		\( x' = ( {x_{1}}' {x_{2}}' {x_{3}}' ... {x_{n}}')\),  
-		represented as feature vectors in some input space\\
-
-		\begin{enumerate}
-			\item \textbf{Radial Basis Function (RBF)}\\
-			The RBF kernel is defined as 
-			\begin{equation}\label{eq:kernel_rbf}
-				K(x,x') = \exp^{-\frac{||x-x'||^{2}}{2\sigma^{2}}}
-			\end{equation}
-			\(||x-x'||^{2}\) represents the squared Euclidean distance 
-			And \( \sigma > 0 \) can either be a scalar (isotropic variant of the kernel) or a vector with the same number of dimensions 
-			as the inputs X (anisotropic variant of the kernel). \\
-			It is also known as the squared exponential kernel. 
-			This kernel is infinitely differentiable, which implies that GPs with this kernel as covariance function have mean square derivatives of all orders, 
-			and are thus very smooth.
-			
-			\item \textbf{Matern}\\
-			The class of Matern kernels is a generalization of the RBF and the absolute exponential kernel, parameterized 
-			by an additional parameter $\nu$ (nu). The smaller the value of $\nu$, the less smooth the approximated function becomes. When $\nu=\infty$, 
-			the kernel becomes equivalent to the RBF kernel and when $\nu=0.5$, to the absolute exponential kernel. 
-			Important intermediate values are $\nu=1.5$ (once differentiable functions) and $\nu=2.5$ (twice differentiable functions).
-
-			\item \textbf{Automatic Relevance Detection (ARD)}\\
-			If we chose the anisotropic variant of the RBF and Matern kernel, then these kernels are also known as ARD kernels.
-			For the model, the difference is that each \(\sigma_{i}\), where $i = 1,2,3,...,n$ might be different, 
-			depending the importance of the corresponding input features.\\
-
-			ARD is advantageous for the experiment as: 
-			\begin{enumerate}
-				\item Generalisation performance is potentially improved.
-				\item The data would be better explained.
-				\item Increase the efficiency of feature extraction for audio.
-			\end{enumerate}
-			\cite{Cawley2014}
-			
-			\item \textbf{Dot Product}\\
-			The Dot Product kernel is non-stationary and can be obtained from linear regression by putting $N(0,1)$ priors on the coefficients 
-			of $x_{d} (d = 1, . . . , D)$ and a prior of $N(0, \sigma_{0}^{2})$ on the bias. 
-			The Dot Product kernel is invariant to a rotation of the coordinates about the origin, but not translations. 
-			It is parameterized by a parameter $\sigma_{0}^{2}$. For $\sigma_{0}^{2} = 0$, 
-			the kernel is called the homogeneous linear kernel, otherwise it is inhomogeneous. The kernel is given by
-			\begin{equation}\label{eq:kernel_dp}
-				K(x,x') = \sigma_{0}^{2} + x \cdot x'  
-			\end{equation}
-		\end{enumerate}
-
-		While Matern is a very generalized kernel, both isotropic and ARD variant of the Matern kernel are selected for our model. 
-		On the other hand, as dot product kernel is a very efficient and simple kernel, it is tested as well.
-	\end{enumerate}
-
-	Without doing feature selections, the feature dimensions would be huge. 
-	As a result, it is likely to lead to overfitting and poor generalisation of the model \cite{Cawley2014}. 
-	Thus, to increase the effectiveness of the GP model, we would apply feature selection to the data first.
-
-	\subsection{State-of-art Machine Learning Models}
-	The following machine learning models are used:
-	\begin{enumerate}
-		\item \textbf{K-Nearest Neighbors} \\
-		The K-Nearest Neighbors is a non-parametric method for classification and regression. 
-		The training examples are vectors in a multidimensional feature space, each with a class label. 
-		The data will be classified into the class with most number of occurrence within the defined k radius.
-	
-		\item \textbf{Support Vector Machines (SVM)} \\
-		SVM, with the help of the libsvm, is a type of linear classiﬁers that aims at ﬁnding 
-		a unique solution in the form of an optimal hyperplane which is deﬁned as the one that maximizes the margins between the two classes.
-
-		\item \textbf{Random Forest Regressor} \\
-		Random Forest is an ensemble of decision trees, whereas a decision tree tries to separate the data into different leaf nodes 
-		where the data points in each node have certain similarity. Each decision tree will predict a value and the values will be averaged to be the result.
-	
-		\item \textbf{AdaBoost} \\
-		AdaBoost is the short form of Adaptive Boost which is sensitive to noisy data and outliers. 
-		AdaBoost first find out the classifier with the least errors, adding the weight to the outliers, then find out another classifier with least errors again.
-		A final classifier will be combined and indicate the class of data.
-	
-		\item \textbf{Naive Bayes} \\ 
-		Naive Bayes is a prediction algorithm that uses Bayes rule. 
-		All naive Bayes classifiers assume that the value of a particular feature is independent of the value of any other feature, given the class variable. 
-		The possibilities is represented by the number of times the particular event occurs in the dataset over the total number of events. 
-	\end{enumerate}
+	\subsection{Modifications and Additional Insights}
+	...
 
 	\section{Evaluation}
 	In order to test our proposed GP models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}. 
