@@ -79,7 +79,8 @@
 	...
 	
 	\section{Modelling and Approach}
-	As  stated in the Future Applications subsection of Project 1, we replicate a similar application which not only offers higher accessibility, more user-friendly approach and reduced social stigma, but in addition, to give a reasonable and acceptable prediction of users' depression levels. \\	
+	As  stated in the Future Applications subsection of Project 1, we replicate a similar application which not only offers higher accessibility, more user-friendly approach and reduced social stigma, but in addition, to give a reasonable and acceptable prediction of users' depression levels.
+	Thus, our aim here is to measure depression via voice recordings that is obtained from real-world dataset i.e. a human test-subject. \\	
 	
 	The following premises have to hold true so that the GP model planning and decision making is suitable for depression prediction:
 	\begin{enumerate}
@@ -94,9 +95,17 @@
 	Accurate prediction is essential to not only licensed authorities but will also help more users to harbour acceptance towards their affliction to seek medical attention.
 	In addition, planning and decision making is also inline with our Future Applications subsection in Project 1 and thus, extending from there allows us to demonstrate the high feasibilty of our experiment.
 	
-	\subsection{Planning and Decision Making} \label{pdm}
+	\subsection{Planning and Decision Making Process} \label{pdm}
 	In our previous report, we have demonstrated that we are able to predict depression with GP. 
-	With the data obtained, we will extend our experiment to demonstrate how our model can plan and make decisions accordingly. \\
+	With the data obtained, we will extend our experiment to demonstrate how our model can plan and make decisions accordingly. 
+	We will be using only two live test subjects as a precursor to our project, subject A, a victim of depression and subject B, an average human.
+	To begin, we have generated a sample application or agent that is able to ask questions and record the subject's reply.
+	This agent is set to ask a fixed number of non-biased questions so as to not influence the subject's state of mind and to reduce the variation between subjects.
+	The reply here, however is of low importance as our primary objective is to measure the voice and cross-reference it to our model. \\
+
+	The above is the procedure we use to collect data, fed into the GP and finally the agent will make a decision to whether the subject is depressed or not depressed.
+	If the outcome results in a one with low confidence interval, the subject undergoes the same procedure after a week as passed.
+	As depression is disorder can be recurrent and often in episodes \cite{bp6152013}, a prediction generated over a time span therefore produces more accurate results.
 	
 	\subsection{Reinforcement Learning (RL)}
 	...
