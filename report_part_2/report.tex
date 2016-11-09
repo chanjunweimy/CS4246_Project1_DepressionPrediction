@@ -82,14 +82,7 @@
 	Instead of optimising our model, we decide to extend from the Future Applications subsection of Project 1 to demonstrate the feasibility of our project and also the benefits that it may provide to society.
 	We replicate a similar use case for our automation, which is the a pre-screening for depression victims.
 	With the same voice recording input, we use GP to classify diagnosable cases and complex cases as well as depressed and non-depressed patients. \\	
-	
-	Similar to Project 1, the following premises have to hold true so that the GP model planning and decision making is suitable for depression prediction:
-	\begin{enumerate}
-		\item Depression prediction is an event-based recognition which provides a single depression estimate over a certain amount of time. \cite{Valstar2016}
-		\item The speech signals extracted from different people suffering from depression should share some similarities and thus admissible for prediction with the Gaussian Process models. 
-		For example, diminished, prosodic and monotonous speech is often strongly correlated with depression \cite{Cummins2015}.
-	\end{enumerate}
-	
+
 	\subsection{Automation Flow} \label{af}
 	\begin{figure}[h]
  		\begin{center}
@@ -145,8 +138,43 @@
 	As observed in the Motivation and Objective section, psychiatrist identifying the extend of the patients depression and whether the affliction is true or false is a waste of time and resource.
 	Hence, our model introduces not only a unbiased selection process, but also a quicker and more effiecient process of depression prediction.
 
-	\subsection{Modifications and Additional Insights}
-	...
+	\subsection{Insights to our model}
+	\subsubsection{Gaussian Processes} 
+In our modelling, we used 2 gaussian processes(GP) for regression and classification tasks respectively. The GP models that we use here are modelled similarly to the modelling done in project 1. GP regressor(GPR) predicts the PHQ-8 score, while GP classifier(GPC) predicts whether the person is depressed or not. Similar to project 1, we trained GPR and GPC with data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}, with PHQ-8 and depression labels respectively. We applied the same audio signal processing techniques to the audio files as per project 1. We only used the Mel Frequency Cepstral Coefficients (MFCC) feature subset as we have seen the good theorical and experimental results the feature subset had produced. Most importantly, we make the same 2 assumptions that we need for us to use GP on the depression data: 
+	Similar to Project 1, the following premises have to hold true so that the GP model planning and decision making is suitable for depression prediction:
+	\begin{enumerate}
+		\item Depression prediction is an event-based recognition which provides a single depression estimate over a certain amount of time. \cite{Valstar2016}
+		\item The speech signals extracted from different people suffering from depression should share some similarities and thus admissible for prediction with the Gaussian Process models\cite{Cummins2015}.
+	\end{enumerate}
+Since the GP models recieve new data incrementally, we cannot use an offline GP as per project 1. Henceforth, we would need to tweak the GP to fit this problem. Since it is not possible for us to obtain a comprehensive dataset of all people coming to the clinic, we would then need a GP that learn dynamically, adapting to new data as it becomes avaliable. Online machine learning is a method that allows the data to be updated when it becomes available. We have noted that there are online variants of GP, namely: XXYY, XXYYX and XXHS. Because of this and that, we chose this particular online variant of GP. 
+	
+	\subsubsection{Phone Interview}
+	We note that regardless of the questions asked or the circumstance, a depressed person will still exhibit signs of depression in his speech\cite{jad2008}. Hence, the questions asked are irrelevant. The questions will be presented in the proof of concept section.
+
+	\subsubsection{Decision making}
+	The greatest advantage of using GP over other machine learning algorithms is that it provides us with a probability estimate representing confidence of the prediction. With that probability, we can decide if the predicted label can be relied on or that it cannot be trusted and needs to learn this data point. In our model, we exploit this property, unique to GPs. After the interview, GPC will predict the depression label with a confidence $p_c$ on the audio recording. As mentioned in the modelling, we define a particular probability $\rho_c$. If GPC predicts with $p_c>\rho_c$, then we can trust the predicted label and continue to decide appropriately based on the label. We determine the probability $\rho_c$ experimentally by observing the prediction quality of the labels in the training data, a summary is given in table \ref{tab:rho}.
+	
+ 	\begin{table}[h]
+ 		\begin{center}
+  			\begin{tabular}{ | r | c | c | }
+    			\hline
+			 	 \bfseries $p_c$($\%$)	& \bfseries Depression 	& \bfseries No Depression \\ \hline
+				 $[0,10)$		& - 			& - 			 \\ \hline
+				 $[10,20)$		& $100\%(1/1)$ 		& -		 \\ \hline
+				 $[20,30)$		& $100\%(4/4)$ 		& - 	 \\ \hline
+				 $[30,40)$		& 95 			& $100\%(1/1)$ 			 \\ \hline
+				 $[40,50)$		& 6.326 		& 7.548		 \\ \hline
+				 $[50,60)$		& 5.597 		& 6.690 	 \\ \hline 
+				 $[60,70)$		& $100\%(1/1)$ 			& 31 			 \\ \hline
+				 $[70,80)$		& - 		& $100\%(1/1)$		 \\ \hline
+				 $[80,90)$		& - 		& $100\%(4/4)$ 	 \\ \hline 
+				 $[90,100]$		& - 			& - 			 \\ \hline
+				 -		& 95 			& 31 			 \\ \hline
+			 \end{tabular}
+		\end{center}
+ 	\caption{Relationship between probability and accuraccy... Fix table later}
+ 	\label{tab:rho}
+ 	\end{table}
 
 	\section{Evaluation}
 	In order to test our proposed GP models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}. 
