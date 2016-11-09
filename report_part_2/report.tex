@@ -79,21 +79,16 @@
 	...
 	
 	\section{Modelling and Approach}
-	As  stated in the Future Applications subsection of Project 1, we replicate a similar application which not only offers higher accessibility, more user-friendly approach and reduced social stigma, but in addition, to give a reasonable and acceptable prediction of users' depression levels.
-	Thus, our aim here is to measure depression via voice recordings that is obtained from real-world dataset i.e. a human test-subject. \\	
+	Instead of optimising our model, we decide to extend from the Future Applications subsection of Project 1 to demonstrate the feasibility of our project and also the benefits that it may provide to society.
+	We replicate a similar use case for our automation, which is the a pre-screening for depression victims.
+	With the same voice recording input, we use GP to classify diagnosable cases and complex cases as well as depressed and non-depressed patients. \\	
 	
-	The following premises have to hold true so that the GP model planning and decision making is suitable for depression prediction:
+	Similar to Project 1, the following premises have to hold true so that the GP model planning and decision making is suitable for depression prediction:
 	\begin{enumerate}
 		\item Depression prediction is an event-based recognition which provides a single depression estimate over a certain amount of time. \cite{Valstar2016}
 		\item The speech signals extracted from different people suffering from depression should share some similarities and thus admissible for prediction with the Gaussian Process models. 
 		For example, diminished, prosodic and monotonous speech is often strongly correlated with depression \cite{Cummins2015}.
 	\end{enumerate}
-
-	\subsection{Qualitative Advantages}
-	As seen in our Motivation and Objective section of Project 1, good prognosis comes with early detection of depression. 
-	Although it is known that depression or rather emotions is general, are subjective and is difficult to predict, the capability of GP in retrieving the confidence intervals of the prediction and a continuous measurement over time may offset the uncertainty.
-	Accurate prediction is essential to not only licensed authorities but will also help more users to harbour acceptance towards their affliction to seek medical attention.
-	In addition, planning and decision making is also inline with our Future Applications subsection in Project 1 and thus, extending from there allows us to demonstrate the high feasibilty of our experiment.
 	
 	\subsection{Automation Flow} \label{af}
 	\begin{figure}[h]
@@ -105,26 +100,13 @@
  	\end{figure}
  	\begin{comment}
 	@startuml
-	digraph g {
-		graph [rankdir=LR];
-	 	gp_class[shape=rect label="GP for Classifying"];
-		gp_phq[shape=rect label="GP for PHQ-8"];
-		patient[shape=circle];
-		vp[shape=square label="Voice Recording"];
-		pc[shape=square label="Phone Interview"];
-		result_na[shape=square label="Continue observation"];
-		result_ac[shape=square label="Is patient depressed?"];
-		not_depressed[shape=square label="Refer to general practitioner"];
-		depressed[shape=square label="Determine priority"];
-		patient -> pc;
-		pc -> vp;
-		vp -> gp_class;
-		gp_class -> result_na[label=<75\%];
-		gp_class -> result_ac[label=>75\%];
-		result_ac -> not_depressed;
-		result_ac -> depressed;
-		depressed -> gp_phq;
-	}
+		Patient -right-|>(Phone Interview) : set appointment
+		(Phone Interview) -right-|> [GP Classifier] : voice recording
+		[GP Classifier] ..> (Continue observing) : <75\% CI
+		[GP Classifier] --> (Is patient depressed?) : >=75\% CI
+		(Is patient depressed?) --> [GP PHQ-8] : yes
+		(Is patient depressed?) ..> [Refer to general practitioner] : no
+		[GP PHQ-8] .left.|> (Determine priority)
 	@enduml
  	\end{comment}
 
@@ -133,7 +115,7 @@
 	At that time, a short phone interview consisting of a fixed number of unbiased questions is conducted.
 	The objective of the interview is to record the patient's voice pattern.
 	The recordings will the serve as an input for the first GP, which is a classifier that will output both the confidence interval and a binary state to whether the patient is suffering from depression or not.
-	This leads to two scenarios depending on the confidence interval:
+	This leads to two scenarios depending on the confidence interval (CI):
 	
 	\begin{enumerate}
 		\item {\textgreater= 75\%} \\
@@ -147,8 +129,21 @@
 	
 	Following from point 1, the voice of the depressed patient will then be used as an input for a second GP which models the PHQ-8. 
 	This is to determine the scale of depression that the patient is suffering from which also helps the psychiatrist to select an appropriate appointment date. 		
-	Similar the to the triage procedure in emergency services, a patient with a higher PHQ-8 value will be placed on the higher end of the priority list and vice versa. 
-	This process also automates the selection process for psychiatrist and thus reduce bias in treatment.
+	Similar the to the triage procedure in emergency services, a patient with a higher PHQ-8 value will be placed on the higher end of the priority list and vice versa.
+
+	\subsection{Qualitative Advantages}
+	The model is a suitable use case since we can exploit the confidence interval of the GP to provide the complexity of a patient's depression.
+	With the confidence interval, we can set lower boundary between diagnosable patients and those with a more complex condition.
+	These results, will enable us to determine which patient requires further observation and those that can give an immediate result.
+	This is also because most patients themselves are often confused to the depth of their depression, whether it is an actual episode or they are just seeking attention.
+	For diagnosable patients, we can also modify our GP to predict depression in a binary manner, i.e. true for depressed and false for not depressed.
+	This benefit is the key element of our decision making process.
+	Hence, this model can ease the workload of psychiatrist and the transitioning of depressed patients to the clinics. \\
+
+	In a real-world context, the model can garner more acceptance towards the selection process.
+	Since there are several factors affecting how we experience depression and various extend of depression \cite{nimh2015}, using GP to select patients can definitely give a more objective view as compared to a psychiatrist.
+	As observed in the Motivation and Objective section, psychiatrist identifying the extend of the patients depression and whether the affliction is true or false is a waste of time and resource.
+	Hence, our model introduces not only a unbiased selection process, but also a quicker and more effiecient process of depression prediction.
 
 	\subsection{Modifications and Additional Insights}
 	...
