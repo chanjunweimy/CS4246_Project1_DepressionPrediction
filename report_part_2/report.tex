@@ -106,7 +106,7 @@
 	At that time, a short phone interview consisting of a fixed number of unbiased questions is conducted.
 	The objective of the interview is to record the patient's voice pattern.
 	The recordings will the serve as an input for the first GP, which is a classifier that will output both the confidence interval and a binary state to whether the patient is suffering from depression or not.
-	This leads to two scenarios depending on the \emph{p}, which is the confidence level:
+	This leads to two scenarios depending on the \emph{p}, which is the probability estimate:
 	
 	\begin{enumerate}
 		\item {\textgreater= \emph{p}} \\
@@ -144,15 +144,6 @@
 	All the data gathered, will then be fed into the GPC and GPR until there is an improvement in the results.
 	Undiagnosable patients undergo the same process until he/she can be given a proper classification of whether he/she is depressed or not.
 	From here on, he will also undergo the process in \ref{sch_app} or is refuse an appointment if found that he/she is not depressed.
-
-	\subsection{Qualitative Advantages}
-	The greatest advantage of using a GP is that it provides us with a probability estimate along with the predicted label. We rely on the probability to determine the reliability of the predicted label. As we are dealing with human beings, we would want to rely on the predicted label only if it is reliable. Additionally, we have read in medical literature regarding the dire consequences of misdiagnosis and/or inappropriate treatment\cite{nasrallah2015consequences,bowden2001strategies,dunner2003clinical} in the area of depression. With the probability, we can be confident of the decisions that we make, that can potentially affect a person. Assume that we have a predicted label that can be trusted, then with the label, i.e. true for depressed and false for not depressed, we can decide if the person needs to come to the clinic for an appointment. Hence, reducing the number of appointments that are made, easing the workload of the staff in the clinic.
-	
-	In addition to reducing the workload of the staff, the GP models can potentially improve as more patients go through the pre-screening process. It can be the case that the GP is not confident of its prediction, then we should not trust the label that the GP had predicted. Then, we would need to determine by the means of a physical examiniation if the person in question is depressed or not and administer the appropriate treatment. Through the appointment with the psychiatrist, he can determine if the patient is depressed or not. With the ground truth, we can now train the GPs with the new data point. We are also careful to only update the GP if the data point is predicted with low confidence.
-
-	In our model, we do not require a trained staff to administer the phone interview. GP will determine the depression label of the person objectively, not considering the content of the interview but relying on certain depression indicators in speech\cite{nimh2015}. This allows the removal of any bias(eg. gender, racial) in pre-screening, which can potentially cause misdiagnosis. In addition, the clinic can save skilled-manpower as they can hire anyone or can use an automated system to perform the pre-screening task.
-	
-	Hence, our model introduces an unbiased pre-screening process reaping the following benefits: leading to a reduction of the number of appointments, reduction of manpower required and a pre-screening process whose accuracy improves incrementally over time. 
 
 	\subsection{Insights to our model}
 	\subsubsection{Gaussian Processes} 
@@ -194,6 +185,15 @@ Since the GP models recieve new data incrementally, we cannot use an offline GP 
 
 	\subsubsection{Scheduling}
 	For the cases when the person needs to be scheduled for an appointment with the psycharist, we can use GPR to determine the predicted PHQ-8 scores. With the predicted scores, we can piroritise certain higher risk individuals over the rest. Since the depression clinic is understaffed and struggling to keep up with number of patients, it is wise to piroritize the individuals who are predicted with higher PHQ-8 scores, which indicates that they are likely to be more depressed. Henceforth, we optimize the scheduling piroritizing people with higher predicted PHQ-8 scores.
+
+	\subsection{Qualitative Advantages}
+	The greatest advantage of using a GP is that it provides us with a probability estimate along with the predicted label. We rely on the probability to determine the reliability of the predicted label. As we are dealing with human beings, we would want to rely on the predicted label only if it is reliable. Additionally, we have read in medical literature regarding the dire consequences of misdiagnosis and/or inappropriate treatment\cite{nasrallah2015consequences,bowden2001strategies,dunner2003clinical} in the area of depression. With the probability, we can be confident of the decisions that we make, that can potentially affect a person. Assume that we have a predicted label that can be trusted, then with the label, i.e. true for depressed and false for not depressed, we can decide if the person needs to come to the clinic for an appointment. Hence, reducing the number of appointments that are made, easing the workload of the staff in the clinic.
+	
+	In addition to reducing the workload of the staff, the GP models can potentially improve as more patients go through the pre-screening process. It can be the case that the GP is not confident of its prediction, then we should not trust the label that the GP had predicted. Then, we would need to determine by the means of a physical examiniation if the person in question is depressed or not and administer the appropriate treatment. Through the appointment with the psychiatrist, he can determine if the patient is depressed or not. With the ground truth, we can now train the GPs with the new data point. We are also careful to only update the GP if the data point is predicted with low confidence.
+
+	In our model, we do not require a trained staff to administer the phone interview. GP will determine the depression label of the person objectively, not considering the content of the interview but relying on certain depression indicators in speech\cite{nimh2015}. This allows the removal of any bias(eg. gender, racial) in pre-screening, which can potentially cause misdiagnosis. In addition, the clinic can save skilled-manpower as they can hire anyone or can use an automated system to perform the pre-screening task.
+	
+	Hence, our model introduces an unbiased pre-screening process reaping the following benefits: leading to a reduction of the number of appointments, reduction of manpower required and a pre-screening process whose accuracy improves incrementally over time. 
 
 	\section{Evaluation}
 	In order to test our proposed GP models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}. 
