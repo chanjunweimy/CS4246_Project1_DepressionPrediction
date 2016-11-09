@@ -73,15 +73,13 @@
 	Some of our preliminary studies have shown that despite consensus among the scientific community that Support Vector Machine (SVM) models have a 
 	very high predictive accuracy specifically in speech emotion recognition \cite{Chavhan2010}, GP models have been proven to consistently outperform SVM models on the task of music emotion recognition \cite{MARKOV2013}. 
 	Nevertheless, there are no studies on the use of GP in predicting depression severity. 
-	The findings of this paper will hopefully open up new frontiers and fuel further research interest on this topic.
+	The findings of this paper will hopefully open up new frontiers and fuel further research interest on this topic. 
 	
 	\subsection{Important Requirements}
 	...
 	
 	\section{Modelling and Approach}
-	Instead of optimising our model, we demonstrate the feasibility of our project via planning and decision making.
-	By providing two general use cases, we illustrate the application of our GP models, which are the general automation flow of the pre-screening and the scheduling of appointment by priority.
-	Both the processes requires the voice recording data which is feed as input into two separate GPs, the Gaussian Process Classifier (GPC) and the Gaussian Process Regressor (GPR). 
+	Leveraging on the success of the modelling of depression prediction of PHQ-8 scores in project 1, we extend and apply the work done to solve the aforementioned problem of under-staffing. Our solution is to implement pre-screening and automate the process of the deciding if the person needs an appointment or otherwise. Moreover, our process allows prioritizing of patient's appointments by their PHQ-8 score. Henceforth, we would need to use 2 GPs: Gaussian Process Classifier (GPC) and the Gaussian Process Regressor (GPR). In this section, we will firstly describe the process that we are proposing and we will go into detail on each component of the process.
 
 	\subsection{Automation Flow} \label{af}
 	\begin{figure}[h]
