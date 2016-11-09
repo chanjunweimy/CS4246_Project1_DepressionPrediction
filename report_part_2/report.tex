@@ -120,7 +120,25 @@
 		As depression is disorder can be recurrent and often in episodes \cite{bp6152013}, a prediction generated over a time span therefore produces more accurate results.\\
 	\end{enumerate}
 	
-	Following from point 1, the voice of the depressed patient will then be used as an input for a second GP which models the PHQ-8. 
+	\begin{figure}[h]
+ 		\begin{center}
+		\includegraphics[width=0.48\textwidth]{appointment} 
+  		\end{center}
+  		\caption{Scheduling an Appointment}
+  		\label{auto_flow} 
+ 	\end{figure}
+ 	\begin{comment}
+	@startuml			
+		[Voice recording] -right-|> [GPR] : input
+		[GPR] -right-|> (PHQ-8 Score) : outputs
+		(PHQ-8 Score) -right-|> [Scheduler] : feed to
+		[Scheduler] --> (Appointment) : get time and date
+		(Appointment) -left-|> (PHQ-8/Depression LBL)
+		(PHQ-8/Depression LBL) -left-|> [Update GPC/GPR] : use to
+	@enduml
+ 	\end{comment}
+
+	Continuing from Figure \ref{appointment}, the voice of the depressed patient will then be used as an input for a second GP which models the PHQ-8. 
 	This is to determine the scale of depression that the patient is suffering from which also helps the psychiatrist to select an appropriate appointment date. 		
 	Similar the to the triage procedure in emergency services, a patient with a higher PHQ-8 value will be placed on the higher end of the priority list and vice versa.
 
