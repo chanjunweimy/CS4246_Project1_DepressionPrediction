@@ -79,7 +79,7 @@
 	...
 	
 	\section{Modelling and Approach}
-	Instead of optimising our model, we demonstrate the feasibility of our project via planning and decision making.
+	We demonstrate the feasibility of our project via planning and decision making.
 	By providing two general use cases, we illustrate the application of our GP models, which are the general automation flow of the pre-screening and the scheduling of appointment by priority.
 	Both the processes requires the voice recording data which is feed as input into two separate GPs, the Gaussian Process Classifier (GPC) and the Gaussian Process Regressor (GPR). 
 
@@ -108,7 +108,7 @@
 	At that time, a short phone interview consisting of a fixed number of unbiased questions is conducted.
 	The objective of the interview is to record the patient's voice pattern.
 	The recordings will the serve as an input for the first GP, which is a classifier that will output both the confidence interval and a binary state to whether the patient is suffering from depression or not.
-	This leads to two scenarios depending on the \emph{p}, which is the confidence level:
+	This leads to two scenarios depending on the \emph{p}, which is the probability estimate:
 	
 	\begin{enumerate}
 		\item {\textgreater= \emph{p}} \\
