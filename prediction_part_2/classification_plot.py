@@ -26,7 +26,7 @@ import GPy.models as models
 import time
 from math import sqrt,ceil
 import GPy
-import GPyOpt
+#import GPyOpt
 import matplotlib.mlab as mlab
 import math
 import matplotlib.pyplot as plt
@@ -80,6 +80,7 @@ def convertToBitVec(featSel):
     return wrapper
 
 mfccIntVec = [1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+#mfccIntVec = 4*[1]+3*[0]
 
 def returnMask(intVec):
     def wrapper(X,y):
@@ -311,13 +312,20 @@ scoreLearner = gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())
 mode = "MFCC"
 bitVec = bitVecs[mode]
 scoreLearner.fit(X_train[:,bitVec], y_train[:])
-tempTrainY, stdTrainY = scoreLearner.predict(X_train[:,bitVec], return_std = True)
-tempDevY, stdDevY = scoreLearner.predict(X_dev[:,bitVec], return_std = True)
+tempTrainY, stdTrainY = scoreLearner.predict(X_train[:,bitVec], return_std=True)
+tempDevY, stdDevY = scoreLearner.predict(X_dev[:,bitVec], return_std=True)
 rmse_train = sqrt(mean_squared_error(y_train, tempTrainY))
 rmse_predict = sqrt(mean_squared_error(y_dev, tempDevY))
 #rmses.append([name + '('+mode+')', rmse_train, rmse_predict])
 print('scoreLearner' + '('+mode+')')
 print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
+
+X = np.arange(len(tempDevY))
+upper_bound = np.array(map(lambda x: x[0]+1.96*abs(x[1]), zip(tempDevY,stdDevY)))
+lower_bound = np.array(map(lambda x: x[0]-1.96*abs(x[1]), zip(tempDevY,stdDevY)))
+plt.plot(X, tempDevY, 'g')
+plt.fill_between(X, lower_bound, upper_bound, alpha=0.5, color='b')
+plt.show()
 
 newTrainX = []  
 for i in range(len(tempTrainY)):
