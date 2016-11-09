@@ -140,7 +140,7 @@
 
 	\subsection{Insights to our model}
 	\subsubsection{Gaussian Processes} 
-In our modelling, we used 2 gaussian processes(GP) for regression and classification tasks respectively. The GP models that we use here are modelled similarly to the modelling done in project 1. GP regressor(GPR) predicts the PHQ-8 score, while GP classifier(GPC) predicts whether the person is depressed or not. Similar to project 1, we trained GPR and GPC with data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}, with PHQ-8 and depression labels respectively. We applied the same audio signal processing techniques to the audio files as per project 1. We only used the Mel Frequency Cepstral Coefficients (MFCC) feature subset as we have seen the good theorical and experimental results the feature subset had produced. Most importantly, we make the same 2 assumptions that we need for us to use GP on the depression data: 
+In our modelling, we used 2 gaussian processes(GP) for regression and classification tasks respectively. The GP models that we use here are modelled similarly to the modelling done in project 1. GP regressor(GPR) predicts the (Personal Health Questionaire depression scale)PHQ-8 score, while GP classifier(GPC) predicts whether the person is depressed or not. Similar to project 1, we trained GPR and GPC with data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}, with PHQ-8 and depression labels respectively. We applied the same audio signal processing techniques to the audio files as per project 1. We only used the Mel Frequency Cepstral Coefficients (MFCC) feature subset as we have seen the good theorical and experimental results the feature subset had produced. Most importantly, we make the same 2 assumptions that we need for us to use GP on the depression data: 
 	Similar to Project 1, the following premises have to hold true so that the GP model planning and decision making is suitable for depression prediction:
 	\begin{enumerate}
 		\item Depression prediction is an event-based recognition which provides a single depression estimate over a certain amount of time. \cite{Valstar2016}
@@ -175,6 +175,9 @@ Since the GP models recieve new data incrementally, we cannot use an offline GP 
  	\caption{Relationship between probability and accuraccy... Fix table later}
  	\label{tab:rho}
  	\end{table}
+
+	\subsubsection{Scheduling}
+	For the cases when the person needs to be scheduled for an appointment with the psycharist, we can use GPR to determine the predicted PHQ-8 scores. With the predicted scores, we can piroritise certain higher risk individuals over the rest. Since the depression clinic is understaffed and struggling to keep up with number of patients, it is wise to piroritize the individuals who are predicted with higher PHQ-8 scores, which indicates that they are likely to be more depressed. Henceforth, we optimize the scheduling piroritizing people with higher predicted PHQ-8 scores.
 
 	\section{Evaluation}
 	In order to test our proposed GP models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}. 
