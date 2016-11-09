@@ -79,9 +79,9 @@
 	...
 	
 	\section{Modelling and Approach}
-	Instead of optimising our model, we decide to extend from the Future Applications subsection of Project 1 to demonstrate the feasibility of our project and also the benefits that it may provide to society.
-	We replicate a similar use case for our automation, which is the a pre-screening for depression victims.
-	With the same voice recording input, we use GP to classify diagnosable cases and complex cases as well as depressed and non-depressed patients. \\	
+	Instead of optimising our model, we demonstrate the feasibility of our project via planning and decision making.
+	By providing two general use cases, we illustrate the application of our GP models, which are the general automation flow of the pre-screening and the scheduling of appointment by priority.
+	Both the processes requires the voice recording data which is feed as input into two separate GPs, the Gaussian Process Classifier (GPC) and the Gaussian Process Regressor (GPR). 
 
 	\subsection{Automation Flow} \label{af}
 	\begin{figure}[h]
@@ -96,9 +96,9 @@
 		Patient -right-|>(Phone Interview) : seek treatment
 		(Phone Interview) -right-|> [GPC] : voice recording
 		(Set appointment) --> [GPC] : repeat process after a time t
-		[GPC] --> (Set appointment) : < p
+		[GPC] --> (Schedule appointment) : < p
 		[GPC] --> (Is patient depressed?) : >= p
-		(Is patient depressed?) ..> (Set appointment ) : yes
+		(Is patient depressed?) ..> (Schedule appointment ) : yes
 		(Is patient depressed?) ..> (No appointment needed) : no
 	@enduml
  	\end{comment}
@@ -108,16 +108,17 @@
 	At that time, a short phone interview consisting of a fixed number of unbiased questions is conducted.
 	The objective of the interview is to record the patient's voice pattern.
 	The recordings will the serve as an input for the first GP, which is a classifier that will output both the confidence interval and a binary state to whether the patient is suffering from depression or not.
-	This leads to two scenarios depending on the confidence interval (CI):
+	This leads to two scenarios depending on the \emph{p}, which is the confidence level:
 	
 	\begin{enumerate}
-		\item {\textgreater= 75\%} \\
-		An appropriate medical action is taken. 
+		\item {\textgreater= \emph{p}} \\
+		The patient's affliction diagnosable.
 		However, this is also dependent on the binary state i.e. whether the patient is depressed or not depressed. 
-		A depressed patient will be given further attention by the psychiatrist whereas a non-depressed patient would be refered to a general practitioner for further diagnosis.
-		\item {\textless 75\%} \\
-		Further observation is required. This would mean that the psychiatrist would accept the patient's proposal for an appointment but will still undergo voice tests to further determine to whether the patient is a victim of depression. 
-		As depression is disorder can be recurrent and often in episodes \cite{bp6152013}, a prediction generated over a time span therefore produces more accurate results.\\
+		A depressed patient will be given further attention by the psychiatrist by scheduling an appointment whereas a non-depressed patient would be not be given attention by the psychiatrist.
+		\item {\textless \emph{p}} \\
+		The patient's affliction is uncertain. 
+		In this case, the patient can still schedule an appointment and is placed under continuous scrutiny until he/she can be diagnosed as depressed or vice versa.
+		This outcome is not unusual as depression is disorder can be recurrent and often in episodes \cite{bp6152013}, a prediction generated over a time span therefore produces more accurate results.\\
 	\end{enumerate}
 	
 	\begin{figure}[h]
@@ -125,7 +126,7 @@
 		\includegraphics[width=0.48\textwidth]{appointment} 
   		\end{center}
   		\caption{Flow for Scheduling an Appointment}
-  		\label{auto_flow} 
+  		\label{sch_app} 
  	\end{figure}
  	\begin{comment}
 	@startuml			
@@ -138,9 +139,13 @@
 	@enduml
  	\end{comment}
 
-	Continuing from Figure \ref{appointment}, the voice of the depressed patient will then be used as an input for a second GP which models the PHQ-8. 
+	Continuing from Figure \ref{sch_app} when an appointment has been scheduled, the voice of the patient will then be used as an input for the GPR which models the PHQ-8. 
 	This is to determine the scale of depression that the patient is suffering from which also helps the psychiatrist to select an appropriate appointment date. 		
 	Similar the to the triage procedure in emergency services, a patient with a higher PHQ-8 value will be placed on the higher end of the priority list and vice versa.
+	The patient's LBL and PHQ-8 scores will be observed over time during scheduled sessions to identify the patient's improvement in his/her emotional state.
+	All the data gathered, will then be fed into the GPC and GPR until there is an improvement in the results.
+	Undiagnosable patients undergo the same process until he/she can be given a proper classification of whether he/she is depressed or not.
+	From here on, he will also undergo the process in \ref{sch_app} or is refuse an appointment if found that he/she is not depressed.
 
 	\subsection{Qualitative Advantages}
 	The greatest advantage of using a GP is that it provides us with a probability estimate along with the predicted label. We rely on the probability to determine the reliability of the predicted label. As we are dealing with human beings, we would want to rely on the predicted label only if it is reliable. Additionally, we have read in medical literature regarding the dire consequences of misdiagnosis and/or inappropriate treatment\cite{nasrallah2015consequences,bowden2001strategies,dunner2003clinical} in the area of depression. With the probability, we can be confident of the decisions that we make, that can potentially affect a person. Assume that we have a predicted label that can be trusted, then with the label, i.e. true for depressed and false for not depressed, we can decide if the person needs to come to the clinic for an appointment. Hence, reducing the number of appointments that are made, easing the workload of the staff in the clinic.
