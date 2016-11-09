@@ -93,13 +93,13 @@
  	\end{figure}
  	\begin{comment}
 	@startuml
-		Patient -right-|>(Phone Interview) : set appointment
-		(Phone Interview) -right-|> [GP Classifier] : voice recording
-		[GP Classifier] ..> (Continue observing) : <75\% CI
-		[GP Classifier] --> (Is patient depressed?) : >=75\% CI
-		(Is patient depressed?) --> [GP PHQ-8] : yes
-		(Is patient depressed?) ..> [Refer to general practitioner] : no
-		[GP PHQ-8] .left.|> (Determine priority)
+		Patient -right-|>(Phone Interview) : seek treatment
+		(Phone Interview) -right-|> [GPC] : voice recording
+		(Set appointment) --> [GPC] : repeat process after a time t
+		[GPC] --> (Set appointment) : < p
+		[GPC] --> (Is patient depressed?) : >= p
+		(Is patient depressed?) ..> (Set appointment ) : yes
+		(Is patient depressed?) ..> (No appointment needed) : no
 	@enduml
  	\end{comment}
 
