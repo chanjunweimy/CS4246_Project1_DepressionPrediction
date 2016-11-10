@@ -323,9 +323,23 @@ print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
 X = np.arange(len(tempDevY))
 upper_bound = np.array(map(lambda x: x[0]+1.96*abs(x[1]), zip(tempDevY,stdDevY)))
 lower_bound = np.array(map(lambda x: x[0]-1.96*abs(x[1]), zip(tempDevY,stdDevY)))
-plt.plot(X, tempDevY, 'g')
-plt.fill_between(X, lower_bound, upper_bound, alpha=0.5, color='b')
+plt.plot(X, tempDevY, 'r.', label='Observations')
+plt.plot(X, tempDevY, 'g-')
+plt.fill_between(X, lower_bound, upper_bound, alpha=0.5, color='b', label='95% confidence interval')
+plt.xlabel('Subject')
+plt.ylabel('PHQ8 score')
+plt.legend(loc='upper right')
 plt.show()
+
+"""
+mean_std_dev = zip(tempDevY, stdDevY)
+mean_std_dev = sorted(mean_std_dev, key=lambda l: l[0])
+tempDevY = np.array(zip(*mean_std_dev)[0])
+stdDevY_abs = np.array(map(abs, zip(*mean_std_dev)[1]))
+plt.plot(tempDevY, stdDevY_abs, 'r')
+#plt.fill_between(tempDevY, stdDevY_abs, where=stdDevY_abs>0, color='b')
+plt.show()
+"""
 
 newTrainX = []  
 for i in range(len(tempTrainY)):
