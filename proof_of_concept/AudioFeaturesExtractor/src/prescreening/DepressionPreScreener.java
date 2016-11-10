@@ -1,4 +1,4 @@
-package training;
+package prescreening;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import prescreening.DiagnosedPatient;
+import training.AudioFeaturesGenerator;
 
 public class DepressionPreScreener {
 	public static final String FILEPATH_PRESCREEN = "data/dcapswoz_audio/dev";
@@ -24,15 +24,24 @@ public class DepressionPreScreener {
 		ArrayList<DiagnosedPatient> patients = extractPatientDatas(args);
 		patients = classifyDepression(patients);
 		showPatientsInfo(patients);
-		patients = rejectNormalPerson(patients);
 		
+		System.out.println(patients.size());
+		patients = rejectNormalPerson(patients);
+		System.out.println(patients.size());
+
 	}
 
 	private ArrayList<DiagnosedPatient> rejectNormalPerson(ArrayList<DiagnosedPatient> patients) {
+		ArrayList<DiagnosedPatient> rejectedPatients = new ArrayList<DiagnosedPatient>();
+		
 		for (DiagnosedPatient patient : patients) {
 			if (!patient.getIsDepressed() && patient.getGpConfidence() - NORMAL_CONFIDENCE_THRESHOLD > 0) {
-				patients.remove(patient);
+				rejectedPatients.add(patient);
 			}
+		}
+		
+		for (DiagnosedPatient rejectedPatient : rejectedPatients) {
+			patients.remove(rejectedPatient);	
 		}
 		return patients;
 	}
