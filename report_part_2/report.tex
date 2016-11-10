@@ -149,8 +149,8 @@
 
 	Figure \ref{sch_app} represents the case that he/she needs an appointment. 
 	Similarly, the patient's voice is used as an input for the GPR which predicts the PHQ-8 score. 
-	PHQ-8 score determines the levels of depression(from $0 - 24$, $0$ means no depression and $24$ means very depressed) of the patient, allowing the staff to piroritize appointments based on the PHQ-8 score.
-	We were inspired by triage algorithms used in emergency services\cite{shah2015managing}, where priority of one's treatments are decided by the severity of their ailments\cite{wiki:Triage}.
+	PHQ-8 score determines the levels of depression(from $0$-$24$, $0$ means no depression and $24$ means very depressed) of the patient, allowing the staff to piroritize appointments based on the PHQ-8 score.
+	We were inspired by triage algorithms used in emergency services\cite{shah2015managing,oredsson2011systematic}, where priority of one's treatments are decided by the severity of their ailments\cite{wiki:Triage}.
 	We have seen that this method dispenses limited resources with efficiacy\cite{rosedale2011effectiveness} throughout many emergency services world-wide. 
 	Similarly, we want to apply that idea into psychiatric clinic, which are also facing a shortage of resources. 
 	We would piroritize patients who are more depressed(predicted by GPR with a higher PHQ-8 score) will have higher pirority and vice versa.
@@ -161,10 +161,10 @@
 	\subsubsection{Gaussian Processes :}
 	In our modelling, we used 2 GPs for regression and classification tasks respectively. 
 	The GP models that we use here are modelled similarly to the modelling done in project 1. 
-	GPR predicts the PHQ-8 score, while GP classifier(GPC) predicts whether the person is depressed or not. 
-	Similar to project 1, we trained GPR and GPC with data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}, with PHQ-8 and depression labels respectively. 
+	GPR predicts the PHQ-8 score, while GPC predicts whether the person is depressed or not. 
+	Similar to project 1, we trained GPR and GPC with data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}, with PHQ-8 and depression labels(provided as part of the dataset) respectively. 
 	We applied the same audio signal processing techniques to the audio files as per project 1. 
-	We only used the Mel Frequency Cepstral Coefficients (MFCC) feature subset as we have seen the good theorical and experimental results the feature subset had produced. 
+	We used GP with a dot-product kernel, with the Mel Frequency Cepstral Coefficients (MFCC) feature subset as we have seen the good theorical and experimental results the feature subset had produced in project 1. 
 	Most importantly, we make the same two assumptions so that the GP model planning and decision making is suitable for depression prediction:
 	\begin{enumerate}
 		\item Depression prediction is an event-based recognition which provides a single depression estimate over a certain amount of time. \cite{Valstar2016}
