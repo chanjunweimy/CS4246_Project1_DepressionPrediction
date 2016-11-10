@@ -20,7 +20,6 @@ from inputs import read_train_dev_files_with_binary
 from plotting import plot_bar, plot_all_Y, plot_f1
 import numpy as np
 import sys
-from ARD_kernel import ard_kernel
 import GPy.kern as kern
 import GPy.models as models
 import time
@@ -31,8 +30,8 @@ import matplotlib.mlab as mlab
 import math
 import matplotlib.pyplot as plt
 
-x_train_file_name = "data/splitted/X/urop/trainX.txt"
-x_dev_file_name = "data/splitted/X/urop/devX.txt"
+x_train_file_name = "data/splitted/X/MFCC/trainX.txt"
+x_dev_file_name = "data/splitted/X/MFCC/devX.txt"
 y_train_file_name = "data/splitted/y/trainY.txt"
 y_dev_file_name = "data/splitted/y/devY.txt"
 
@@ -47,6 +46,10 @@ if len(sys.argv) == 5:
 elif len(sys.argv) == 3:
     x_train_file_name = sys.argv[1]
     x_dev_file_name = sys.argv[2]
+elif len(sys.argv) == 2:    
+     x_dev_file_name = sys.argv[1]
+#print len(sys.argv)
+#print sys.argv
 
 X_train, y_train, X_dev, y_dev, y_bin_train, y_bin_dev = read_train_dev_files_with_binary(x_train_file_name, x_dev_file_name, y_train_file_name, y_dev_file_name, y_bin_train_file_name, y_bin_dev_file_name)
 n_feats = len(X_train[0])
@@ -258,8 +261,8 @@ def printPerformances(models_performances):
         
 
 
-mode = "MFCC"
-bitVec = bitVecs[mode]
+#mode = "MFCC"
+#bitVec = bitVecs[mode]
 
 
 #depressionRegressor = gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())
@@ -271,15 +274,15 @@ bitVec = bitVecs[mode]
 #print rmse_predict
 
 depressionClassifer = gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct())
-depressionClassifer.fit(X_train[:,bitVec], y_bin_train)
+depressionClassifer.fit(X_train, y_bin_train)
 #f1, performance = getClassifierPerformance(depressionClassifer, "depressionClassifer", mode, X_train[:,bitVec], y_bin_train, X_dev[:,bitVec])
 #print performance
 
 #print "PHQ8:"
 #print phq8
 #print "ISDEPRESSED:"
-depressedPredicts = depressionClassifer.predict(X_dev[:,bitVec])
-depressedProbas = depressionClassifer.predict_proba(X_dev[:,bitVec])
+depressedPredicts = depressionClassifer.predict(X_dev)
+depressedProbas = depressionClassifer.predict_proba(X_dev)
 
 for i in range(len(depressedPredicts)):
     depressedPredict = depressedPredicts[i]

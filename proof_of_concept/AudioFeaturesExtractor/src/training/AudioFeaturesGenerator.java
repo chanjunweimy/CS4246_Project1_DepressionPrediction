@@ -17,8 +17,8 @@ public class AudioFeaturesGenerator {
 
 	//public static final String FILEPATH_FEATURE_OUT = "data/features/";
 	public static final String FILEPATH_FEATURE_OUT = "";
-	//public static final String FILEPATH_DCAPSWOZ = "data/dcapswoz_audio/dev";
-	public static final String FILEPATH_DCAPSWOZ = "data/dcapswoz_audio/train";
+	public static final String FILEPATH_DCAPSWOZ = "data/dcapswoz_audio/dev";
+	//public static final String FILEPATH_DCAPSWOZ = "data/dcapswoz_audio/train";
 
 	public static final String EMOTION_DCAPSWOZ_MFCC = FILEPATH_FEATURE_OUT + "emotion_dcapswoz_mfcc.txt";
 	public static final String EMOTION_DCAPSWOZ_SPECTRUM = FILEPATH_FEATURE_OUT + "emotion_dcapswoz_spectrum.txt";
@@ -421,7 +421,7 @@ public class AudioFeaturesGenerator {
 			mfcc.process(signal);
 			double[] mean = mfcc.getMeanFeature();
 			
-			System.out.println(mean.length);
+			//System.out.println(mean.length);
 			
 			StringBuffer buffer = new StringBuffer();
 			
