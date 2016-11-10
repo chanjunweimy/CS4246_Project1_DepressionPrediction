@@ -35,7 +35,7 @@ public class DepressionPreScreener {
 		ArrayList<DiagnosedPatient> rejectedPatients = new ArrayList<DiagnosedPatient>();
 		
 		for (DiagnosedPatient patient : patients) {
-			if (!patient.getIsDepressed() && patient.getGpConfidence() - NORMAL_CONFIDENCE_THRESHOLD > 0) {
+			if (!patient.getIsDepressed() && patient.getGpConfidence() - NORMAL_CONFIDENCE_THRESHOLD >= 0) {
 				rejectedPatients.add(patient);
 			}
 		}
