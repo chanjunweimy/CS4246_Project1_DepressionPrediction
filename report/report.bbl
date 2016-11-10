@@ -1,0 +1,219 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{Cawley and Talbot}{2014}]{Cawley2014}
+Cawley, G.~C., and Talbot, N. L.~C.
+\newblock 2014.
+\newblock {Kernel learning at the first level of inference}.
+\newblock {\em Neural Networks} 53:69--80.
+
+\bibitem[\protect\citeauthoryear{Chavhan, Dhore, and
+  Yesaware}{2010}]{Chavhan2010}
+Chavhan, Y.; Dhore, M.~L.; and Yesaware, P.
+\newblock 2010.
+\newblock {Speech Emotion Recognition using Support Vector Machine}.
+\newblock {\em International Journal of Computer Applications} 1(20):8--11.
+
+\bibitem[\protect\citeauthoryear{Cummins \bgroup et al\mbox.\egroup
+  }{2015}]{Cummins2015}
+Cummins, N.; Scherer, S.; Krajewski, J.; Schnieder, S.; Epps, J.; and Quatieri,
+  T.~F.
+\newblock 2015.
+\newblock {A review of depression and suicide risk assessment using speech
+  analysis}.
+\newblock {\em Speech Communication} 71:10--49.
+
+\bibitem[\protect\citeauthoryear{Dhanani \bgroup et al\mbox.\egroup
+  }{2014}]{Dhanani:EECS-2014-131}
+Dhanani, A.; Lee, S.~Y.; Phothilimthana, P.; and Pardos, Z.
+\newblock 2014.
+\newblock A comparison of error metrics for learning model parameters in
+  bayesian knowledge tracing.
+\newblock Technical Report UCB/EECS-2014-131, EECS Department, University of
+  California, Berkeley.
+
+\bibitem[\protect\citeauthoryear{{El Ayadi}, Kamel, and
+  Karray}{2011}]{ElAyadi2011}
+{El Ayadi}, M.; Kamel, M.~S.; and Karray, F.
+\newblock 2011.
+\newblock {Survey on speech emotion recognition: Features, classification
+  schemes, and databases}.
+\newblock {\em Pattern Recognition} 44(3):572--587.
+
+\bibitem[\protect\citeauthoryear{Fiske, Wetherell, and Gatz}{2009}]{arcp2009}
+Fiske, A.; Wetherell, J.~L.; and Gatz, M.
+\newblock 2009.
+\newblock Depression in older adults.
+\newblock {\em Annual Review of Clinical Psychology} 5:363--389.
+
+\bibitem[\protect\citeauthoryear{{GPy}}{since 2012}]{gpy2014}
+{GPy}.
+\newblock since 2012.
+\newblock {GPy}: A gaussian process framework in python.
+\newblock \url{http://github.com/SheffieldML/GPy}.
+
+\bibitem[\protect\citeauthoryear{Greenberg \bgroup et al\mbox.\egroup
+  }{2015}]{tjcp2015}
+Greenberg, P.~E.; Fournier, A.-A.; Sisitsky, T.; Pike, C.~T.; and Kessler,
+  R.~C.
+\newblock 2015.
+\newblock The economic burden of adults with major depressive disorder in the
+  united states.
+\newblock {\em The Journal of Clinical Psychiatry} 76(2):155--162.
+
+\bibitem[\protect\citeauthoryear{Guyon and Elisseeff}{2003}]{Guyon2003}
+Guyon, I., and Elisseeff, A.
+\newblock 2003.
+\newblock {An Introduction to Variable and Feature Selection}.
+\newblock {\em Journal of Machine Learning Research (JMLR)} 3(3):1157--1182.
+
+\bibitem[\protect\citeauthoryear{Hall and Smith}{1999}]{HALLHALL}
+Hall, M.~A., and Smith, L.~A.
+\newblock 1999.
+\newblock Feature selection for machine learning: Comparing a correlation-based
+  filter approach to the wrapper.
+\newblock In {\em Proceedings of the Twelfth International Florida Artificial
+  Intelligence Research Society Conference},  235--239.
+\newblock AAAI Press.
+
+\bibitem[\protect\citeauthoryear{Hashim \bgroup et al\mbox.\egroup
+  }{2016}]{jov2016}
+Hashim, N.~W.; Wilkes, M.; Salomon, R.; Meggs, J.; and France, D.~J.
+\newblock 2016.
+\newblock Evaluation of voice acoustics as predictors of clinical depression
+  scores.
+\newblock {\em Journal of Voice} 0(0).
+
+\bibitem[\protect\citeauthoryear{Jiaquan~Xu \bgroup et al\mbox.\egroup
+  }{2016}]{nvsr2016}
+Jiaquan~Xu, M.; Sheery L.~Murphy, B.; Kenneth D.~Kochanek, M.; and Brigham
+  A.~Bastian, B.
+\newblock 2016.
+\newblock Deaths: Final data for 2013.
+\newblock {\em National Vital Statistics Reports} Vol 64, No. 2.
+
+\bibitem[\protect\citeauthoryear{Johnstone}{2001}]{uwa2001}
+Johnstone, T.
+\newblock 2001.
+\newblock {\em The effect of emotion on voice production and speech acoustics}.
+\newblock Ph.D. Dissertation, University of Western Australia.
+
+\bibitem[\protect\citeauthoryear{Komer, Bergstra, and
+  Eliasmith}{2014}]{Komer2014HyperoptsklearnAH}
+Komer, B.; Bergstra, J.; and Eliasmith, C.
+\newblock 2014.
+\newblock Hyperopt-sklearn: Automatic hyperparameter configuration for
+  scikit-learn.
+
+\bibitem[\protect\citeauthoryear{Kroenke \bgroup et al\mbox.\egroup
+  }{2008}]{jad2008}
+Kroenke, K.; Strine, T.; Spitzer, R.~L.; Williams, J.~B.; Berry, J.~T.; and
+  Mokdad, A.
+\newblock 2008.
+\newblock The phq-8 as a measure of current depression in the general
+  popoulation.
+\newblock {\em Journal of Affective Disorders} 114(1-3):163--73.
+
+\bibitem[\protect\citeauthoryear{Li \bgroup et al\mbox.\egroup
+  }{2016}]{li2016feature}
+Li, J.; Cheng, K.; Wang, S.; Morstatter, F.; Robert, T.; Tang, J.; and Liu, H.
+\newblock 2016.
+\newblock Feature selection: A data perspective.
+\newblock {\em arXiv:1601.07996}.
+
+\bibitem[\protect\citeauthoryear{Lin and Tang}{2006}]{Lin2006}
+Lin, D., and Tang, X.
+\newblock 2006.
+\newblock {\em Conditional Infomax Learning: An Integrated Framework for
+  Feature Extraction and Fusion}.
+\newblock Berlin, Heidelberg: Springer Berlin Heidelberg.
+\newblock  68--82.
+
+\bibitem[\protect\citeauthoryear{Markov and Matsui}{2013}]{MARKOV2013}
+Markov, K., and Matsui, T.
+\newblock 2013.
+\newblock {Music Genre and Emotion Recognition Using Gaussian Processes}.
+\newblock 2:2--3.
+
+\bibitem[\protect\citeauthoryear{McCambridge, Witton, and
+  Elbourne}{2014}]{jce2014}
+McCambridge, J.; Witton, J.; and Elbourne, D.~R.
+\newblock 2014.
+\newblock Systematic review of the hawthorne effect: New concepts are needed to
+  study research participation effects.
+\newblock {\em Journal of Clinical Epidemiology} 67(3):267--277.
+
+\bibitem[\protect\citeauthoryear{Pedregosa \bgroup et al\mbox.\egroup
+  }{2011}]{scikit-learn}
+Pedregosa, F.; Varoquaux, G.; Gramfort, A.; Michel, V.; Thirion, B.; Grisel,
+  O.; Blondel, M.; Prettenhofer, P.; Weiss, R.; Dubourg, V.; Vanderplas, J.;
+  Passos, A.; Cournapeau, D.; Brucher, M.; Perrot, M.; and Duchesnay, E.
+\newblock 2011.
+\newblock Scikit-learn: Machine learning in {P}ython.
+\newblock {\em Journal of Machine Learning Research} 12:2825--2830.
+
+\bibitem[\protect\citeauthoryear{RC \bgroup et al\mbox.\egroup
+  }{2003}]{jama2003}
+RC, K.; P, B.; O, D.; and et~al.
+\newblock 2003.
+\newblock The epidemiology of major depressive disorder: Results from the
+  national comorbidity survey replication (ncs-r).
+\newblock {\em JAMA} 289(23):3095--3105.
+
+\bibitem[\protect\citeauthoryear{Robnik-{\v{S}}ikonja and
+  Kononenko}{2003}]{Rob2003}
+Robnik-{\v{S}}ikonja, M., and Kononenko, I.
+\newblock 2003.
+\newblock Theoretical and empirical analysis of relieff and rrelieff.
+\newblock {\em Machine Learning} 53(1):23--69.
+
+\bibitem[\protect\citeauthoryear{Smith and Cashwell}{2011}]{tpcrp2011}
+Smith, A.~L., and Cashwell, C.~S.
+\newblock 2011.
+\newblock Social distance and mental illness: Attitudes among mental health and
+  non-mental health professionals and trainees.
+\newblock {\em The Professional Counselor: Research and Practice} 1(1):13--20.
+
+\bibitem[\protect\citeauthoryear{Smith and Somorjai}{2011}]{Smith2011}
+Smith, I. C.~P., and Somorjai, R.~L.
+\newblock 2011.
+\newblock Deriving biomedical diagnostics from nmr spectroscopic data.
+\newblock {\em Biophysical Reviews} 3(1):47--52.
+
+\bibitem[\protect\citeauthoryear{Stratou \bgroup et al\mbox.\egroup
+  }{2015}]{Stratou2015}
+Stratou, G.; Scherer, S.; Gratch, J.; and Morency, L.~P.
+\newblock 2015.
+\newblock {Automatic nonverbal behavior indicators of depression and PTSD: the
+  effect of gender}.
+\newblock {\em Journal on Multimodal User Interfaces} 9(1):17--29.
+
+\bibitem[\protect\citeauthoryear{Valstar \bgroup et al\mbox.\egroup
+  }{2016a}]{Valstar2016}
+Valstar, M.; Gratch, J.; Ringeval, F.; Torres, M.~T.; Scherer, S.; and Cowie,
+  R.
+\newblock 2016a.
+\newblock {AVEC 2016 – Depression , Mood , and Emotion Recognition Workshop
+  and Challenge}.
+
+\bibitem[\protect\citeauthoryear{Valstar \bgroup et al\mbox.\egroup
+  }{2016b}]{avec2016}
+Valstar, M.~F.; Gratch, J.; Schuller, B.~W.; Ringeval, F.; Lalanne, D.; Torres,
+  M.; Scherer, S.; Stratou, G.; Cowie, R.; and Pantic, M.
+\newblock 2016b.
+\newblock {AVEC} 2016 - depression, mood, and emotion recognition workshop and
+  challenge.
+\newblock {\em CoRR} abs/1605.01600.
+
+\bibitem[\protect\citeauthoryear{Wolpert}{2001}]{bmb2001}
+Wolpert, L.
+\newblock 2001.
+\newblock Stigma of depression - a personal view.
+\newblock {\em British Medical Bulletin} 57(1):221--224.
+
+\bibitem[\protect\citeauthoryear{{World Health Organization}}{2004}]{who2004}
+{World Health Organization}.
+\newblock 2004.
+\newblock The global burden of disease: 2004 update.
+\newblock Technical report, World Health Organization.
+
+\end{thebibliography}
