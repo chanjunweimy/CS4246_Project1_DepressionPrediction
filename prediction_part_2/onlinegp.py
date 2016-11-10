@@ -279,6 +279,12 @@ depressionClassifer.fit(X_train[:,bitVec], y_bin_train)
 #print phq8
 #print "ISDEPRESSED:"
 depressedPredicts = depressionClassifer.predict(X_dev[:,bitVec])
-for depressedPredict in depressedPredicts:
-    print depressedPredict
+depressedProbas = depressionClassifer.predict_proba(X_dev[:,bitVec])
+
+for i in range(len(depressedPredicts)):
+    depressedPredict = depressedPredicts[i]
+    depressedProba_d = depressedProbas[i][0]
+    depressedProba_n = depressedProbas[i][1]
+    print str(depressedPredict) + " " + str(depressedProba_d) + " " + str(depressedProba_n)
+    
 #print y_bin_dev
