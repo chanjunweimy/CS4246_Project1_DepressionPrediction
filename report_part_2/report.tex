@@ -73,36 +73,160 @@
 	Some of our preliminary studies have shown that despite consensus among the scientific community that Support Vector Machine (SVM) models have a 
 	very high predictive accuracy specifically in speech emotion recognition \cite{Chavhan2010}, GP models have been proven to consistently outperform SVM models on the task of music emotion recognition \cite{MARKOV2013}. 
 	Nevertheless, there are no studies on the use of GP in predicting depression severity. 
-	The findings of this paper will hopefully open up new frontiers and fuel further research interest on this topic.
+	The findings of this paper will hopefully open up new frontiers and fuel further research interest on this topic. 
 	
 	\subsection{Important Requirements}
 	...
 	
 	\section{Modelling and Approach}
-	As  stated in the Future Applications subsection of Project 1, we replicate a similar application which not only offers higher accessibility, more user-friendly approach and reduced social stigma, but in addition, to give a reasonable and acceptable prediction of users' depression levels. \\	
+	Leveraging on the success of the modelling of depression prediction of PHQ-8 scores in project 1, we extend and apply the work done to solve the aforementioned problem of under-staffing. 
+	Our solution is to implement pre-screening and automate the process of the deciding if the person needs an appointment or otherwise. 
+	Moreover, our process allows prioritizing of patient's appointments by their PHQ-8 score. 
+	Henceforth, we would need to use 2 GPs: Gaussian Process Classifier (GPC) and the Gaussian Process Regressor (GPR). 
+	In this section, we will firstly describe the process that we are proposing and we will go into detail on each component of the process.
+
+	\subsection{Automation Flow} \label{af}
+	\begin{figure}[h]
+ 		\begin{center}
+		\includegraphics[width=0.48\textwidth]{automation} 
+  		\end{center}
+  		\caption{Automation Flow}
+  		\label{auto_flow} 
+ 	\end{figure}
+ 	\begin{comment}
+	@startuml
+		Patient -right-|>(Phone Interview) : seek treatment
+		(Phone Interview) -right-|> [GPC] : voice recording
+		(Set appointment) --> [GPC] : repeat process after a time t
+		[GPC] --> (Schedule appointment) : < p
+		[GPC] --> (Is patient depressed?) : >= p
+		(Is patient depressed?) ..> (Schedule appointment ) : yes
+		(Is patient depressed?) ..> (No appointment needed) : no
+	@enduml
+ 	\end{comment}
+
+	As shown in Figure \ref{auto_flow}, the model is the steps of an average user who is seeking for medical attention in the early stages of depression.
+	Prior to medical treatment, the patient is required to call up a psychiatrist to arrange an appointment time and date. 
+	At that time, a short phone interview consisting of a fixed number of unbiased questions is conducted.
+	The objective of the interview is to record the patient's voice pattern.
+	The recordings will the serve as an input for the first GP, which is a classifier that will output both the confidence interval and a binary state to whether the patient is suffering from depression or not.
+	This leads to two scenarios depending on the \emph{p}, which is the probability estimate:
 	
-	The following premises have to hold true so that the GP model planning and decision making is suitable for depression prediction:
+	\begin{enumerate}
+		\item {\textgreater= \emph{p}} \\
+		The patient's affliction diagnosable.
+		However, this is also dependent on the binary state i.e. whether the patient is depressed or not depressed. 
+		A depressed patient will be given further attention by the psychiatrist by scheduling an appointment whereas a non-depressed patient would be not be given attention by the psychiatrist.
+		\item {\textless \emph{p}} \\
+		The patient's affliction is uncertain. 
+		In this case, the patient can still schedule an appointment and is placed under continuous scrutiny until he/she can be diagnosed as depressed or vice versa.
+		This outcome is not unusual as depression is disorder can be recurrent and often in episodes \cite{bp6152013}, a prediction generated over a time span therefore produces more accurate results.\\
+	\end{enumerate}
+	
+	\begin{figure}[h]
+ 		\begin{center}
+		\includegraphics[width=0.48\textwidth]{appointment} 
+  		\end{center}
+  		\caption{Flow for Scheduling an Appointment}
+  		\label{sch_app} 
+ 	\end{figure}
+ 	\begin{comment}
+	@startuml			
+		[Voice recording] -right-|> [GPR] : input
+		[GPR] -right-|> (PHQ-8 Score) : outputs
+		(PHQ-8 Score) -right-|> [Scheduler] : feed to
+		[Scheduler] --> (Appointment) : get time and date
+		(Appointment) -left-|> (PHQ-8/Depression LBL)
+		(PHQ-8/Depression LBL) -left-|> [Update GPC/GPR] : use to
+	@enduml
+ 	\end{comment}
+
+	Continuing from Figure \ref{sch_app} after the psychiatrist has agreed for an appointment, the voice of the patient will then be used as an input for the GPR which models the PHQ-8. 
+	This is to determine the scale of depression that the patient is suffering from which also helps the psychiatrist to select an appropriate appointment date. 		
+	Similar the to the triage procedure in emergency services, a patient with a higher PHQ-8 value will be placed on the higher end of the priority list and vice versa.
+	The patient's LBL and PHQ-8 scores will be observed over time during scheduled sessions to identify the patient's improvement in his/her emotional state.
+	All the data gathered, will then be fed into the GPC and GPR until there is an improvement in the results.
+	Undiagnosable patients undergo the same process until he/she can be given a proper classification of whether he/she is depressed or not.
+	From here on, he will also undergo the process in \ref{sch_app} or is refuse an appointment if found that he/she is not depressed.
+
+	\subsection{Insights to our model}
+	\subsubsection{Gaussian Processes :}
+	In our modelling, we used 2 gaussian processes(GP) for regression and classification tasks respectively. 
+	The GP models that we use here are modelled similarly to the modelling done in project 1. 
+	GPR predicts the (Personal Health Questionaire depression scale)PHQ-8 score, while GP classifier(GPC) predicts whether the person is depressed or not. 
+	Similar to project 1, we trained GPR and GPC with data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}, with PHQ-8 and depression labels respectively. 
+	We applied the same audio signal processing techniques to the audio files as per project 1. 
+	We only used the Mel Frequency Cepstral Coefficients (MFCC) feature subset as we have seen the good theorical and experimental results the feature subset had produced. 
+	Most importantly, we make the same two assumptions so that the GP model planning and decision making is suitable for depression prediction:
 	\begin{enumerate}
 		\item Depression prediction is an event-based recognition which provides a single depression estimate over a certain amount of time. \cite{Valstar2016}
-		\item The speech signals extracted from different people suffering from depression should share some similarities and thus admissible for prediction with the Gaussian Process models. 
-		For example, diminished, prosodic and monotonous speech is often strongly correlated with depression \cite{Cummins2015}.
+		\item The speech signals extracted from different people suffering from depression should share some similarities and thus admissible for prediction with the Gaussian Process models\cite{Cummins2015}.
 	\end{enumerate}
+	Since the GP models recieve new data incrementally, we cannot use an offline GP as per project 1. 
+	Hence, we would need to tweak the GP to fit this problem. Since it is not possible for us to obtain a comprehensive dataset of all people coming to the clinic, we would then need a GP that learn dynamically, adapting to new data as it becomes avaliable. 
+	Online machine learning is a method that allows the data to be updated when it becomes available. 
+	We have noted that there are online variants of GP, namely: XXYY, XXYYX and XXHS. It is with this reasoning that we chose this particular online variant of GP. 
+	
+	\subsubsection{Phone Interview :}
+	We note that regardless of the questions asked or the circumstance, a depressed person will still exhibit signs of depression in his speech\cite{jad2008}. 
+	Hence, the questions asked are irrelevant. The questions will be presented in the proof of concept section.
+
+	\subsubsection{Decision making :}
+	The greatest advantage of using GP over other machine learning algorithms is that it provides us with a probability estimate representing confidence of the prediction. 
+	With that probability, we can decide if the predicted label can be relied on or that it cannot be trusted and needs to learn this data point. In our model, we exploit this property, unique to GPs. 
+	After the interview, GPC will predict the depression label with a confidence $p_c$ on the audio recording. 
+	As mentioned in the modelling, we define a particular probability $\rho_c$. If GPC predicts with $p_c>\rho_c$, then we can trust the predicted label and continue to decide appropriately based on the label. 
+	We determine the probability $\rho_c$ experimentally by observing the prediction quality of the labels in the training data, a summary is given in table \ref{tab:rho}.
+	
+ 	\begin{table}[h]
+ 		\begin{center}
+  			\begin{tabular}{ | r | c | c | }
+    			\hline
+			 	 \bfseries $p_c$($\%$)	& \bfseries Depression 	& \bfseries No Depression \\ \hline
+				 $[0,10)$		& - 			& - 			 \\ \hline
+				 $[10,20)$		& $100\%(1/1)$ 		& -		 \\ \hline
+				 $[20,30)$		& $100\%(4/4)$ 		& - 	 \\ \hline
+				 $[30,40)$		& 95 			& $100\%(1/1)$ 			 \\ \hline
+				 $[40,50)$		& 6.326 		& 7.548		 \\ \hline
+				 $[50,60)$		& 5.597 		& 6.690 	 \\ \hline 
+				 $[60,70)$		& $100\%(1/1)$ 			& 31 			 \\ \hline
+				 $[70,80)$		& - 		& $100\%(1/1)$		 \\ \hline
+				 $[80,90)$		& - 		& $100\%(4/4)$ 	 \\ \hline 
+				 $[90,100]$		& - 			& - 			 \\ \hline
+				 -		& 95 			& 31 			 \\ \hline
+			 \end{tabular}
+		\end{center}
+ 	\caption{Relationship between probability and accuraccy... Fix table later}
+ 	\label{tab:rho}
+ 	\end{table}
+
+	\subsubsection{Scheduling :}
+	For the cases when the person needs to be scheduled for an appointment with the psycharist, we can use GPR to determine the predicted PHQ-8 scores. 
+	With the predicted scores, we can piroritise certain higher risk individuals over the rest. 
+	Since the depression clinic is understaffed and struggling to keep up with number of patients, it is wise to piroritize the individuals who are predicted with higher PHQ-8 scores, which indicates that they are likely to be more depressed. 
+	Hence, we optimize the scheduling piroritizing people with higher predicted PHQ-8 scores.
 
 	\subsection{Qualitative Advantages}
-	As seen in our Motivation and Objective section of Project 1, good prognosis comes with early detection of depression. 
-	Although it is known that depression or rather emotions is general, are subjective and is difficult to predict, the capability of GP in retrieving the confidence intervals of the prediction and a continuous measurement over time may offset the uncertainty.
-	Accurate prediction is essential to not only licensed authorities but will also help more users to harbour acceptance towards their affliction to seek medical attention.
-	In addition, planning and decision making is also inline with our Future Applications subsection in Project 1 and thus, extending from there allows us to demonstrate the high feasibilty of our experiment.
+	The greatest advantage of using a GP is that it provides us with a probability estimate along with the predicted label. 
+	We rely on the probability to determine the reliability of the predicted label. 
+	As we are dealing with human beings, we would want to rely on the predicted label only if it is reliable. 
+	Additionally, we have read in medical literature regarding the dire consequences of misdiagnosis and/or inappropriate treatment\cite{nasrallah2015consequences,bowden2001strategies,dunner2003clinical} in the area of depression. 
+	With the probability, we can be confident of the decisions that we make, that can potentially affect a person. 
+	Assume that we have a predicted label that can be trusted, then with the label, i.e. true for depressed and false for not depressed, we can decide if the person needs to come to the clinic for an appointment. 
+	Hence, reducing the number of appointments that are made, easing the workload of the staff in the clinic. \\
 	
-	\subsection{Planning and Decision Making} \label{pdm}
-	In our previous report, we have demonstrated that we are able to predict depression with GP. 
-	With the data obtained, we will extend our experiment to demonstrate how our model can plan and make decisions accordingly. \\
-	
-	\subsection{Reinforcement Learning (RL)}
-	...
+	In addition to reducing the workload of the staff, the GP models can potentially improve as more patients go through the pre-screening process.
+	It can be the case that the GP is not confident of its prediction, then we should not trust the label that the GP had predicted. 
+	Then, we would need to determine by the means of a physical examiniation if the person in question is depressed or not and administer the appropriate treatment. 
+	Through the appointment with the psychiatrist, he can determine if the patient is depressed or not. 
+	With the ground truth, we can now train the GPs with the new data point. We are also careful to only update the GP if the data point is predicted with low confidence. \\
 
-	\subsection{Modifications and Additional Insights}
-	...
+	In our model, we do not require a trained staff to administer the phone interview. 
+	GP will determine the depression label of the person objectively, not considering the content of the interview but relying on certain depression indicators in speech\cite{nimh2015}. 
+	This allows the removal of any bias(eg. gender, racial) in pre-screening, which can potentially cause misdiagnosis. 
+	Additionally, the clinic can save skilled-manpower as they can hire anyone or can use an automated system to perform the pre-screening task. \\
+	
+	Hence, our model introduces an unbiased pre-screening process reaping the following benefits: leading to a reduction of the number of appointments, reduction of manpower required and a pre-screening process whose accuracy improves incrementally over time.
 
 	\section{Evaluation}
 	In order to test our proposed GP models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}. 
