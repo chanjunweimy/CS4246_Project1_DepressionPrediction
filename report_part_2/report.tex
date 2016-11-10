@@ -110,14 +110,14 @@
 	At that time, a short phone interview consisting of a fixed number of unbiased questions is conducted.
 	The objective of the interview is to record the patient's voice pattern.
 	The recordings will the serve as an input for the first GP, which is a classifier that will output both the confidence interval and a binary state to whether the patient is suffering from depression or not.
-	This leads to two scenarios depending on the \emph{p}, which is the probability estimate:
+	This leads to two scenarios depending on the \(\rho_c\), which is the probability estimate:
 	
 	\begin{enumerate}
-		\item {\textgreater= \emph{p}} \\
+		\item {\textgreater= \(\rho_c\)} \\
 		The patient's affliction diagnosable.
 		However, this is also dependent on the binary state i.e. whether the patient is depressed or not depressed. 
 		A depressed patient will be given further attention by the psychiatrist by scheduling an appointment whereas a non-depressed patient would be not be given attention by the psychiatrist.
-		\item {\textless \emph{p}} \\
+		\item {\textless \(\rho_c\)} \\
 		The patient's affliction is uncertain. 
 		In this case, the patient can still schedule an appointment and is placed under continuous scrutiny until he/she can be diagnosed as depressed or vice versa.
 		This outcome is not unusual as depression is disorder can be recurrent and often in episodes \cite{bp6152013}, a prediction generated over a time span therefore produces more accurate results.\\
@@ -153,7 +153,7 @@
 	\subsubsection{Gaussian Processes :}
 	In our modelling, we used 2 gaussian processes(GP) for regression and classification tasks respectively. 
 	The GP models that we use here are modelled similarly to the modelling done in project 1. 
-	GPR predicts the (Personal Health Questionaire depression scale)PHQ-8 score, while GP classifier(GPC) predicts whether the person is depressed or not. 
+	GPR predicts the (Personal Health Questionaire depression scale) PHQ-8 score, while GP classifier(GPC) predicts whether the person is depressed or not. 
 	Similar to project 1, we trained GPR and GPC with data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}, with PHQ-8 and depression labels respectively. 
 	We applied the same audio signal processing techniques to the audio files as per project 1. 
 	We only used the Mel Frequency Cepstral Coefficients (MFCC) feature subset as we have seen the good theorical and experimental results the feature subset had produced. 
