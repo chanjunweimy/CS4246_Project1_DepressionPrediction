@@ -12,7 +12,7 @@ import features.ZeroCrossing;
 import signal.WaveIO;
 import storage.ConfigFileHandler;
 
-public class Main {
+public class AudioFeatureGeneratorMain {
 	private static final String FEATURE_MFCC = "MFCC";
 	private static final String FEATURE_MS = "MS";
 	private static final String FEATURE_ENERGY = "ENERGY";
@@ -25,7 +25,7 @@ public class Main {
 	private boolean _hasEnergy = false;
 	private boolean _hasZeroCrossing = false;
 	
-	public Main() {
+	public AudioFeatureGeneratorMain() {
 	}
 	
 	public void execute(String[] args) {
@@ -204,7 +204,7 @@ public class Main {
 	}
 	
 	public static void main(String[] args) {
-		Main prog = new Main();
+		AudioFeatureGeneratorMain prog = new AudioFeatureGeneratorMain();
 		prog.execute(args);
 	}
 }
