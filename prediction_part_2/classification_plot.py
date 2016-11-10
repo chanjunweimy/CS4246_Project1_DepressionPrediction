@@ -315,8 +315,9 @@ regressors = [("KNN", None, KNeighborsRegressor(2)),
                
 ]
 
-#models_rmse = []
-#models_rmse = trainModels(regressors, models_rmse)
+models_rmse = []
+models_rmse = trainModels(regressors, models_rmse)
+models_rmse=sorted(models_rmse, key=lambda l: l[2], reverse=True)
 
 # Give some general prior distributions for model parameters
 # m.kern.lengthscale.set_prior(GPy.priors.Gamma.from_EV(1.,10.))
@@ -326,7 +327,7 @@ regressors = [("KNN", None, KNeighborsRegressor(2)),
 
 #print("AverageRacialEnsemble(MFCC)")
 #print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
-#plot_bar(models_rmse)
+plot_bar(models_rmse)
 #plot_all_Y()
 
 scoreLearner = gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())

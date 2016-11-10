@@ -97,5 +97,5 @@ def read_train_dev_files_with_binary(trainx, devx, trainy, devy, trainbiny, devb
         sys.exit(1)
     k_dev = k_x_dev
 
-    print("Data has " + str(n_feats) + " features and " + str(k_train) + " training points and " + str(k_dev) + " dev points." )
+    #print("Data has " + str(n_feats) + " features and " + str(k_train) + " training points and " + str(k_dev) + " dev points." )
     return np.array(X_train), np.array(y_train), np.array(X_dev), np.array(y_dev), np.array(y_bin_train), np.array(y_bin_dev)

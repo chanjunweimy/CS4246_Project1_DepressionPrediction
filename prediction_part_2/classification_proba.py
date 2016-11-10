@@ -296,15 +296,15 @@ def findProbabilityDistribution(expectedResults, actualResults, actualResultsPro
         #print len(normal_wrong_predictions)
         if predicted == 0 and predicted == actual:
             normal_right_predictions[normalIndex] = normal_right_predictions[normalIndex] + 1
-            depression_right_predictions[depressionIndex] = depression_right_predictions[depressionIndex] + 1
+            #depression_right_predictions[depressionIndex] = depression_right_predictions[depressionIndex] + 1
         elif predicted == 0 and predicted != actual:
             normal_wrong_predictions[normalIndex] = normal_wrong_predictions[normalIndex] + 1
-            depression_wrong_predictions[depressionIndex] = depression_wrong_predictions[depressionIndex] + 1
+            #depression_wrong_predictions[depressionIndex] = depression_wrong_predictions[depressionIndex] + 1
         elif predicted == 1 and predicted == actual:
-            normal_right_predictions[normalIndex] = normal_right_predictions[normalIndex] + 1
+            #normal_right_predictions[normalIndex] = normal_right_predictions[normalIndex] + 1
             depression_right_predictions[depressionIndex] = depression_right_predictions[depressionIndex] + 1
         elif predicted == 1 and predicted != actual:
-            normal_wrong_predictions[normalIndex] = normal_wrong_predictions[normalIndex] + 1
+            #normal_wrong_predictions[normalIndex] = normal_wrong_predictions[normalIndex] + 1
             depression_wrong_predictions[depressionIndex] = depression_wrong_predictions[depressionIndex] + 1
         else:
             print 'got bug in findProbabilityDistribution'
