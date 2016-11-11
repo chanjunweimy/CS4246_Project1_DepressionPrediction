@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import schedule.Scheduler;
 import training.AudioFeaturesGenerator;
 
 public class DepressionPreScreener {
@@ -25,10 +26,11 @@ public class DepressionPreScreener {
 		patients = classifyDepression(patients);
 		showPatientsInfo(patients);
 		
-		System.out.println(patients.size());
+		//System.out.println(patients.size());
 		patients = rejectNormalPerson(patients);
-		System.out.println(patients.size());
-
+		//System.out.println(patients.size());
+		Scheduler scheduler = new Scheduler();
+		scheduler.runScheduler(patients);
 	}
 
 	private ArrayList<DiagnosedPatient> rejectNormalPerson(ArrayList<DiagnosedPatient> patients) {

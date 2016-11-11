@@ -29,7 +29,7 @@ public class Counsellor {
 	public void printCounsellor() {
 		System.out.println(_name + ":");
 		for (TimeSlot timeSlot: _timeSlots) {
-			System.out.println(timeSlot);
+			System.out.println(timeSlot.getTimeSlotDetail());
 		}
 	}
 }

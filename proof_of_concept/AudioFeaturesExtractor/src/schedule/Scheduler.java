@@ -28,15 +28,15 @@ public class Scheduler {
 			boolean isDone = false;
 			for (int i = 0; i < size; i++) {
 				for (int j = 0; j < _counsellors.size(); j++) {
-					TimeSlot slot = _counsellors.get(i).getTimeSlots().get(j);
+					TimeSlot slot = _counsellors.get(j).getTimeSlots().get(j);
 					if (slot.isFreeSlot() && !slot.isTooShort(minutes)) {
 						LocalDateTime endTime = slot.getStart().plusMinutes(minutes);
 						TimeSlot newSlot = new TimeSlot();
 						newSlot.setStart(slot.getStart());
 						newSlot.setEnd(endTime);
 						newSlot.setPatient(patient);
-						_counsellors.get(i).addTimeSlot(newSlot);
-						_counsellors.get(i).getTimeSlots().get(j).setStart(endTime);
+						_counsellors.get(j).addTimeSlot(newSlot);
+						_counsellors.get(j).getTimeSlots().get(i).setStart(endTime);
 						isDone = true;
 						break;
 					}
@@ -55,6 +55,9 @@ public class Scheduler {
 	private void initializeScheduler() {
 		initializeCounsellors();
 		addTimeSlots();
+		for (Counsellor counsellor: _counsellors) {
+			counsellor.printCounsellor();
+		}
 	}
 
 	private void addTimeSlots() {
@@ -64,7 +67,7 @@ public class Scheduler {
 		ArrayList<String> startStrings = new ArrayList<String>();
 		ArrayList<String> endStrings = new ArrayList<String>();
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(FILE_COUNSELLOR));
+			BufferedReader br = new BufferedReader(new FileReader(FILE_DAY));
 			String line;
 			while ((line = br.readLine()) != null) {
 				line = line.trim().toLowerCase();
@@ -84,11 +87,12 @@ public class Scheduler {
 			e.printStackTrace();
 		}
 		
-		DateTimeFormatter dateTimeformatter = DateTimeFormatter.ofPattern("yyyy MM dd");
 		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		DateTimeFormatter dateTimeformatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
 		for (int i = 0; i < 5; i ++) {
 			LocalDateTime day = mon.plusDays(i);
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MM dd hh:mm");
 			String text = day.format(formatter);
 			
 			for (int j = 0; j < startStrings.size(); j++) {
@@ -109,7 +113,7 @@ public class Scheduler {
 	private LocalDateTime getNearestMonday() {
 		LocalDateTime now = LocalDateTime.now();
 		while (now.getDayOfWeek() != DayOfWeek.MONDAY) {
-			now.plusDays(1);
+			now = now.plusDays(1);
 		}
 		return now;
 	}
@@ -135,5 +139,9 @@ public class Scheduler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static void main(String[] args) {
+		new Scheduler();
 	}
 }
