@@ -101,7 +101,7 @@
 		Patient -right-|>(Phone Interview) : seek treatment
 		(Phone Interview) -right-|> [GPC] : voice recording
 		(Set appointment) --> [GPC] : repeat process after a time t
-		[GPC] --> (Schedule appointment) : < p
+		[GPC] --> (Refer to general practitioner) : < p
 		[GPC] --> (Is patient depressed?) : >= p
 		(Is patient depressed?) ..> (Schedule appointment ) : yes
 		(Is patient depressed?) ..> (No appointment needed) : no
@@ -122,10 +122,10 @@
 		\item {Confident of prediction ($p \geq \rho_c$)} \\
 		GPC is confident of its prediction, allowing us to make decision with confidence on the predicted label.
 		Then, we make the decision based on whether the patient is depressed or not depressed as predicted by GPC. 
-		A depressed patient will be given an appointment(refer to Figure \ref{sch_app}) for treatment, whereas a non-depressed patient would be informed that he/she is not required to go for an appointment.
+		A depressed patient will be given an appointment (refer to Figure \ref{sch_app}) for treatment, whereas a non-depressed patient would be informed that he/she is not required to go for an appointment.
 		\item {Not confident of prediction ($p < \rho_c$}) \\
 		GPC is not confident of its prediction, we cannot rely on the predicted label. 
-		In this case, patient can proceed with the appointment scheduling(Figure \ref{sch_app}). 
+		In this case, patient will be referred to a general practitioner for further observations (Figure \ref{sch_app}). 
 		We note that he/she would need to be diagosed by the clinician and treatment if appropriate. 
 		We would also obtain the ground truth from the diagnosis and use that to train the GPC/GPR on this datapoint. 
 	\end{enumerate}
