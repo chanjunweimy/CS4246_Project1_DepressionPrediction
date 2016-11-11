@@ -28,7 +28,7 @@ public class Scheduler {
 			boolean isDone = false;
 			for (int i = 0; i < size; i++) {
 				for (int j = 0; j < _counsellors.size(); j++) {
-					TimeSlot slot = _counsellors.get(j).getTimeSlots().get(j);
+					TimeSlot slot = _counsellors.get(j).getTimeSlots().get(i);
 					if (slot.isFreeSlot() && !slot.isTooShort(minutes)) {
 						LocalDateTime endTime = slot.getStart().plusMinutes(minutes);
 						TimeSlot newSlot = new TimeSlot();
