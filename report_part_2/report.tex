@@ -462,6 +462,293 @@
 	Our results also confirms the initial assumption that MFCC is an appropriate feature set to be used in emotion and therefore depression prediction and that GP is 
 	applicable and feasible in predicting PHQ-8 scores.
 
+	Here are the 95\% confidence interval for the predicted PHQ8 score for each subject of the test set.
+
+	\begin{figure}[h]
+ 		\begin{center}
+		\includegraphics[width=0.5\textwidth]{Confidence}
+  		\end{center}
+  		\caption{Confidence interval for each subject of the test set}
+  		\label{Confidence}
+ 	\end{figure}
+
+
+
+	\subsection{Methodology to investigate depression through voice}
+    \begin{enumerate}
+		\item Using the same application to record sound – Example: Call Recorder
+		\item Ask the questions to the person during recording. The answer gathered is not important, as long as we could collect the voice. The voice recorded is preferably over 1 minute.
+        \begin{enumerate}
+            \item Ask for the person’s personal contact, such as email, or phone number, or address.
+            \item Asking the person’s availability to come to the clinic, the date and time, or period of time
+            \item Asking the person’s individual health screening history: Is this the first time you find a psychologist to talk with? Do you have any medical records in the past?
+            \item If the previous questions doesn’t let the person’s voice recording long enough, the agent might ask the person, is he/she is willing to help out in a questionnaire – (Can even collaborate with some questionnaires)
+        \end{enumerate}
+        \item It is not necessary to ask all the questions above as long as the patient’s voice recording can pass about a minute for each session.
+        \item Avoid saying something like, “Cheer up!”, “Lighten up!” to provide help, or giving suggestions like “Take a hot bath. That’s what I always do when I upset!” to the patients. Each phone call should obey the principle of “Ask for information and NOT providing unprofessional guidance”. \cite{PCS16}
+        \item End with, thank you Sir/Ms for your time. We will contact you within 3 working days.
+        \item Cut the voice recordings of the patient out from the whole phone call recordings manually and pass it to the GP model for processing.
+	\end{enumerate}
+
+
+
+    \subsection{Works done on Depression Classification}
+    \begin{enumerate}
+        \item I extended the result of Depression Regression to Depression Classification.
+        \item I tried using the predicted score as the feature but obtained poor result:
+
+        \begin{figure}[h]
+ 		    \begin{center}
+		    \includegraphics[width=0.5\textwidth]{poor_results}
+  		    \end{center}
+  		    \caption{First results of the classification}
+  		    \label{poor_results}
+ 	    \end{figure}
+
+        \item So I changed back to speech feature and obtained a very good result by using GP Dot Product!
+
+        \begin{figure}[h]
+ 		    \begin{center}
+		    \includegraphics[width=0.5\textwidth]{gp_dot_product}
+  		    \end{center}
+  		    \caption{Results of the classification with the GP Dot Product}
+  		    \label{gp_dot_product}
+ 	    \end{figure}
+
+ 	    \item The GP-dot product obtains a depression F1 score of 0.67 whereas the normal F1 score of 0.92 which beats DeapAudioNet 0.52 for depression and 0.70 for normal. It also beats the baseline which has 0.41 for depression and 0.58 for normal
+        \item Other than the graph, the following table is generated:
+
+        \begin{table}[h]
+            \begin{center}
+                \begin{tabular}{ | r | c | c | c | c | }
+                 \hline
+                                                    & \bfseries F1	& \bfseries Precision 	& \bfseries Recall      & \bfseries Accuracy \\ \hline
+                 Gaussian Process (Dot-Product)		& 0.67(0.92) 	& 0.57(0.96)            & 0.8(0.88)			    & 0.87 \\ \hline
+                 DepAudioNet	                    & 0.52(0.7) 	& 0.35(1.0)	    		& 1.0(0.54)             & -  \\ \hline
+                 BaseLine                       	& 0.41(0.58) 	& 0.27(0.94)			& 0.89(0.42)            & -  \\ \hline
+                 \end{tabular}
+            \end{center}
+        \caption{F1, Precision, Recall and Accuracy for each model}
+        \label{summary_table}
+        \end{table}
+    \end{enumerate}
+
+
+	\begin{table}[h!]
+		\begin{center}
+			\begin{tabular}{ | r | c | c | }
+			\hline
+			\multirow{2}{*}{\bfseries Probability Range}	& \multicolumn{2}{c|}{\bfseries Accuracy} \\\cline{3-4}
+									&						& \bfseries Depression      & \bfseries Normal      \\ \hline
+			[0% , 10%) 	                                    & No Sample                 & No Sample             \\ \hline
+			[10% , 20%)            				            & 100\% (1 out of 1)		& No Sample 		    \\ \hline
+            [20% , 30%)	                                    & 100\% (4 out of 4)	    & No Sample             \\ \hline
+            [30% , 40%)	                                    & 84.21\% (16 out of 19)	& 100\% (1 out of 1)    \\ \hline
+            [40% , 50%)	                                    & 80\% (44 out of 55)	    & 69\% (3 out of 5)     \\ \hline
+            [50% , 60%)	                                    & 60\% (3 out of 5)	        & 80\% (44 out of 55)   \\ \hline
+            [60% , 70%)	                                    & 100\% (1 out of 1)	    & 84.21\% (16 out of 19)\\ \hline
+            [70% , 80%)	                                    & No Sample	                & 100\% (1 out of 1)    \\ \hline
+            [80%, 90%)	                                    & No Sample	                & 100\% (4 out of 4)    \\ \hline
+            [90%, 100%)	                                    & No Sample	                & No Sample             \\ \hline
+            100\%	                                        & No Sample                 & No Sample             \\ \hline
+            NAN	                                            & 90\% (9 out of 10)	    & 90\% (9 out of 10)    \\ \hline
+			\end{tabular}
+		\end{center}
+		\caption{Correlationship between Probabilities and Accuracy of classification}
+		\label{summary_table}
+	\end{table}
+
+    According to the table, we could certainly said that the interval [30%, 70%] is certainly an unsure area, and needs more investigation, though we do not know if the area is larger.
+    The resulting predicted result when getting a NAN is always not depressed (0), which might not be the case. One possible explanation the model keeps choosing the non-depressed when it is NAN, so it depends on the luck, when the model gets NAN, we probably needs to explore more.
+    How to balance between Exploration and Exploitation?
+
+    \subsection{Performance Metrics}
+    We are using F1 score to be the performance metrics of the depression classification task, so in the information retrieval world, there is something call precision and something call recall.
+    Precision is among the result I retrieved, how accurate it is. ( correct retrieved result / total retrieved) High Precision would show that the model retrieves accurate result.
+    Recall is among the result I retrieved, how relevant it is. ( correct retrieved result / total relevant) High Recall would show that the model retrieves result which is highly relevant to the query.
+    So for our case, in order to calculate the precision and recall of depression classification, we first look at the following table:
+
+	\begin{table}[h!]
+		\begin{center}
+			\begin{tabular}{ | r | c | c | }
+            \hline
+                                            & \bfseries True - Well predicted	& \bfseries False - Wrongly predicted    \\ \hline
+            Depressed? Yes (Positive)		& True Positive (tp) 	            & False Positive (fp)                    \\ \hline
+            Depressed? No (Negative)	    & True Negative (tn) 	            & False Negative (fn)	    		     \\ \hline
+            \end{tabular}
+		\end{center}
+		\caption{Precision and Recall for Depression Classification}
+		\label{summary_table}
+	\end{table}
+
+    Imagine we are retrieving a list of “Is his depressed?” list, the precision would be tp / (tp + fp) and so this is the formula for precision(P) is:
+    \begin{equation}\label{eq:prediction}
+  	\text{P} = \frac{tp}{tp + fp}
+ 	\end{equation}
+
+ 	Then what are the relevant list? The one who is correctly diagnosed as depressed and the one who is falsely diagnosed as not depressed are all relevant to depression and thus the formula for recall (R) would be:
+    \begin{equation}\label{eq:recall}
+  	\text{R} = \frac{tp}{tp + fn}
+ 	\end{equation}
+
+ 	Having a high precision and low recall or low precision and high recall are not good, like if you have no relevant document, then recall is infinite.
+    If nothing is retrieved, precision is also infinite, so we need something to strike for a balance, and F1 is the balance between precision and recall. It is defined as the harmonic mean of precision and recall, and thus the formula for F1 would be:
+    \begin{equation}\label{eq:balance}
+  	\text{F1} = \frac{1}{\frac{1}{P} + \frac{1}{R}} = \frac{PR}{P + R}
+ 	\end{equation}
+
+    Moreover, we also added accuracy, which is every result that is predicted correctly / total result:
+    \begin{equation}\label{eq:accuracy}
+  	\text{Accuracy} = \frac{tp + tn}{tp + fp + tn + fn}
+ 	\end{equation}
+
+    \begin{figure}[h]
+        \begin{center}
+        \includegraphics[width=0.5\textwidth]{accu_results}
+        \end{center}
+        \caption{Results of the accuracy}
+        \label{accu_results}
+    \end{figure}
+
+
+
+	\subsection{Methodology to investigate depression through voice}
+    \begin{enumerate}
+		\item Using the same application to record sound – Example: Call Recorder
+		\item Ask the questions to the person during recording. The answer gathered is not important, as long as we could collect the voice. The voice recorded is preferably over 1 minute.
+        \begin{enumerate}
+            \item Ask for the person’s personal contact, such as email, or phone number, or address.
+            \item Asking the person’s availability to come to the clinic, the date and time, or period of time
+            \item Asking the person’s individual health screening history: Is this the first time you find a psychologist to talk with? Do you have any medical records in the past?
+            \item If the previous questions doesn’t let the person’s voice recording long enough, the agent might ask the person, is he/she is willing to help out in a questionnaire – (Can even collaborate with some questionnaires)
+        \end{enumerate}
+        \item It is not necessary to ask all the questions above as long as the patient’s voice recording can pass about a minute for each session.
+        \item Avoid saying something like, “Cheer up!”, “Lighten up!” to provide help, or giving suggestions like “Take a hot bath. That’s what I always do when I upset!” to the patients. Each phone call should obey the principle of “Ask for information and NOT providing unprofessional guidance”. \cite{PCS16}
+        \item End with, thank you Sir/Ms for your time. We will contact you within 3 working days.
+        \item Cut the voice recordings of the patient out from the whole phone call recordings manually and pass it to the GP model for processing.
+	\end{enumerate}
+
+
+
+    \subsection{Works done on Depression Classification}
+    \begin{enumerate}
+        \item I extended the result of Depression Regression to Depression Classification.
+        \item I tried using the predicted score as the feature but obtained poor result:
+
+        \begin{figure}[h]
+ 		    \begin{center}
+		    \includegraphics[width=0.5\textwidth]{poor_results}
+  		    \end{center}
+  		    \caption{First results of the classification}
+  		    \label{poor_results}
+ 	    \end{figure}
+
+        \item So I changed back to speech feature and obtained a very good result by using GP Dot Product!
+
+        \begin{figure}[h]
+ 		    \begin{center}
+		    \includegraphics[width=0.5\textwidth]{gp_dot_product}
+  		    \end{center}
+  		    \caption{Results of the classification with the GP Dot Product}
+  		    \label{gp_dot_product}
+ 	    \end{figure}
+
+ 	    \item The GP-dot product obtains a depression F1 score of 0.67 whereas the normal F1 score of 0.92 which beats DeapAudioNet 0.52 for depression and 0.70 for normal. It also beats the baseline which has 0.41 for depression and 0.58 for normal
+        \item Other than the graph, the following table is generated:
+
+        \begin{table}[h]
+            \begin{center}
+                \begin{tabular}{ | r | c | c | c | c | }
+                 \hline
+                                                    & \bfseries F1	& \bfseries Precision 	& \bfseries Recall      & \bfseries Accuracy \\ \hline
+                 Gaussian Process (Dot-Product)		& 0.67(0.92) 	& 0.57(0.96)            & 0.8(0.88)			    & 0.87 \\ \hline
+                 DepAudioNet	                    & 0.52(0.7) 	& 0.35(1.0)	    		& 1.0(0.54)             & -  \\ \hline
+                 BaseLine                       	& 0.41(0.58) 	& 0.27(0.94)			& 0.89(0.42)            & -  \\ \hline
+                 \end{tabular}
+            \end{center}
+        \caption{F1, Precision, Recall and Accuracy for each model}
+        \label{summary_table}
+        \end{table}
+    \end{enumerate}
+
+
+	\begin{table}[h!]
+		\begin{center}
+			\begin{tabular}{ | r | c | c | }
+			\hline
+			\multirow{2}{*}{\bfseries Probability Range}	& \multicolumn{2}{c|}{\bfseries Accuracy} \\\cline{3-4}
+									&						& \bfseries Depression      & \bfseries Normal      \\ \hline
+			[0% , 10%) 	                                    & No Sample                 & No Sample             \\ \hline
+			[10% , 20%)            				            & 100\% (1 out of 1)		& No Sample 		    \\ \hline
+            [20% , 30%)	                                    & 100\% (4 out of 4)	    & No Sample             \\ \hline
+            [30% , 40%)	                                    & 84.21\% (16 out of 19)	& 100\% (1 out of 1)    \\ \hline
+            [40% , 50%)	                                    & 80\% (44 out of 55)	    & 69\% (3 out of 5)     \\ \hline
+            [50% , 60%)	                                    & 60\% (3 out of 5)	        & 80\% (44 out of 55)   \\ \hline
+            [60% , 70%)	                                    & 100\% (1 out of 1)	    & 84.21\% (16 out of 19)\\ \hline
+            [70% , 80%)	                                    & No Sample	                & 100\% (1 out of 1)    \\ \hline
+            [80%, 90%)	                                    & No Sample	                & 100\% (4 out of 4)    \\ \hline
+            [90%, 100%)	                                    & No Sample	                & No Sample             \\ \hline
+            100\%	                                        & No Sample                 & No Sample             \\ \hline
+            NAN	                                            & 90\% (9 out of 10)	    & 90\% (9 out of 10)    \\ \hline
+			\end{tabular}
+		\end{center}
+		\caption{Correlationship between Probabilities and Accuracy of classification}
+		\label{summary_table}
+	\end{table}
+
+    According to the table, we could certainly said that the interval [30%, 70%] is certainly an unsure area, and needs more investigation, though we do not know if the area is larger.
+    The resulting predicted result when getting a NAN is always not depressed (0), which might not be the case. One possible explanation the model keeps choosing the non-depressed when it is NAN, so it depends on the luck, when the model gets NAN, we probably needs to explore more.
+    How to balance between Exploration and Exploitation?
+
+    \subsection{Performance Metrics}
+    We are using F1 score to be the performance metrics of the depression classification task, so in the information retrieval world, there is something call precision and something call recall.
+    Precision is among the result I retrieved, how accurate it is. ( correct retrieved result / total retrieved) High Precision would show that the model retrieves accurate result.
+    Recall is among the result I retrieved, how relevant it is. ( correct retrieved result / total relevant) High Recall would show that the model retrieves result which is highly relevant to the query.
+    So for our case, in order to calculate the precision and recall of depression classification, we first look at the following table:
+
+	\begin{table}[h!]
+		\begin{center}
+			\begin{tabular}{ | r | c | c | }
+            \hline
+                                            & \bfseries True - Well predicted	& \bfseries False - Wrongly predicted    \\ \hline
+            Depressed? Yes (Positive)		& True Positive (tp) 	            & False Positive (fp)                    \\ \hline
+            Depressed? No (Negative)	    & True Negative (tn) 	            & False Negative (fn)	    		     \\ \hline
+            \end{tabular}
+		\end{center}
+		\caption{Precision and Recall for Depression Classification}
+		\label{summary_table}
+	\end{table}
+
+    Imagine we are retrieving a list of “Is his depressed?” list, the precision would be tp / (tp + fp) and so this is the formula for precision(P) is:
+    \begin{equation}\label{eq:prediction}
+  	\text{P} = \frac{tp}{tp + fp}
+ 	\end{equation}
+
+ 	Then what are the relevant list? The one who is correctly diagnosed as depressed and the one who is falsely diagnosed as not depressed are all relevant to depression and thus the formula for recall (R) would be:
+    \begin{equation}\label{eq:recall}
+  	\text{R} = \frac{tp}{tp + fn}
+ 	\end{equation}
+
+ 	Having a high precision and low recall or low precision and high recall are not good, like if you have no relevant document, then recall is infinite.
+    If nothing is retrieved, precision is also infinite, so we need something to strike for a balance, and F1 is the balance between precision and recall. It is defined as the harmonic mean of precision and recall, and thus the formula for F1 would be:
+    \begin{equation}\label{eq:balance}
+  	\text{F1} = \frac{1}{\frac{1}{P} + \frac{1}{R}} = \frac{PR}{P + R}
+ 	\end{equation}
+
+    Moreover, we also added accuracy, which is every result that is predicted correctly / total result:
+    \begin{equation}\label{eq:accuracy}
+  	\text{Accuracy} = \frac{tp + tn}{tp + fp + tn + fn}
+ 	\end{equation}
+
+    \begin{figure}[h]
+        \begin{center}
+        \includegraphics[width=0.5\textwidth]{accu_results}
+        \end{center}
+        \caption{Results of the accuracy}
+        \label{accu_results}
+    \end{figure}
+
+
 	\section{Conclusion}	
 	Our work has succesfully shown that GP is a good model for this problem and can predict PHQ-8 better than state-of-the-art machine learning models. 
 	In addition to being on par or better at prediction, GP can inherently provide an estimate of prediction uncertainty. 
