@@ -44,6 +44,7 @@
 \setlength{\pdfpagewidth}{8.5in}
 \setlength{\pdfpageheight}{11in}
 
+\newsavebox\myv
 
 \title{
 	CS4246 AI Planning and Decision Making - Project 2 \\
@@ -268,21 +269,23 @@ The greatest advantage of using a GP is that it provides us with a probability e
  	 \end{figure}
 
         \begin{table}[h!]
-		\begin{adjustbox}{width=0.53\textwidth,center}
+            	\resizebox {0.45\textwidth }{!}{ %
                 \begin{tabular}{ | r | c | c | c | c | }
                  \hline
                                                     & \bfseries F1	& \bfseries Precision 	& \bfseries Recall      & \bfseries Accuracy \\ \hline
-                 Gaussian Process (Dot-Product)		& 0.67(0.92) 	& 0.57(0.96)            & 0.8(0.88)			    & 0.87 \\ \hline
+                 GPC		& 0.67(0.92) 	& 0.57(0.96)            & 0.8(0.88)			    & 0.87 \\ \hline
                  DepAudioNet	                    & 0.52(0.7) 	& 0.35(1.0)	    		& 1.0(0.54)             & -  \\ \hline
                  BaseLine                       	& 0.41(0.58) 	& 0.27(0.94)			& 0.89(0.42)            & -  \\ \hline
-                 \end{tabular}%}
-       		 \end{adjustbox}
+                 \end{tabular}}
         \caption{Our GPC beats the related study (DepAudioNet) and the baseline.}
         \label{table:comparisionOfGPModelWithOthers}
         \end{table}
 
         As shown in graph \ref{figure:gp_dot_product}, GPC (with Dot-Product Kernel) yields the best result compared to other existing machine learning methods. 
         In summary, the table \ref{table:comparisionOfGPModelWithOthers} contrasts the fact that our GPC beats the related study (DepAudioNet) and the baseline.
+        F1 score is chosen to be the performance metrics of the depression classification task to provide a meaningful and consistent comparison to the baseline 
+        provided and the related study. It is the harmonic mean of precision and recall. 
+        In addition, among the retrieved result, precision is the accuracy of it and recall is the relevance of it.
 
 	\subsection{A busy doctor}
 	In a clinic, there is only one doctor who is called Antoine and he is very busy. 
@@ -320,7 +323,7 @@ The greatest advantage of using a GP is that it provides us with a probability e
         \item It is not necessary to ask all the questions above as long as the length of the phone interview is around 1 minute.
         \item Avoid saying something like, "Cheer up!", "Lighten up!" to provide help, or giving suggestions like 
         		"Take a hot bath. That's what I always do when I upset!" to the patients. 
-        		Each phone call should obey the principle of "Ask for information and NOT providing unprofessional guidance". \cite{PCS16}
+        		Each phone call should obey the principle of "Ask for information and NOT providing unprofessional guidance". \cite{PsychCentral2015}
         \item End with, thank you Sir/Ms for your time. We will contact you within 3 working days.
         \item Extracting the speeches of the person from recording manually and pass it to the agent.
 	\end{enumerate}
@@ -330,39 +333,6 @@ The greatest advantage of using a GP is that it provides us with a probability e
 	She ran the autonomous agent to process them at night to produce a schedule for Antoine.
 	The agent first extracts the audio features from the speeches.
 	MFCC is the audio feature that is extracted by the agent. They are passed to the GPC to classify if the person is depressed. 
-	As the GPC is implemented using Python, the agent would execute the GPC by executing these lines of codes:
-
-	\begin{lstlisting}
-	private ArrayList<DiagnosedPatient> classifyDepression(ArrayList<DiagnosedPatient> patients) {
-		Process process;
-		try {
-			String command = "python onlinegp.py " + AudioFeaturesGenerator.EMOTION_DCAPSWOZ_ALL;
-			//System.out.println(command);
-			process = Runtime.getRuntime().exec(command);
-			InputStream is = process.getInputStream();
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
-			String line;
-			
-			int i = 0;
-			while ((line = br.readLine()) != null) {
-				  String[] tokens = line.split(" ");
-				  int depressedNum = Integer.parseInt(tokens[0]);
-				  boolean isDepressed = depressedNum == 1;
-				  patients.get(i).setIsDepressed(isDepressed);
-				  patients.get(i).setGpConfidence(Double.parseDouble(tokens[depressedNum + 1])); 
-				  i++;
-			}
-			br.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return patients;
-	}
-	
-	\end{lstlisting}
-
 	Then, GPC will reply its predition on the person with the confidence level.
 	The agent will trust the GPC if the person is predicted as not depressed with the confidence level \(\geq\) 70,
 	and these persons will be suggested to be rejected and will not be scheduled a consultation as the agent assumes Antoine is very busy and 
@@ -398,6 +368,8 @@ The greatest advantage of using a GP is that it provides us with a probability e
 	Free: 18-11-2016 (Fri) 08:00 18-11-2016 (Fri) 12:00
 	Free: 18-11-2016 (Fri) 13:00 18-11-2016 (Fri) 17:00
 	\end{Verbatim}
+
+	
 	
 	Note that, in the future if Antoine has a few new partners, a new scheduling algorithm is needed to ensure that everyone's work will be distributed clearly.
 	It is not hard to observe that it is a Constraint Satisfaction Problem (CSP), and thus we suggest genetic algorithm for this case, 
@@ -415,11 +387,9 @@ The greatest advantage of using a GP is that it provides us with a probability e
 	depression prediction.
 	
 	\section{Further Work}
-	For this experiment, we only used machine learning algorithms with their default parameters. 
-	An aspect that deserves further exploration is to perform automatic hyper-parameter optimization
-	across all the machine learning algorithms to fine-tune each model's performance. 
-	In particular, we can try Hyperopt-sklearn \cite{Komer2014HyperoptsklearnAH} or GP based hyper-parameter tuner. 
-	We opine that with hyper-parameter tuning, we can predict PHQ-8 scores better and can have a more objective comparison of the different learning algorithms.
+	The framework that we suggested not only can be used to help doctors for the diagnosis of MDD, but also extendable to other depression-related 
+	diseases such as Bipolar disorder and PDD or even other mental illnesses that result in subtle differences in voice acoustics. 
+
 	
 	\section{Contributions}
 	\begin{itemize}
