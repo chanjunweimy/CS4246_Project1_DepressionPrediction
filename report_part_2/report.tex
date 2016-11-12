@@ -32,7 +32,8 @@
   stringstyle=\color{mauve},
   breaklines=true,
   breakatwhitespace=true,
-  tabsize=3
+  tabsize=3,
+  linewidth=0.5\textwidth
 }
 
 \DeclareUnicodeCharacter{FB01}{fi}
@@ -282,7 +283,7 @@
  	    \end{figure}
 
  	    
-        \begin{table}[h]
+        \begin{table}[h!]
             \begin{center}
                 \begin{tabular}{ | r | c | c | c | c | }
                  \hline
@@ -298,52 +299,6 @@
 
         As shown in graph \ref{figure:gp_dot_product}, GPC (with Dot-Product Kernel) yields the best result compared to other existing machine learning methods. 
         In summary, the table \ref{table:comparisionOfGPModelWithOthers} contrasts the fact that our GPC beats the related study (DepAudioNet) and the baseline.
-
-	 \subsubsection{Performance Metrics}
-       F1 score is chosen to be the performance metrics of the depression classification task to provide a meaningful and consistent comparison to the baseline 
-       provided and the related study. To understand more about F1,  we need to understand about precision and recall. 
-       We will use the terminologies defined in the table \ref{table:precision_recall}.  
-       
-    
-	\begin{table}[h!]
-		\begin{center}
-			\begin{tabular}{ | r | c | c | }
-            \hline
-                                            & \bfseries True - Well predicted	& \bfseries False - Wrongly predicted    \\ \hline
-            Depressed? Yes (Positive)		& True Positive (tp) 	            & False Positive (fp)                    \\ \hline
-            Depressed? No (Negative)	    & True Negative (tn) 	            & False Negative (fn)	    		     \\ \hline
-            \end{tabular}
-		\end{center}
-		\caption{Precision and Recall for Depression Classification}
-		\label{table:precision_recall}
-	\end{table}
-	
-	Firstly, precision is among the result I retrieved, how accurate it is.
-	In our context, precision is like how accurate is our "Is him depressed?" list, and it is defined as:
-     \begin{equation}\label{eq:prediction}
-  		\text{P} = \frac{tp}{tp + fp}
-	\end{equation}
-     High Precision would show that the model retrieves accurate result.\\
-
-	Recall is among the result I retrieved, how relevant it is. 
-	In our context, The one who is correctly diagnosed as depressed and the one who is falsely diagnosed as not depressed are all relevant to depression,
-	thus recall is defined as:
-	\begin{equation}\label{eq:recall}
-  		\text{R} = \frac{tp}{tp + fn}
- 	\end{equation}
-	High Recall would show that the model retrieves result which is highly relevant to the query.
-
- 	Having a high precision and low recall or low precision and high recall are not good, like if you have no relevant document, then recall is infinite.
-     If nothing is retrieved, precision is also infinite, so we need something to strike for a balance, 
-     and F1 is the balance between precision and recall. It is defined as the harmonic mean of precision and recall, and thus the formula for F1 would be:
-     \begin{equation}\label{eq:balance}
-  		\text{F1} = \frac{1}{\frac{1}{P} + \frac{1}{R}} = \frac{PR}{P + R}
- 	\end{equation}
-
-     Moreover, we also added accuracy, which is every result that is predicted correctly / total result:
-     \begin{equation}\label{eq:accuracy}
-  		\text{Accuracy} = \frac{tp + tn}{tp + fp + tn + fn}
- 	\end{equation}
 
 	\subsection{A busy doctor}
 	In a clinic, there is only one doctor who is called Antoine and he is very busy. 
@@ -442,7 +397,7 @@
 	The scheduling is just done using greedy algorithm as the agent is designed to be used by Antoine only.
 
 	After the scheduling, a schedule of Antoine for the next week is generated and it is looked like this:
-	\begin{verbatim}
+	\begin{verbatim}[width=0.5\textwidth]
 	Antoine:
 	Miguel : 14-11-2016 (Mon) 08:00 14-11-2016 (Mon) 09:00
 	Davi : 14-11-2016 (Mon) 09:00 14-11-2016 (Mon) 10:30
