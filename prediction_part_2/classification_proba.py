@@ -1,4 +1,4 @@
-from math import sqrt
+from math import sqrt, isnan
 from sklearn import gaussian_process as gp
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVR
@@ -26,7 +26,7 @@ import GPy.models as models
 import time
 from math import sqrt,ceil
 import GPy
-#import GPyOpt
+import GPyOpt
 import matplotlib.mlab as mlab
 import math
 import matplotlib.pyplot as plt
@@ -80,7 +80,6 @@ def convertToBitVec(featSel):
     return wrapper
 
 mfccIntVec = [1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-#mfccIntVec = 4*[1]+3*[0]
 
 def returnMask(intVec):
     def wrapper(X,y):
@@ -171,25 +170,15 @@ def getClassifieresPerformancesByDefinedX(classifiers, eaMode, models_f1, models
     
 def getClassifierPerformance(model, name, eaMode, X, Y, X_star):
     model.fit(X, Y)
-    #pt_f1, pt_precision, pt_recall, pt_accuracy = classifyForF1(model, X, y_bin_train, 1)
-    pp_f1, pp_precision, pp_recall, pp_accuracy = classifyForF1(model, X_star, y_bin_dev, 1)
-    #nt_f1, nt_precision, nt_recall, nt_accuracy = classifyForF1(model, X, y_bin_train, 0)
-    np_f1, np_precision, np_recall, np_accuracy = classifyForF1(model, X_star, y_bin_dev,0)
+    #pt_f1, pt_precision, pt_recall, pt_accuracy = classifyForF1(model, X, 1)
+    pp_f1, pp_precision, pp_recall, pp_accuracy = classifyForF1(model, X_star, 1)
+    #nt_f1, nt_precision, nt_recall, nt_accuracy = classifyForF1(model, X, 0)
+    np_f1, np_precision, np_recall, np_accuracy = classifyForF1(model, X_star, 0)
     f1 = [name + '(' + eaMode + ')', pp_f1, np_f1]
     performance = [name + '(' + eaMode + ')', pp_f1, pp_precision, pp_recall, pp_accuracy, np_f1, np_precision, np_recall, np_accuracy]
     return f1, performance
 
-def getClassifierTrainingPerformance(model, name, eaMode, X, Y, X_star):
-    model.fit(X, Y)
-    #pt_f1, pt_precision, pt_recall, pt_accuracy = classifyForF1(model, X, 1)
-    pp_f1, pp_precision, pp_recall, pp_accuracy = classifyForF1(model, X, Y, 1)
-    #nt_f1, nt_precision, nt_recall, nt_accuracy = classifyForF1(model, X, 0)
-    np_f1, np_precision, np_recall, np_accuracy = classifyForF1(model, X, Y, 0)
-    f1 = [name + '(' + eaMode + ')', pp_f1, np_f1]
-    performance = [name + '(' + eaMode + ')', pp_f1, pp_precision, pp_recall, pp_accuracy, np_f1, np_precision, np_recall, np_accuracy]
-    return f1, performance
-    
-def classifyForF1(classifier, X, Y, positive_bit):
+def classifyForF1(classifier, X, positive_bit):
     #depressionClassifer = gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct())
     #classifier.fit(newTrainX, y_bin_train)
     classifiedResult = classifier.predict(X)
@@ -203,20 +192,9 @@ def classifyForF1(classifier, X, Y, positive_bit):
     tn = 0.0
     fn = 0.0
 
-    if len(Y) != len(classifiedResult):
-        print 'error'
-        sys.exit(-1)
-    
-    for i in range(len(Y)):
-        actual = Y[i]
+    for i in range(len(y_bin_dev)):
+        actual = y_bin_dev[i]
         predicted = classifiedResult[i]
-        
-        #if predicted != actual:
-        #    print 'not same'
-        #    print predicted
-        #    print actual
-        #    print positive_bit
-        #    sys.exit(-1)
         
         if actual == positive_bit and predicted == actual:
             tp = tp + 1.0
@@ -239,8 +217,8 @@ def classifyForF1(classifier, X, Y, positive_bit):
     if (tp + fp) != 0:
         precision = tp / (tp + fp)
     
-    if len(Y) != 0:
-        accuracy = (tp + tn) / len(Y)
+    if len(y_bin_dev) != 0:
+        accuracy = (tp + tn) / len(y_bin_dev)
     
     if (tp + fn) != 0:
         recall = tp / (tp + fn)
@@ -277,6 +255,80 @@ def printPerformances(models_performances):
         '),Precision: ' + str(pp_precision) + '(' + str(np_precision) + 
         '),Recall: ' + str(pp_recall) + '(' + str(np_recall) + 
         '),Accuracy: '  + str(pp_accuracy) + '(' + str(np_accuracy) + ')') 
+        
+def findProbabilityDistribution(expectedResults, actualResults, actualResultsProba):
+    depression_right_predictions = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    depression_wrong_predictions = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    normal_right_predictions = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    normal_wrong_predictions = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    if len(expectedResults) != len(actualResults):
+        print 'error'
+        sys.exit(-1)
+    
+    for i in range(len(expectedResults)):
+        predicted = actualResults[i]
+        actual = expectedResults[i]
+        
+        if predicted != actual:
+            print "audio" + str(i) + ": False, predicted: " + str(predicted) + " but expected: " + str(actual) + " with confidence of " + str(actualResultsProba[i][1])
+        
+        normalIndex = 11
+        depressionIndex = 11
+        if isnan(actualResultsProba[i][0]) == False:
+            normalProba = actualResultsProba[i][0] * 10
+            normalIndex = int(normalProba)
+        #else:
+            #print predicted
+            #print actual == predicted
+            #print actualResultsProba[i]
+        
+        if isnan(actualResultsProba[i][1]) == False:
+            depressionProba = actualResultsProba[i][1] * 10
+            depressionIndex = int(depressionProba)
+        
+        #print 'round ' + str(i) + ':'
+        #print normalIndex
+        #print depressionIndex
+        #print len(depression_right_predictions)
+        #print len(depression_wrong_predictions)
+        #print len(normal_right_predictions)
+        #print len(normal_wrong_predictions)
+        if predicted == 0 and predicted == actual:
+            normal_right_predictions[normalIndex] = normal_right_predictions[normalIndex] + 1
+            depression_right_predictions[depressionIndex] = depression_right_predictions[depressionIndex] + 1
+        elif predicted == 0 and predicted != actual:
+            normal_wrong_predictions[normalIndex] = normal_wrong_predictions[normalIndex] + 1
+            depression_wrong_predictions[depressionIndex] = depression_wrong_predictions[depressionIndex] + 1
+        elif predicted == 1 and predicted == actual:
+            normal_right_predictions[normalIndex] = normal_right_predictions[normalIndex] + 1
+            depression_right_predictions[depressionIndex] = depression_right_predictions[depressionIndex] + 1
+        elif predicted == 1 and predicted != actual:
+            normal_wrong_predictions[normalIndex] = normal_wrong_predictions[normalIndex] + 1
+            depression_wrong_predictions[depressionIndex] = depression_wrong_predictions[depressionIndex] + 1
+        else:
+            print 'got bug in findProbabilityDistribution'
+    
+    print 'Depression: '
+    printProbabilityDistribution(depression_right_predictions, depression_wrong_predictions)
+    
+    print 'Normal: '
+    printProbabilityDistribution(normal_right_predictions, normal_wrong_predictions)
+
+def printProbabilityDistribution(rights, wrongs):
+    for i in range(len(rights) - 2):
+        accuracy = calculateAccuracy(rights[i], wrongs[i])
+        print 'Accuracy for ' + str(i * 10) + ' ~ ' + str((i + 1) * 10) + " is: " + str(accuracy) 
+
+    print 'Accuracy for 100% is: ' + str(calculateAccuracy(rights[10], wrongs[10]))
+    
+    print 'Accuracy for NAN is: ' + str(calculateAccuracy(rights[11], wrongs[11]))
+    
+def calculateAccuracy(right, wrong):
+    accuracy = '-1(No sample)' 
+    if (right + wrong) != 0:
+        accuracy = str(float(right) / float(right + wrong)) + '(' + str(right) + ' out of ' + str(right + wrong) + ')'
+    return accuracy
     
 regressors = [("KNN", None, KNeighborsRegressor(2)),
                ("Linear SVR", None, SVR(kernel="linear")),
@@ -329,85 +381,18 @@ regressors = [("KNN", None, KNeighborsRegressor(2)),
 #plot_bar(models_rmse)
 #plot_all_Y()
 
-scoreLearner = gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())
+depressionClassifer = gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct())
+
 mode = "MFCC"
 bitVec = bitVecs[mode]
-scoreLearner.fit(X_train[:,bitVec], y_train[:])
-tempTrainY, stdTrainY = scoreLearner.predict(X_train[:,bitVec], return_std=True)
-tempDevY, stdDevY = scoreLearner.predict(X_dev[:,bitVec], return_std=True)
-rmse_train = sqrt(mean_squared_error(y_train, tempTrainY))
-rmse_predict = sqrt(mean_squared_error(y_dev, tempDevY))
-#rmses.append([name + '('+mode+')', rmse_train, rmse_predict])
-print('scoreLearner' + '('+mode+')')
-print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
+depressionClassifer.fit(X_train[:,bitVec], y_bin_train)
 
-X = np.arange(len(tempDevY))
-upper_bound = np.array(map(lambda x: x[0]+1.96*abs(x[1]), zip(tempDevY,stdDevY)))
-lower_bound = np.array(map(lambda x: x[0]-1.96*abs(x[1]), zip(tempDevY,stdDevY)))
-plt.plot(X, tempDevY, 'r.', label='Observations')
-plt.plot(X, tempDevY, 'g-')
-plt.fill_between(X, lower_bound, upper_bound, alpha=0.5, color='b', label='95% confidence interval')
-plt.xlabel('Subject')
-plt.ylabel('PHQ8 score')
-plt.legend(loc='upper right')
-plt.show()
+print 'development:'
+classifiedResult = depressionClassifer.predict(X_dev[:,bitVec])
+classifiedResultProba = depressionClassifer.predict_proba(X_dev[:,bitVec])
+findProbabilityDistribution(y_bin_dev, classifiedResult, classifiedResultProba)
 
-"""
-mean_std_dev = zip(tempDevY, stdDevY)
-mean_std_dev = sorted(mean_std_dev, key=lambda l: l[0])
-tempDevY = np.array(zip(*mean_std_dev)[0])
-stdDevY_abs = np.array(map(abs, zip(*mean_std_dev)[1]))
-plt.plot(tempDevY, stdDevY_abs, 'r')
-#plt.fill_between(tempDevY, stdDevY_abs, where=stdDevY_abs>0, color='b')
-plt.show()
-"""
-
-newTrainX = []  
-for i in range(len(tempTrainY)):
-    tempX = []
-    tempX.append(tempTrainY[i])
-    #tempX.append(stdTrainY[i])
-    newTrainX.append(tempX)
-
-newDevX = []
-for i in range(len(tempDevY)):
-    tempX = []
-    tempX.append(tempDevY[i])
-    #tempX.append(stdDevY[i])
-    newDevX.append(tempX)
-
-
-#depressionClassifer = gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct())
-
-models_f1 = []
-models_performances = []
-#f1, performance = getClassifierPerformance(depressionClassifer, 'GP-DP', 'predict', newTrainX, y_bin_train, newDevX)
-#models_f1.append(f1)
-#models_performances.append(performance)
-
-classifiers = [("KNN", None, KNeighborsClassifier(2)),
-               ("Linear SVM", None, SVC(kernel="linear")),
-               ("RBF SVM", None, SVC(gamma=2, C=1)),
-               ("DT", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
-               ("RF", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
-                                                         max_depth=20)),
-               ("AB", None, AdaBoostClassifier(random_state=13370)),
-               #("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*1)))),
-               ("GP-DP", ["MFCC","All","CIFE","CFS"], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
-               # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
-               # GP beats SVM in our experiment (qualitative advantages)
-               # only keep RBF, dot product and matern on the chart
-               # add a paragraph 'Processed Data'
-               #1) generate the dataset with 526 features
-               #2) the predictive variance and predictive mean (best and worst) of some vectors from the dot product.
-               
-]
-#classify(X_train[:,bitVec], X_dev[:,bitVec])
-models_f1, models_performances = getClassifieresPerformances(classifiers, models_f1, models_performances)
-#models_f1, models_performances = getClassifieresPerformancesByDefinedX(classifiers, 'predict', models_f1, models_performances, newTrainX, y_bin_train, newDevX)
-models_f1, models_performances = addRelatedWork(models_f1, models_performances)
-models_f1=sorted(models_f1, key=lambda l: l[1])
-models_performances=sorted(models_performances, key=lambda l: l[1])
-
-plot_f1(models_f1)
-printPerformances(models_performances)
+print 'training:'
+classifiedResult = depressionClassifer.predict(X_train[:,bitVec])
+classifiedResultProba = depressionClassifer.predict_proba(X_train[:,bitVec])
+findProbabilityDistribution(y_bin_train, classifiedResult, classifiedResultProba)

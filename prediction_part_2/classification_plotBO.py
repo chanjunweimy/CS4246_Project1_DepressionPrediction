@@ -26,7 +26,7 @@ import GPy.models as models
 import time
 from math import sqrt,ceil
 import GPy
-#import GPyOpt
+import GPyOpt
 import matplotlib.mlab as mlab
 import math
 import matplotlib.pyplot as plt
@@ -80,7 +80,6 @@ def convertToBitVec(featSel):
     return wrapper
 
 mfccIntVec = [1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-#mfccIntVec = 4*[1]+3*[0]
 
 def returnMask(intVec):
     def wrapper(X,y):
@@ -125,7 +124,122 @@ class RBF_ARD_WRAPPER:
         self.m.optimize()
     def predict(self, X):
         return self.m.predict(X)[0]
-        
+
+nfold = 3
+def fit_svr_val(x):
+    x = np.atleast_2d(np.exp(x))
+    fs = np.zeros((x.shape[0],1))
+    for i in range(x.shape[0]):
+        fs[i] = 0
+        for n in range(nfold):
+            mode = "All"
+            bitVec = bitVecs[mode]
+            X_MFCC = X_train[:,bitVec]
+            idx = np.array(range(X_MFCC.shape[0]))
+            idx_valid = np.logical_and(idx>=X_MFCC.shape[0]/nfold*n, idx<X_MFCC.shape[0]/nfold*(n+1))
+            idx_train = np.logical_not(idx_valid)
+            svr = SVR(C=x[i,0], epsilon=x[i,1],gamma=x[i,2])
+            svr.fit(X_MFCC[idx_train],y_train[idx_train])
+            fs[i] += np.sqrt(np.square(svr.predict(X_MFCC[idx_valid])-y_train[idx_valid]).mean())
+        fs[i] *= 1./nfold
+    return fs
+    
+def fit_svr_val_CIFE(x):
+    x = np.atleast_2d(np.exp(x))
+    fs = np.zeros((x.shape[0],1))
+    for i in range(x.shape[0]):
+        fs[i] = 0
+        for n in range(nfold):
+            mode = "CIFE"
+            bitVec = bitVecs[mode]
+            X_MFCC = X_train[:,bitVec]
+            idx = np.array(range(X_MFCC.shape[0]))
+            idx_valid = np.logical_and(idx>=X_MFCC.shape[0]/nfold*n, idx<X_MFCC.shape[0]/nfold*(n+1))
+            idx_train = np.logical_not(idx_valid)
+            svr = SVR(C=x[i,0], epsilon=x[i,1],gamma=x[i,2])
+            svr.fit(X_MFCC[idx_train],y_train[idx_train])
+            fs[i] += np.sqrt(np.square(svr.predict(X_MFCC[idx_valid])-y_train[idx_valid]).mean())
+        fs[i] *= 1./nfold
+    return fs
+    
+def fit_svr_val_CFS(x):
+    x = np.atleast_2d(np.exp(x))
+    fs = np.zeros((x.shape[0],1))
+    for i in range(x.shape[0]):
+        fs[i] = 0
+        for n in range(nfold):
+            mode = "CFS"
+            bitVec = bitVecs[mode]
+            X_MFCC = X_train[:,bitVec]
+            idx = np.array(range(X_MFCC.shape[0]))
+            idx_valid = np.logical_and(idx>=X_MFCC.shape[0]/nfold*n, idx<X_MFCC.shape[0]/nfold*(n+1))
+            idx_train = np.logical_not(idx_valid)
+            svr = SVR(C=x[i,0], epsilon=x[i,1],gamma=x[i,2])
+            svr.fit(X_MFCC[idx_train],y_train[idx_train])
+            fs[i] += np.sqrt(np.square(svr.predict(X_MFCC[idx_valid])-y_train[idx_valid]).mean())
+        fs[i] *= 1./nfold
+    return fs
+    
+def fit_svr_val_MFCC(x):
+    x = np.atleast_2d(np.exp(x))
+    fs = np.zeros((x.shape[0],1))
+    for i in range(x.shape[0]):
+        fs[i] = 0
+        for n in range(nfold):
+            mode = "MFCC"
+            bitVec = bitVecs[mode]
+            X_MFCC = X_train[:,bitVec]
+            idx = np.array(range(X_MFCC.shape[0]))
+            idx_valid = np.logical_and(idx>=X_MFCC.shape[0]/nfold*n, idx<X_MFCC.shape[0]/nfold*(n+1))
+            idx_train = np.logical_not(idx_valid)
+            svr = SVR(C=x[i,0], epsilon=x[i,1],gamma=x[i,2])
+            svr.fit(X_MFCC[idx_train],y_train[idx_train])
+            fs[i] += np.sqrt(np.square(svr.predict(X_MFCC[idx_valid])-y_train[idx_valid]).mean())
+        fs[i] *= 1./nfold
+    return fs
+
+def fit_svr_val_Relief(x):
+    x = np.atleast_2d(np.exp(x))
+    fs = np.zeros((x.shape[0],1))
+    for i in range(x.shape[0]):
+        fs[i] = 0
+        for n in range(nfold):
+            mode = "Relief"
+            bitVec = bitVecs[mode]
+            X_MFCC = X_train[:,bitVec]
+            idx = np.array(range(X_MFCC.shape[0]))
+            idx_valid = np.logical_and(idx>=X_MFCC.shape[0]/nfold*n, idx<X_MFCC.shape[0]/nfold*(n+1))
+            idx_train = np.logical_not(idx_valid)
+            svr = SVR(C=x[i,0], epsilon=x[i,1],gamma=x[i,2])
+            svr.fit(X_MFCC[idx_train],y_train[idx_train])
+            fs[i] += np.sqrt(np.square(svr.predict(X_MFCC[idx_valid])-y_train[idx_valid]).mean())
+        fs[i] *= 1./nfold
+    return fs
+    
+    
+def fit_svc_val(x):
+    x = np.atleast_2d(np.exp(x))
+    fs = np.zeros((x.shape[0],1))
+    for i in range(x.shape[0]):
+        fs[i] = 0
+        for n in range(nfold):
+            mode = "MFCC"
+            bitVec = bitVecs[mode]
+            X_MFCC = X_train[:,bitVec]
+            idx = np.array(range(X_MFCC.shape[0]))
+            idx_valid = np.logical_and(idx>=X_MFCC.shape[0]/nfold*n, idx<X_MFCC.shape[0]/nfold*(n+1))
+            idx_train = np.logical_not(idx_valid)
+            svc = SVC(C=x[i,0] ,gamma=x[i,1])
+            #svc.fit(X_MFCC[idx_train],y_bin_train[idx_train])
+            f1, performance = getClassifierPerformanceOfXAndY(svc, "SVC-BO", mode, 
+            X_MFCC[idx_train], y_bin_train[idx_train], X_MFCC[idx_valid], y_bin_train[idx_valid])
+            fs[i] += 1 - f1[1]
+            #fs[i] += np.sqrt(np.square(svr.predict(X_MFCC[idx_valid])-Y_train[idx_valid]).mean())
+        fs[i] *= 1./nfold
+    return fs
+## -- Note that similar wrapper functions can be used to tune other Scikit-learn methods
+
+   
 def trainModels(regressors, models_rmse): 
     for name, featSelectionMode, model in regressors:
         modes = featSelectionMode
@@ -178,8 +292,18 @@ def getClassifierPerformance(model, name, eaMode, X, Y, X_star):
     f1 = [name + '(' + eaMode + ')', pp_f1, np_f1]
     performance = [name + '(' + eaMode + ')', pp_f1, pp_precision, pp_recall, pp_accuracy, np_f1, np_precision, np_recall, np_accuracy]
     return f1, performance
+    
+def getClassifierPerformanceOfXAndY(model, name, eaMode, X, Y, X_star, Y_star):
+    model.fit(X, Y)
+    #pt_f1, pt_precision, pt_recall, pt_accuracy = classifyForF1(model, X, y_bin_train, 1)
+    pp_f1, pp_precision, pp_recall, pp_accuracy = classifyForF1(model, X_star, Y_star, 1)
+    #nt_f1, nt_precision, nt_recall, nt_accuracy = classifyForF1(model, X, y_bin_train, 0)
+    np_f1, np_precision, np_recall, np_accuracy = classifyForF1(model, X_star, Y_star,0)
+    f1 = [name + '(' + eaMode + ')', pp_f1, np_f1]
+    performance = [name + '(' + eaMode + ')', pp_f1, pp_precision, pp_recall, pp_accuracy, np_f1, np_precision, np_recall, np_accuracy]
+    return f1, performance
 
-def getClassifierTrainingPerformance(model, name, eaMode, X, Y, X_star):
+def getClassifierTrainingPerformance(model, name, eaMode, X, Y):
     model.fit(X, Y)
     #pt_f1, pt_precision, pt_recall, pt_accuracy = classifyForF1(model, X, 1)
     pp_f1, pp_precision, pp_recall, pp_accuracy = classifyForF1(model, X, Y, 1)
@@ -277,15 +401,84 @@ def printPerformances(models_performances):
         '),Precision: ' + str(pp_precision) + '(' + str(np_precision) + 
         '),Recall: ' + str(pp_recall) + '(' + str(np_recall) + 
         '),Accuracy: '  + str(pp_accuracy) + '(' + str(np_accuracy) + ')') 
-    
+
+
+domain       =[{'name': 'C',      'type': 'continuous', 'domain': (0.,7.)},
+               {'name': 'epsilon','type': 'continuous', 'domain': (-12.,-2.)},
+               {'name': 'gamma',  'type': 'continuous', 'domain': (-12.,-2.)}]
+opt = GPyOpt.methods.BayesianOptimization(f = fit_svr_val,            # function to optimize       
+                                          domain = domain,         # box-constrains of the problem
+                                          acquisition_type ='LCB',       # LCB acquisition
+                                          acquisition_weight = 0.1)   # Exploration exploitation
+# it may take a few seconds
+opt.run_optimization(max_iter=50)
+# opt.plot_convergence()
+x_best = np.exp(opt.X[np.argmin(opt.Y)])   
+
+domain       =[{'name': 'C',      'type': 'continuous', 'domain': (0.,7.)},
+               {'name': 'epsilon','type': 'continuous', 'domain': (-12.,-2.)},
+               {'name': 'gamma',  'type': 'continuous', 'domain': (-12.,-2.)}]
+opt = GPyOpt.methods.BayesianOptimization(f = fit_svr_val_MFCC,            # function to optimize       
+                                          domain = domain,         # box-constrains of the problem
+                                          acquisition_type ='LCB',       # LCB acquisition
+                                          acquisition_weight = 0.1)   # Exploration exploitation
+# it may take a few seconds
+opt.run_optimization(max_iter=50)
+# opt.plot_convergence()
+x_best_MFCC = np.exp(opt.X[np.argmin(opt.Y)]) 
+     
+
+domain       =[{'name': 'C',      'type': 'continuous', 'domain': (0.,7.)},
+               {'name': 'epsilon','type': 'continuous', 'domain': (-12.,-2.)},
+               {'name': 'gamma',  'type': 'continuous', 'domain': (-12.,-2.)}]
+opt = GPyOpt.methods.BayesianOptimization(f = fit_svr_val_CFS,            # function to optimize       
+                                          domain = domain,         # box-constrains of the problem
+                                          acquisition_type ='LCB',       # LCB acquisition
+                                          acquisition_weight = 0.1)   # Exploration exploitation
+# it may take a few seconds
+opt.run_optimization(max_iter=50)
+# opt.plot_convergence()
+x_best_CFS = np.exp(opt.X[np.argmin(opt.Y)])      
+     
+
+domain       =[{'name': 'C',      'type': 'continuous', 'domain': (0.,7.)},
+               {'name': 'epsilon','type': 'continuous', 'domain': (-12.,-2.)},
+               {'name': 'gamma',  'type': 'continuous', 'domain': (-12.,-2.)}]
+opt = GPyOpt.methods.BayesianOptimization(f = fit_svr_val_CIFE,            # function to optimize       
+                                          domain = domain,         # box-constrains of the problem
+                                          acquisition_type ='LCB',       # LCB acquisition
+                                          acquisition_weight = 0.1)   # Exploration exploitation
+# it may take a few seconds
+opt.run_optimization(max_iter=50)
+# opt.plot_convergence()
+x_best_CIFE = np.exp(opt.X[np.argmin(opt.Y)])   
+
+
+domain       =[{'name': 'C',      'type': 'continuous', 'domain': (0.,7.)},
+               {'name': 'epsilon','type': 'continuous', 'domain': (-12.,-2.)},
+               {'name': 'gamma',  'type': 'continuous', 'domain': (-12.,-2.)}]
+opt = GPyOpt.methods.BayesianOptimization(f = fit_svr_val_Relief,            # function to optimize       
+                                          domain = domain,         # box-constrains of the problem
+                                          acquisition_type ='LCB',       # LCB acquisition
+                                          acquisition_weight = 0.1)   # Exploration exploitation
+# it may take a few seconds
+opt.run_optimization(max_iter=50)
+# opt.plot_convergence()
+x_best_Relief = np.exp(opt.X[np.argmin(opt.Y)])           
+     
 regressors = [("KNN", None, KNeighborsRegressor(2)),
                ("Linear SVR", None, SVR(kernel="linear")),
                ("RBF SVR", None, SVR(gamma=2, C=1)),
+               ("RBFBO_ALL SVR", ["All"], SVR(C=x_best[0], epsilon=x_best[1],gamma=x_best[2])),
+               ("RBFBO_MFCC SVR", ["MFCC"], SVR(C=x_best_MFCC[0], epsilon=x_best_MFCC[1],gamma=x_best_MFCC[2])),
+               ("RBFBO_CFS SVR", ["CFS"], SVR(C=x_best_CFS[0], epsilon=x_best_CFS[1],gamma=x_best_CFS[2])),
+               ("RBFBO_CIFE SVR", ["CIFE"], SVR(C=x_best_CIFE[0], epsilon=x_best_CIFE[1],gamma=x_best_CIFE[2])),
+               ("RBFBO_Relief SVR", ["Relief"], SVR(C=x_best_Relief[0], epsilon=x_best_Relief[1],gamma=x_best_Relief[2])),
                ("DT", None, DecisionTreeRegressor(min_samples_split=1024, max_depth=20)),
                ("RF", None, RandomForestRegressor(n_estimators=10, min_samples_split=1024,
                                                          max_depth=20)),
                ("AB", None, AdaBoostRegressor(random_state=13370)),
-               #("Naive Bayes", None, GaussianNB()),
+               #("Naive Bayes", None, GaussianNB()),    
                #("Bagging with DTRegg", ["All"], BaggingRegressor(DecisionTreeRegressor(min_samples_split=1024,
                 #                                                              max_depth=20))),
                #("GP isotropic RBF", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RBF())),
@@ -315,8 +508,8 @@ regressors = [("KNN", None, KNeighborsRegressor(2)),
                
 ]
 
-#models_rmse = []
-#models_rmse = trainModels(regressors, models_rmse)
+models_rmse = []
+models_rmse = trainModels(regressors, models_rmse)
 
 # Give some general prior distributions for model parameters
 # m.kern.lengthscale.set_prior(GPy.priors.Gamma.from_EV(1.,10.))
@@ -326,41 +519,20 @@ regressors = [("KNN", None, KNeighborsRegressor(2)),
 
 #print("AverageRacialEnsemble(MFCC)")
 #print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
-#plot_bar(models_rmse)
+plot_bar(models_rmse)
 #plot_all_Y()
 
 scoreLearner = gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())
 mode = "MFCC"
 bitVec = bitVecs[mode]
 scoreLearner.fit(X_train[:,bitVec], y_train[:])
-tempTrainY, stdTrainY = scoreLearner.predict(X_train[:,bitVec], return_std=True)
-tempDevY, stdDevY = scoreLearner.predict(X_dev[:,bitVec], return_std=True)
+tempTrainY, stdTrainY = scoreLearner.predict(X_train[:,bitVec], return_std = True)
+tempDevY, stdDevY = scoreLearner.predict(X_dev[:,bitVec], return_std = True)
 rmse_train = sqrt(mean_squared_error(y_train, tempTrainY))
 rmse_predict = sqrt(mean_squared_error(y_dev, tempDevY))
 #rmses.append([name + '('+mode+')', rmse_train, rmse_predict])
 print('scoreLearner' + '('+mode+')')
 print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
-
-X = np.arange(len(tempDevY))
-upper_bound = np.array(map(lambda x: x[0]+1.96*abs(x[1]), zip(tempDevY,stdDevY)))
-lower_bound = np.array(map(lambda x: x[0]-1.96*abs(x[1]), zip(tempDevY,stdDevY)))
-plt.plot(X, tempDevY, 'r.', label='Observations')
-plt.plot(X, tempDevY, 'g-')
-plt.fill_between(X, lower_bound, upper_bound, alpha=0.5, color='b', label='95% confidence interval')
-plt.xlabel('Subject')
-plt.ylabel('PHQ8 score')
-plt.legend(loc='upper right')
-plt.show()
-
-"""
-mean_std_dev = zip(tempDevY, stdDevY)
-mean_std_dev = sorted(mean_std_dev, key=lambda l: l[0])
-tempDevY = np.array(zip(*mean_std_dev)[0])
-stdDevY_abs = np.array(map(abs, zip(*mean_std_dev)[1]))
-plt.plot(tempDevY, stdDevY_abs, 'r')
-#plt.fill_between(tempDevY, stdDevY_abs, where=stdDevY_abs>0, color='b')
-plt.show()
-"""
 
 newTrainX = []  
 for i in range(len(tempTrainY)):
@@ -385,9 +557,22 @@ models_performances = []
 #models_f1.append(f1)
 #models_performances.append(performance)
 
+#domain       =[{'name': 'C',      'type': 'continuous', 'domain': (0.,7.)},
+               #{'name': 'epsilon','type': 'continuous', 'domain': (-12.,-2.)},
+               #{'name': 'gamma',  'type': 'continuous', 'domain': (-12.,-2.)}]
+#opt = GPyOpt.methods.BayesianOptimization(f = fit_svc_val,            # function to optimize       
+                                         # domain = domain,         # box-constrains of the problem
+                                         # acquisition_type ='LCB',       # LCB acquisition
+                                         # acquisition_weight = 0.1)   # Exploration exploitation
+# it may take a few seconds
+#opt.run_optimization(max_iter=50)
+#opt.plot_convergence()
+#x_best = np.exp(opt.X[np.argmin(opt.Y)])
+
 classifiers = [("KNN", None, KNeighborsClassifier(2)),
                ("Linear SVM", None, SVC(kernel="linear")),
-               ("RBF SVM", None, SVC(gamma=2, C=1)),
+               #("RBF SVM", None, SVC(C=x_best[0], gamma=x_best[1])),
+               ("RBF SVM", None, SVC(C=1.0, gamma=2.0)),
                ("DT", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
                ("RF", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
                                                          max_depth=20)),
