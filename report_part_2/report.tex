@@ -88,9 +88,9 @@
     In the past decade, researchers have successfully correlated emotion with voice production and speech acoustics \cite{uwa2001}. 
     Analogous to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen success, proving that it is an effective indicator of depression severity \cite{jov2016}. In a recent study, Gaussian Process (GP) Dot Product trained using the Mel Frequency Cepstral Coefficients (MFCC) acoustic feature subset was found to be a good model for the prediction of depression incidence and severity with better accuracies than other state-of-the-art machine learning models \cite{cs42462016}.\\
 
-    We propose a framework based on the outputs of the Gaussian Process Dot Product on MFCC model. The framework lowers the barriers to diagnosis and treatment of depression by supplanting the diagnosis process in primary care with the predictions of the model in most cases, requiring the PCP's attention only in ambiguous cases. In univocal cases, patients are referred directly to specialists for treatment, thereby reducing the referral chain to a single step. Specialized healthcare providers are also given the predicted Patient Health Questionaire 8 (PHQ-8) score of the patient to prioritize urgent cases better, improving appointment scheduling efficiency. On the side of PCPs, time and resources saved can be utilized to provide better quality healthcare in all other aspects.
-    
-    \section{Modelling and Approach}
+	We propose a framework based on the outputs of the GP Dot Product on MFCC model. The framework lowers the barriers to diagnosis and treatment of depression by supplanting the diagnosis process in primary care with the predictions of the model in most cases, requiring the PCP's attention only in ambiguous cases. In univocal cases, patients are referred directly to specialists for treatment, thereby reducing the referral chain to a single step. Specialized healthcare providers are also given the predicted Patient Health Questionaire 8 (PHQ-8) score of the patient to prioritize urgent cases better, improving appointment scheduling efficiency. On the side of PCPs, time and resources saved can be utilized to provide better quality healthcare in all other aspects.
+	
+	\section{Modelling and Approach}
     Our solution is to implement pre-screening and automate the process of the deciding if the person needs an appointment or otherwise.
     In this manner, we cut down on the number of appointments reducing the workload on the staff. 
     Moreover, our process allows prioritizing of patient's appointments by their PHQ-8 score which represents the severity of depression.
@@ -126,44 +126,44 @@ Figure \ref{auto_flow} represents the flow of a person who is seeking for medica
     The objective of the interview is to record the patient's audio signal as he/she answers the questions.
     The recordings will serve as an input for GPC, which is a classifier that will output both a probability estimate and a label, determining if the patient is suffering from depression or not.
     The probability estimate represents the confidence on the predicted label. 
-    We can then define a specific pre-defined probability estimate $\rho_c$, such that we have two two scenarios as listed below. 
-    In the illustration below, we make the argument based on a probability estimate $p$ which is based on some audio recording collected.
-    
-    \begin{enumerate}
-        \item {Confident of prediction ($p \geq \rho_c$)} \\
-        GPC is confident of its prediction, allowing us to make decision with confidence on the predicted label.
-        Then, we make the decision based on whether the patient is depressed or not depressed as predicted by GPC. 
-        A depressed patient will be given an appointment (refer to Figure \ref{sch_app}) for treatment, whereas a non-depressed patient would be informed that he/she is not required to go for an appointment.
-        \item {Not confident of prediction ($p < \rho_c$}) \\
-        GPC is not confident of its prediction, and we cannot rely on the predicted label. 
-        In this case, the patient will be referred to a general practitioner for further observations (Figure \ref{sch_app}). 
-        We note that he/she would need to be diagnosed by the clinician and treatment if appropriate. 
-        We would also obtain the ground truth from the diagnosis and use that to train the GPC/GPR on this data-point. 
-    \end{enumerate}
-    
-    \begin{figure}[h]
-         \begin{center}
-        \includegraphics[width=0.48\textwidth]{appointment} 
-          \end{center}
-          \caption{Flow for Scheduling an Appointment}
-          \label{sch_app} 
-     \end{figure}
-     \begin{comment}
-    @startuml            
-        [Voice recording] -right-|> [GPR] : input
-        [GPR] -right-|> (PHQ-8 Score) : outputs
-        (PHQ-8 Score) -right-|> [Scheduler] : feed to
-        [Scheduler] --> (Appointment) : get time and date
-        (Appointment) -left-|> (PHQ-8/Depression LBL)
-        (PHQ-8/Depression LBL) -left-|> [Update GPC/GPR] : use to
-    @enduml
-     \end{comment}
+    We can then fix a specific pre-defined probability estimate $\rho_c$, such that we have two scenarios as listed below. 
+    In the illustration below, we make the argument based on a probability estimate $p$ which is based on an audio recording.
+	
+	\begin{enumerate}
+		\item {Confident of prediction ($p \geq \rho_c$)} \\
+		GPC is confident of its prediction, allowing us to make decision with confidence on the predicted label.
+		Then, we make the decision based on whether the patient is depressed or not depressed as predicted by GPC. 
+		A depressed patient will be given an appointment (refer to Figure \ref{sch_app}) for treatment, whereas a non-depressed patient would be informed that he/she is not required to go for an appointment.
+		\item {Not confident of prediction ($p < \rho_c$}) \\
+		GPC is not confident of its prediction, we cannot rely on the predicted label. 
+		In this case, patient will be referred to a PCP for further observations (Figure \ref{sch_app}). 
+		We note that he/she would need to be diagosed by the PCP and undergo treatment if appropriate. 
+		We would also obtain the ground truth from the diagnosis and use that to train the GPC/GPR on this data-point. 
+	\end{enumerate}
+	
+	\begin{figure}[h]
+ 		\begin{center}
+		\includegraphics[width=0.48\textwidth]{appointment} 
+  		\end{center}
+  		\caption{Flow for Scheduling an Appointment}
+  		\label{sch_app} 
+ 	\end{figure}
+ 	\begin{comment}
+	@startuml			
+		[Voice recording] -right-|> [GPR] : input
+		[GPR] -right-|> (PHQ-8 Score) : outputs
+		(PHQ-8 Score) -right-|> [Scheduler] : feed to
+		[Scheduler] --> (Appointment) : get time and date
+		(Appointment) -left-|> (PHQ-8/Depression LBL)
+		(PHQ-8/Depression LBL) -left-|> [Update GPC/GPR] : use to
+	@enduml
+ 	\end{comment}
 
-    Figure \ref{sch_app} represents the case that he/she needs an appointment. 
-    Similarly, the patient's voice is use as an input for the GPR which predicts the PHQ-8 score. 
-    PHQ-8 score determines the levels of depression (from $0$-$24$, $0$ means no depression and $24$ means very depressed) of the patient, allowing the staff to prioritize appointments based on the PHQ-8 score.
-    We would prioritize patients who are more depressed (predicted by the GPR with a higher PHQ-8 score) will have higher priority and vice versa.
-    Through the appointment(s) with the psychiatrist, the ground truth of the depression and PHQ-8 labels will be obtained and can be used to train both GPC and GPR if required (if this data-point was predicted with no confidence i.e. $p < \rho_c$).
+	Figure \ref{sch_app} represents the case that he/she needs an appointment. 
+    Similarly, the patient's voice is used as an input for the GPR which predicts the PHQ-8 score. 
+    PHQ-8 score determines the severity of depression (from $0$-$24$, $0$ means no depression and $24$ means very depressed) of the patient, allowing the staff to prioritize appointments based on the PHQ-8 score.
+    Patients who are more depressed (predicted by the GPR with a higher PHQ-8 score) will have higher priority and vice versa.
+    Through the appointment(s) with the PCP, the ground truth of the depression and PHQ-8 labels will be obtained and can be used to train both GPC and GPR if required (if this data-point was predicted with no confidence i.e. $p < \rho_c$).
     As more data points are observed and subsequently use for training, both GPC's and GPR 's accuracy would improve incrementally.
 
     \subsection{Insights to Our Model}
@@ -173,7 +173,7 @@ Figure \ref{auto_flow} represents the flow of a person who is seeking for medica
     GPR predicts the PHQ-8 score, while GPC predicts whether the person is depressed or not. 
     Similar to project 1, we trained GPR and GPC with data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}, with PHQ-8 and depression labels (provided as part of the dataset) respectively. 
     We applied the same audio signal processing techniques to the audio files as per project 1. 
-    We used GP with a dot-product kernel, with the Mel Frequency Cepstral Coefficients (MFCC) feature subset as we have seen the good theoretical and experimental results the feature subset had produced in project 1. 
+    We used GP with a dot-product kernel, with the MFCC feature subset as we have seen the good theoretical and experimental results the feature subset had produced \cite{cs42462016}. 
     More importantly, we make the same two assumptions so that the GP model planning and decision making is suitable for depression prediction:
     \begin{enumerate}
         \item Depression prediction is an event-based which provides a single depression estimate over a time period \cite{Valstar2016}.
@@ -181,13 +181,13 @@ Figure \ref{auto_flow} represents the flow of a person who is seeking for medica
     \end{enumerate}
 In our formulation GPs must be able to train on new data. 
     Since the GP models receive new data incrementally, we cannot use an offline GP as we have described in project 1. 
-    Hence, we would need to tweak the GP to fit this problem, needing a GP that learn dynamically, adapting to new data as it becomes available. 
+    Hence, we would need to tweak the GP to fit this problem, needing a GP that learns dynamically, adapting to new data as it becomes available. 
     Online machine learning is a method that allows the data to be updated when it becomes available. 
     We have noted that there are online variants of GP which will be used in our project.
     
     \subsubsection{Phone Interview :}
 We noted that regardless of the questions asked, a depressed person will still exhibit signs of depression in his speech \cite{jad2008}. 
-    Hence, the questions asked are irrelevant. 
+    Hence, the questions that will be asked are irrelevant.
     A sample of questions is presented in the section titled 'Proof of Concept'.
 
     \subsubsection{Decision making :}
