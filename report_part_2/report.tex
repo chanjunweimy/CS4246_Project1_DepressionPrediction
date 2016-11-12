@@ -9,10 +9,12 @@
 \usepackage{graphicx}
 \usepackage{multirow}
 \usepackage{verbatim}
+\usepackage{fancyvrb}
 \usepackage{url}
 \usepackage[utf8]{inputenc}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{adjustbox}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -24,7 +26,7 @@
   belowskip=3mm,
   showstringspaces=false,
   columns=flexible,
-  basicstyle={\small\ttfamily},
+  basicstyle={\tiny\ttfamily},
   numbers=none,
   numberstyle=\tiny\color{gray},
   keywordstyle=\color{blue},
@@ -63,30 +65,30 @@
 
 	\begin{abstract}
 	\begin{quote}
-	Depression is a debilitating mental illness that has good prognosis given early detection and treatment. In recent years, youth sucide rates in Singapore have increased at an alarming rate. Given that suicide is often a byproduct of depression, it is preventable. General practitioners are the most accessible source of help but lack of time, attention, skills and the presence of social stigma prevent accurate diagnosis of depression. In our project, we propose a general framework to pre-screen patients before they make appointments in general practice for depression. Outputs from the Gaussian Process will be used to determine if the patient requires medical attention and if so, the urgency of the case. In addition, we produced a proof-of-concept prototype illustrating our framework. We also further note that the framework can be extended to other psychiatric disorders.\\
+	Depression is a debilitating mental illness that has excellent prognosis given early detection and treatment. In recent years, youth suicide rates in Singapore have increased at an alarming rate. Suicide is often a byproduct of depression; however, depression can be easily treated. General practitioners are the most accessible source of help but the lack of time, attention, skills and the presence of social stigma prevent an accurate diagnosis of depression. In our project, we propose a general framework to pre-screen patients before they make appointments in general practice for depression. Outputs from the Gaussian Process will be used to determine if the patient requires medical attention and if so, the urgency of the case. Besides, we produced a proof-of-concept prototype illustrating our framework. We also further note that the framework can be extended to other psychiatric disorders.\\
 	\end{quote}
 	\end{abstract}
 	
 	\section{Introduction}
 	Depression has a severe, and at times long-term, negative impact on an individual's quality of life. 
-	Major depression is 3rd leading cause of disability worldwide with 65 million life years spent living with the disability or lost due to early death \cite{who2004}. Depression's annual toll on U.S businesses amounts to about \$80 billion in medical expenditures, lost productivity and suicide. Among the costs, close to \$10 billion accrued in lost workdays each year and more than \$33 billion in other costs accrue from decreased productivity due to symptoms that sap energy, affect work habits, cause problems with concentration, memory, and decision-making \cite{tjcp2015}. \\
+    Major depression is the 3rd leading cause of disability worldwide with 65 million life years spent living with the disability or lost due to early death \cite{who2004}. Depression's annual toll on U.S businesses amounts to about \$80 billion in medical expenditures, lost productivity and suicide. Among the costs, close to \$10 billion accrued in lost workdays each year and more than \$33 billion in other costs accrue from decreased productivity due to symptoms that sap energy, affect work habits, cause problems with concentration, memory, and decision-making \cite{tjcp2015}. \\
 
-	Left unchecked, depression increases risk for morbidity, suicide, decreased cognitive and social functioning, self-neglect, and early death \cite{arcp2009}.. Death from suicide is one of the top 10 causes of death, above the death rate for chronic liver disease, Alzheimer's, homicide, arteriosclerosis or hypertension \cite{nvsr2016}. Despite the severe consequences, depression is one of the most treatable mental illnesses but it is also one of the most under-diagnosed globally. \\
+	Depression, if left unchecked, increases risk for morbidity, suicide, decreased cognitive and social functioning, self-neglect, and early death \cite{arcp2009}. Death from suicide is one of the top 10 causes of death, above the mortality rate for chronic liver disease, Alzheimer's, homicide, arteriosclerosis or hypertension \cite{nvsr2016}. Despite the severe consequences, depression is one of the most treatable mental illnesses, but it is also one of the most under-diagnosed globally. \\
 
-	General practioners (GPs) are often dubbed as the first line in the provision of healthcare as they form the interface between specialized healthcare providers and patients. Compared to specialists, GPs are considered to be more accessible, less stigmatising and more comprehensive, thus they are expected to be a depression patient's best chance at getting initial help \cite{rothman2003}. Indeed, in the US, almost 75\% of depression patients who seek help, do so with a general practitioner \cite{goldman1999}. \\ 
+	General practitioners (GPs) are often dubbed as the first line in the provision of healthcare as they form the interface between specialized healthcare providers and patients. Compared to specialists, GPs are considered to be more accessible, less stigmatizing and more comprehensive. Thus they are expected to be a depression patient's best chance at getting preliminary help \cite{rothman2003}. Indeed, in the US, almost 75\% of depression patients who seek help, do so with a general practitioner \cite{goldman1999}. \\ 
 
-	However, in general practice, 48.4\% of patients suffering from depression go unrecognized \cite{jama2003}. During a visit to the GP, a patient's symptoms that are not physical in nature may not be inquired or brought up. Even if some GPs show interest in patients' psychosocial issues, they likely lack the requisite interviewing skills to properly elicit the relevant history while others lack the sensitivity to affective and nonverbal patient cues \cite{badger1994}. In addition, GPs have a plethora of tasks during each consultation such as assessment and management of ongoing general medical issues, prevention and health maintenance, as well as paperwork. This severely limits the time budget that remains for assessing mental health issues such as depression and futher raises the barrier of accurate diagnosis and proper treatment \cite{telford2002}. \\
+	However, in general practice, 48.4\% of patients suffering from depression go unrecognized \cite{jama2003}. During a visit to the GP, a patient's symptoms(non-physical) may not be observed. Even if some GPs show interest in patients' psychosocial issues, they likely lack the requisite interviewing skills to properly elicit the relevant history while others lack the sensitivity to affective and nonverbal patient cues \cite{badger1994}. GPs have to complete a plethora of tasks during each consultation such as assessment, prevention, and management of medical conditions in addition to filing paperwork. This severely limits the time budget that remains for assessing mental health problems such as depression and further raises the barrier of accurate diagnosis and proper treatment \cite{telford2002}. \\
 
 	\subsection{Motivation}
-	The most recent study conducted by the Institute of Mental Health has shown that Major Depressive Disorder (MDD) is the most common mental disorder in Singapore. An estimated 1 in 17 people having suffered from MDD at some point in their lives which is almost twice that of the next most common disorder, alcohol abuse \cite{annacadmedsg}. In 2015, despite falling overall suicide rates, and a shrinking proportion of youths in the ageing population of Singapore, the number of suicide deaths in youths between 10-19 of age was twice as many as the year before and it is also the highest in 15 years \cite{samaritansofsingapore2016}. This is a worrying trend and as suicide is closely correlated with depression, due to the absence of a more recent study, we extrapolate that the prevalence of MDD has increased over the last 5 years. \\
+	The most recent study conducted by the Institute of Mental Health has shown that Major Depressive Disorder (MDD) is the most common mental disorder in Singapore. An estimated 1 in 17 people having suffered from MDD at some point in their lives which is almost twice that of the next most common disorder, alcohol abuse \cite{annacadmedsg}. In 2015, despite falling overall suicide rates, and a shrinking proportion of youths in the aging population of Singapore, the number of suicide deaths in youths between 10-19 of age was twice as many as the year before, and it is also the highest in 15 years \cite{samaritansofsingapore2016}. The large increase in suicide rates is a worrying trend, as suicide is closely correlated with depression. In light of all the available data, we extrapolate that the prevalence of MDD has increased over the last five years. \\
 
-	Diagnosis and treatment of depression in Singapore is difficult. Apart from the highlighted difficulties that GPs face, there are also significant delays in specialized treatment, which can extend up to several months due to the presence of a long referral chain to a psychiatrist, inherent in the public health system. These barriers are compounded by sociocultural factors in asian societies such as stigmatization where a majority of the public, including mental health professionals, think that they should be protected from people with mental health problems or that these people should be locked up. \cite{chong2009}. This highlights a need for a better process for diagnosing depression. \\
+	Diagnosis and treatment of depression in Singapore are difficult. Apart from the highlighted difficulties that GPs face, there are also significant delays in specialized treatment, which can extend up to several months due to the presence of an extended referral chain to a psychiatrist, inherent in the public health system. Sociocultural factors such as stigmatization compound the problem. In Asian societies, where a majority of the public, including mental health professionals, think that they should be protected from people with mental disorders or that these people should be locked up. \cite{chong2009}. These issues justify need for a better process for diagnosing depression. \\
 	
 	\subsection{Objective}
-	In the past decade, there have been research successfully correlating emotion with voice production and speech acoustics \cite{uwa2001}. 
-	Corollary to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen success, proving that it is an effective indicator of depression severity \cite{jov2016}. In a recent study, Gaussian Process Dot Product trained using the MFCC feature set of acoustic analysis was found to be a good model for the prediction of depression incidence and severity with better accuracies than other state-of-the-art machine learning models \cite{cs42462016}. \\
+	In the past decade, researchers have had successfully correlate emotion with voice production and speech acoustics \cite{uwa2001}. 
+    A corollary to that, a recent research was successful in using voice acoustics as predictors of clinical depression scores, proving that it is an effective indicator of depression severity \cite{jov2016}. In a recent study, Gaussian Process Dot Product trained using the MFCC feature set of acoustic analysis was found to be a good model for the prediction of depression incidence and severity with better accuracies than other state-of-the-art machine learning models \cite{cs42462016}.\\
 
-	We propose a framework based on the outputs of the Gaussian Process Dot Product on MFCC model. The framework lowers the barriers of diagnosis and treatment of depression by supplanting the diagnosis process in general practice with the predictions of the model in most cases, requiring the GP's attention only in ambiguous cases. In univocal cases, patients are referred directly to specialists for treatment, thereby reducing the referral chain to a single step. Specialized healthcare providers are also given the predicted Patient Health Questionaire 8 (PHQ-8) score of the patient to better prioritize urgent cases, improving appointment scheduling. On the side of GPs, time and resources saved can be utilized to provide better quality healthcare in all other aspects.
+	We propose a framework based on the outputs of the Gaussian Process Dot Product on MFCC model. The framework lowers the barriers to diagnosis and treatment of depression by supplanting the diagnosis process in general practice with the predictions of the model in most cases, requiring the GP's attention only in ambiguous cases. In univocal cases, patients are referred directly to specialists for treatment, thereby reducing the referral chain to a single step. Specialized healthcare providers are also given the predicted Patient Health Questionaire 8 (PHQ-8) score of the patient to prioritize urgent cases better, improving appointment scheduling. On the side of GPs, time and resources saved can be utilized to provide better quality healthcare in all other aspects.
 	
 	\section{Modelling and Approach}
 	Leveraging on the success of the modelling of depression prediction of Personal Health Questionaire depression scale (PHQ-8) scores in project 1, we extend and apply the work done to solve the aforementioned problem of under-staffing.
@@ -195,7 +197,7 @@
 	In our model, we exploit this property, unique to GPs. 
 	After the interview, GPC will predict the depression label with a confidence $p$ on the audio recording. 
 	As mentioned in the modelling, we define a particular probability $\rho_c$. 
-	If the GPC predicts with $p \geq \rho_c$, then we can trust the predicted label and continue to decide appropriately based on the label whereas if the GPC predicts with $p < \rho_c$, then we cannot trust the predicted label and refer the patient to an appointment with the psychiatrist to obtain more data.
+	If the GPC predicts with $p \geq \rho_c$, then we can trust the predicted label and continue to decide appropriately based on the label whereas if the GPC predicts with $p < \rho_c$, then we cannot trust the predicted label and refer the patient to a general practitioner to obtain more data.
 	We determine the probability $\rho_c$ experimentally by observing the prediction quality of the labels in the training data, a summary is given in Table \ref{tab:rho}. We observe that with a $\rho_c = 70\%$, it would predict the depression label with $100\%$ accuraccy. 
 	Henceforth, in this paper we will define $\rho_c = 70\%$.
 	
@@ -256,8 +258,8 @@
 	we will first talk about the success of our GPC. Then we will discuss about a scenario of a busy doctor and how our prototype is going to help him.
 	
 	\subsection{The success of GPC}
-		As Gaussian Process (Dot-Product) works well in the depression regrassion task, we believe that it will work well in the classification task too, 
-		and we tested it. The result is shown in figure \ref{figure:gp_dot_product} and table \ref{table:comparisionOfGPModelWithOthers}. \\
+	As Gaussian Process (Dot-Product) works well in the depression regrassion task, we believe that it will work well in the classification task too, and we tested it. 
+	The result is shown in figure \ref{figure:gp_dot_product} and table \ref{table:comparisionOfGPModelWithOthers}. \\
 	
          \begin{figure}[h]
  		    \begin{center}
@@ -265,11 +267,10 @@
   		    \end{center}
   		    \caption{Results of the classification with the GP Dot Product}
   		    \label{figure:gp_dot_product}
- 	    \end{figure}
+ 	 \end{figure}
 
- 	    
         \begin{table}[h!]
-            \begin{center}
+		\begin{adjustbox}{width=0.53\textwidth,center}
             	\resizebox {0.5\textwidth }{!}{ %
                 \begin{tabular}{ | r | c | c | c | c | }
                  \hline
@@ -277,8 +278,8 @@
                  Gaussian Process (Dot-Product)		& 0.67(0.92) 	& 0.57(0.96)            & 0.8(0.88)			    & 0.87 \\ \hline
                  DepAudioNet	                    & 0.52(0.7) 	& 0.35(1.0)	    		& 1.0(0.54)             & -  \\ \hline
                  BaseLine                       	& 0.41(0.58) 	& 0.27(0.94)			& 0.89(0.42)            & -  \\ \hline
-                 \end{tabular}}
-            \end{center}
+                 \end{tabular}%}
+}
         \caption{Our GPC beats the related study (DepAudioNet) and the baseline.}
         \label{table:comparisionOfGPModelWithOthers}
         \end{table}
@@ -305,13 +306,12 @@
 	    \label{figure:workflow_agent}
 	\end{figure}
 	
-	\subsubsection{Phone Interview}
-	
+	\subsubsection{Phone Interview :}
 	Right now, Antoine has to ask his nurse, Joy to do the phone interview as this task is not supported by the autonomous agent yet. 
 	In the future, the phone interview might be able to be conducted by the autonomous agent.
 	Antoine has given his nurse a guideline to follow, and the guideline is the following:
 	
-    \begin{enumerate}
+   	\begin{enumerate}
     		\item The aim of the phone interview is to collect the speeches of the person.
     		\item The phone interview is preferably to be over 1 minute.
 		\item The interviewer should use the same application such as Call Recorder to record sound.
@@ -331,32 +331,28 @@
         \item Extracting the speeches of the person from recording manually and pass it to the agent.
 	\end{enumerate}
 
-
-	\subsubsection{The autonomous agent}
+	\subsubsection{The autonomous agent :}
 	Suppose Joy collected many persons' speeches and relevant data such as the number of hours they needed to consult the doctor and their names. 
 	She ran the autonomous agent to process them at night to produce a schedule for Antoine.
 	The agent first extracts the audio features from the speeches.
-
 	MFCC is the audio feature that is extracted by the agent. They are passed to the GPC to classify if the person is depressed. 
-
 	Then, GPC will reply its predition on the person with the confidence level.
 	The agent will trust the GPC if the person is predicted as not depressed with the confidence level \(\geq\) 70,
 	and these persons will be suggested to be rejected and will not be scheduled a consultation as the agent assumes Antoine is very busy and 
-	he would like to consult as little person as he could.
-	\\
+	he would like to consult as little person as he could. \\
 
 	These are a few sample data that is obtained from the GP:
 	\begin{enumerate}
      	\item Daniel: GP is 91.9163306736\% confidence to say that the patient is normal and required 3.0h.
 		\item Miguel: GP is 54.36852983429999\% confidence to say that the patient is depressed and required 1.0h.
 		\item Maria: GP is 59.406768555\% confidence to say that the patient is normal and required 2.5h.
-     \end{enumerate}
+     	\end{enumerate}
 
 	According to these data, Daniel is not going to be scheduled a consultation, while the others will.
 	The scheduling is just done using greedy algorithm as the agent is designed to be used by Antoine only.
 
 	After the scheduling, a schedule of Antoine for the next week is generated and it is looked like this:
-	
+	\begin{Verbatim}[fontsize=\tiny]
 	\begin{lrbox}{\myv}\begin{minipage}{0.5\textwidth}
 	\begin{verbatim}
 	Antoine:
@@ -376,23 +372,20 @@
 	14-11-2016 (Mon) 10:30 
 	14-11-2016 (Mon) 12:00
 	Elena : 
-	14-11-2016 (Mon) 15:00 
+	\end{Verbatim}
 	14-11-2016 (Mon) 16:30
 	Free: 
 	14-11-2016 (Mon) 12:00 
 	14-11-2016 (Mon) 12:00
 	...
-	\end{verbatim}
 	\end{minipage}\end{lrbox}
 	\resizebox{0.5\textwidth}{!}{\usebox\myv}
 	
 	Note that, in the future if Antoine has a few new partners, a new scheduling algorithm is needed to ensure that everyone's work will be distributed clearly.
 	It is not hard to observe that it is a Constraint Satisfaction Problem (CSP), and thus we suggest genetic algorithm for this case, 
-	as it is one of the famous and useful algorithm for scheduling. \\
-
-	Besides, phq-8 score is not used in the scheduling algorithm right now due to the high error-rate. However, we think that it will be good if we take 
-	the severity of depression into account in the future. \\
-
+	as it is one of the famous and useful algorithm for scheduling. 
+	PHQ-8 score is not used in the scheduling algorithm right now due to the high error-rate. 
+	However, we think that it will be good if we take the severity of depression into account in the future. 
 	Online GP is not implemented yet but we also think that it will be good if we implement it to improve the accuracy or error rate of the model.
 	
 	\section{Conclusion}	
