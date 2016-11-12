@@ -1,6 +1,7 @@
 package schedule;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import prescreening.DiagnosedPatient;
 
@@ -56,10 +57,13 @@ public class TimeSlot {
 	}
 	
 	public String getTimeSlotDetail() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy (EE) HH:mm");
+		String startString = _start.format(formatter);
+		String endString = _end.format(formatter);
 		if (isFreeSlot()) {
-			return "Free: " + _start.toString() + " " + _end.toString();
+			return "Free: " + startString + " " + endString;
 		} 
-		return _patient.getName() + " : " + _start.toString() + " " + _end.toString();
+		return _patient.getName() + " : " + startString + " " + endString;
 			
 	}
 }

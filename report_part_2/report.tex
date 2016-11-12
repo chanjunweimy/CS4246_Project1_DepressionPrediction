@@ -11,6 +11,30 @@
 \usepackage{verbatim}
 \usepackage{url}
 \usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
 \DeclareUnicodeCharacter{FB01}{fi}
 \graphicspath{ {images/} }
 \frenchspacing
@@ -241,514 +265,212 @@
 
 	Hence, our model introduces an unbiased pre-screening process reaping the following benefits: leading to a reduction of the number of appointments, reduction of manpower required, a pre-screening process whose accuracy improves incrementally over time, and a better allocation of resources.
 
-	\section{Evaluation}
-	In order to test our proposed GP models, we conducted tests on data obtained from Audio/Visual Emotion Challenge and Workshop (AVEC 2016) \cite{avec2016}. 
-	The goal of AVEC is to weigh-in on the various approaches used to recognize emotions under unambiguous conditions. 
-	AVEC 2016 provided 2 pieces of data as input: visual and auditory data from each of the participants. 
-	However, we would be reducing the scope of the experiment, limiting the experiment to only the auditory data. 
-	Two Sub-Challenges were lised in AVEC 2016. 
-	We are only interested in the Depression Classification Sub-Challenge, which requires participants to classify inputs by the PHQ-8 score. 
-	In this experiment, we would be using the audio data along with their corresponding PHQ-8 scores to test our assumptions and confirm our hypothesis.
+	\section{Proof Of Concept}
+	In order demonstrate our framework, a prototype has been created. Before we are going deeply into the prototype, 
+	we will first talk about the success of our GPC. Then we will discuss about a scenario of a busy doctor and how our prototype is going to help him.
+	
+	\subsection{The success of GPC}
+		As Gaussian Process (Dot-Product) works well in the depression regrassion task, we believe that it will work well in the classification task too, 
+		and we tested it. The result is shown in figure \ref{figure:gp_dot_product} and table \ref{table:comparisionOfGPModelWithOthers}. \\
+	
+         \begin{figure}[h]
+ 		    \begin{center}
+		    \includegraphics[width=0.5\textwidth]{gp_dot_product}
+  		    \end{center}
+  		    \caption{Results of the classification with the GP Dot Product}
+  		    \label{figure:gp_dot_product}
+ 	    \end{figure}
 
-	\subsection{Data}
+ 	    
+        \begin{table}[h]
+            \begin{center}
+                \begin{tabular}{ | r | c | c | c | c | }
+                 \hline
+                                                    & \bfseries F1	& \bfseries Precision 	& \bfseries Recall      & \bfseries Accuracy \\ \hline
+                 Gaussian Process (Dot-Product)		& 0.67(0.92) 	& 0.57(0.96)            & 0.8(0.88)			    & 0.87 \\ \hline
+                 DepAudioNet	                    & 0.52(0.7) 	& 0.35(1.0)	    		& 1.0(0.54)             & -  \\ \hline
+                 BaseLine                       	& 0.41(0.58) 	& 0.27(0.94)			& 0.89(0.42)            & -  \\ \hline
+                 \end{tabular}
+            \end{center}
+        \caption{Our GPC beats the related study (DepAudioNet) and the baseline.}
+        \label{table:comparisionOfGPModelWithOthers}
+        \end{table}
+
+        As shown in graph \ref{figure:gp_dot_product}, GPC (with Dot-Product Kernel) yields the best result compared to other existing machine learning methods. 
+        In summary, the table \ref{table:comparisionOfGPModelWithOthers} contrasts the fact that our GPC beats the related study (DepAudioNet) and the baseline.
+
+	 \subsubsection{Performance Metrics}
+       F1 score is chosen to be the performance metrics of the depression classification task to provide a meaningful and consistent comparison to the baseline 
+       provided and the related study. To understand more about F1,  we need to understand about precision and recall. 
+       We will use the terminologies defined in the table \ref{table:precision_recall}.  
+       
+    
+	\begin{table}[h!]
+		\begin{center}
+			\begin{tabular}{ | r | c | c | }
+            \hline
+                                            & \bfseries True - Well predicted	& \bfseries False - Wrongly predicted    \\ \hline
+            Depressed? Yes (Positive)		& True Positive (tp) 	            & False Positive (fp)                    \\ \hline
+            Depressed? No (Negative)	    & True Negative (tn) 	            & False Negative (fn)	    		     \\ \hline
+            \end{tabular}
+		\end{center}
+		\caption{Precision and Recall for Depression Classification}
+		\label{table:precision_recall}
+	\end{table}
+	
+	Firstly, precision is among the result I retrieved, how accurate it is.
+	In our context, precision is like how accurate is our "Is him depressed?" list, and it is defined as:
+     \begin{equation}\label{eq:prediction}
+  		\text{P} = \frac{tp}{tp + fp}
+	\end{equation}
+     High Precision would show that the model retrieves accurate result.\\
+
+	Recall is among the result I retrieved, how relevant it is. 
+	In our context, The one who is correctly diagnosed as depressed and the one who is falsely diagnosed as not depressed are all relevant to depression,
+	thus recall is defined as:
+	\begin{equation}\label{eq:recall}
+  		\text{R} = \frac{tp}{tp + fn}
+ 	\end{equation}
+	High Recall would show that the model retrieves result which is highly relevant to the query.
+
+ 	Having a high precision and low recall or low precision and high recall are not good, like if you have no relevant document, then recall is infinite.
+     If nothing is retrieved, precision is also infinite, so we need something to strike for a balance, 
+     and F1 is the balance between precision and recall. It is defined as the harmonic mean of precision and recall, and thus the formula for F1 would be:
+     \begin{equation}\label{eq:balance}
+  		\text{F1} = \frac{1}{\frac{1}{P} + \frac{1}{R}} = \frac{PR}{P + R}
+ 	\end{equation}
+
+     Moreover, we also added accuracy, which is every result that is predicted correctly / total result:
+     \begin{equation}\label{eq:accuracy}
+  		\text{Accuracy} = \frac{tp + tn}{tp + fp + tn + fn}
+ 	\end{equation}
+
+	\subsection{A busy doctor}
+	In a clinic, there is only one doctor who is called Antoine and he is very busy. 
+	So, he sets a rule: in order to be consulted by him regarding on depression, 
+	one has to make a phone call to the clinic and has a phone interview one week before the consultation. 
+	However, he is still very busy and would like to minimize the number of person he is consulting. 
+	Therefore, an autonomous agent is designed for him to help him to perform a pre-screening and schedule the time for him.
+	In this scenario, the agent is written in Java and the agent is designed to have the workflow shown in figure \ref{figure:workflow_agent},
+
 	\begin{figure}[h]
-	\center
- 	\includegraphics[width=0.5\textwidth]{histogram_phq8}
-	\caption{Histogram of the PHQ-8 scores}
-	\label{histogram_phq8}
+	    \begin{center}
+		\includegraphics[width=0.5\textwidth]{workflow_agent}
+	    \end{center}
+	    \caption{The workflow of the autonomous agent.}
+	    \label{figure:workflow_agent}
 	\end{figure}
 	
-	The depression data used in AVEC 2016 was obtained from the benchmarking database, Distress Analysis Interview Corpus - Wizard of Oz (DAIC-WOZ). 
-	Data collected from DAIC-WOZ include raw audio and video recordings and the corresponsing PHQ-8 score (from 0 to 24) \cite{jad2008}. Hence, we would 
-	need to pre-process the auditory data before we use it in our experiment. The pre-processing is briefly discussed in the section below.
-	The distribution of the depression severity scores in the dataset is given in Figure \ref{histogram_phq8}. 
-	The data provided are split into 2 sets: training and development.
-	An overview of the data is given in Table \ref{summary_table}.
-
- 	\begin{table}[h]
- 		\begin{center}
-  			\begin{tabular}{ | r | c | c | c | }
-    			\hline
-			 		& \bfseries Training	& \bfseries Development 	& \bfseries All \\ \hline
-			 $n$		& 95 			& 31 				& 126 \\ \hline
-			 $\mu$	& 6.326 		& 7.548			& 6.626 \\ \hline
-			 $\sigma$	& 5.597 		& 6.690 			& 5.909 \\ \hline
-			 \end{tabular}
-		\end{center}
- 	\caption{Summary of Datasets provided}
- 	\label{summary_table}
- 	\end{table}
-
-	\subsection{Pre-processed data}
-	Since the focus of this paper is the prediction of the PHQ-8 score, we will not describe the pre-processing step in detail.
-	We used standard signal processing techniques to extract the 4 audio feature sets (Energy, MFCC, Magnitude Spectrum, Zero-crossing) as presented in the Modelling 
-	and Approach section.
-	Each audio feature set comprises of several individual features and the breakdown of the actual number of feature columns is summarized in Table \ref{no_features}.
-
- 	\begin{table}[h]
- 		\begin{center}
-  			\begin{tabular}{ | r | c | }
-    			\hline
-			 \bfseries Audio Feature Sets 	& \bfseries Number of features \\ \hline
-			 Magnitude Spectrum		& 512 \\ \hline
-			 MFCC 				& 12 \\ \hline
-			 Energy 				& 1 \\ \hline
-			 Zero-Crossing Rate 		& 1 \\ \hline
-			 \bfseries Total			& \bfseries 526 \\ \hline
-			 \end{tabular}
-		\end{center}
- 	\caption{Number of features extracted}
- 	\label{no_features}
- 	\end{table}
-
- 	\subsection{Measure of Accuracy}
-	AVEC 2016 provided a baseline classifier that consistently predicts the PHQ-8 score with $\text{RMSE}=6.7418$ \cite{avec2016}. 
-	In order to provide a meaningful and consistent comparison to the baseline provided, we used the same Root Mean Square Deviation Error (RMSE) to measure the 
-	error rate on both Training and Development datasets. 
-	RMSE (Equation \ref{eq:rmse}) is a commonly used in the machine learning community to measure the differences between the values predicted by a model 
-	and the ground truth \cite{Dhanani:EECS-2014-131}. 
-	\begin{equation}\label{eq:rmse}
-  	\text{RMSE} = \sqrt{\frac{\sum_{t=1}^n (\hat y_t - y_t)^2}{n}}
- 	\end{equation} 
-
-	\subsection{Feature Selection}
-	Feature selection is the process of selecting a subset of relevant features including variables or predictors to be used in a model for machine learning. 
-	The purpose of feature selection is to reduce the complexity of a model to more easily be interpreted. 
-	The benefit is three-fold: improving the prediction performance of the predictors, providing faster and most cost-effective predictors, 
-	and providing a better understanding of the underlying process that generated the data \cite{Guyon2003}.\\
+	\subsubsection{Phone Interview}
+	Right now, Antoine has to ask his nurse, Joy to do the phone interview as this task is not supported by the autonomous agent yet. 
+	In the future, the phone interview might be able to be conducted by the autonomous agent.
+	Antoine has given his nurse a guideline to follow, and the guideline is the following:
 	
-	Since we have more features than data points, it tends to lead to overfitting \cite{Smith2011}. 
-	Therefore feature selection is first performed on the data before applying machine learning. 
-	The feature selection algorithms used are popular and are taken from scikit-feature, a feature selection library \cite{li2016feature}: CIFE \cite{Lin2006}, Relief 	
-	\cite{Rob2003}, CFS \cite{HALLHALL}. 
-	We will not go into detail as feature selection is not the main focus of the report.
-	
-	\subsection{Experimental Setup}
-	We compared the proposed GP models against state-of-the-art machine learning models as mentioned in the previous section. 
-	For the ease of testing, all implementations of the algorithms except for GP ARD come from the popular machine learning library, Scikit Learn \cite{scikit-learn}. 
-	We used the implementation of GP ARD from GPy, a Gaussian Processes framework in Python \cite{gpy2014}.
-	The hyper-parameters are either determined by the defaults used in either libraries or some reasonable defaults were used.
-	Each machine learning model is trained against the training set and thereafter tested against the development set using RMSE as the error metric. 
-	The entire experimental process is shown in Figure \ref{process}. \\
- 
- 	\begin{comment}
-	\begin{table}[h]
-  		\begin{center}
-   			\begin{tabular}{ | r | c |}
-	    		\hline
-			Algorithm & Hyper-parameters \\ \hline\hline
-			K-Nearest Neighbors        & x \\ \hline
-			SVM - Linear               & x \\ \hline
-			SVM - RBF                  & x \\ \hline
-			Decision Tree              & x \\ \hline
-			Random Forest              & x \\ \hline
-			AdaBoost                   & x \\ \hline
-			Naive Bayes                & x \\ \hline
-			GP ARD  	           & x \\ \hline
-			GP Isotropic Matern        & x \\ \hline
-			GP Dot Product 	           & x \\ \hline
-			\end{tabular}
-		\end{center}
-		\caption{List of Machine Learning Algorithms with their corresponding hyper-parameters}
-		\label{list_mls}
-	\end{table}
- 	\end{comment}
- 	
-	\begin{figure}[h]
- 		\begin{center}
-		\includegraphics[width=0.48\textwidth]{process} 
-  		\end{center}
-  		\caption{Experimental process}
-  		\label{process} 
- 	\end{figure}
- 	\begin{comment}
-	@startuml
-	digraph g {
-		graph [rankdir=LR];
-	 	ML,RMSE[shape=square];
-		Model[shape=circle];
-		ap[shape=rect label="Audio Processing"];
-		Train_AudioData,Dev_AudioData[shape=egg];
-		Train_AudioData -> ap;
-		ap -> Train_X;
-		ap -> Train_y;
-		ap -> Dev_X;
-		Dev_AudioData -> ap;
-		ap -> Dev_y;
-		Train_X -> ML;
-		Train_y -> ML;
-		ML -> Model
-		Dev_X -> Model
-		Model -> RMSE[label=Prediction]
-		Dev_y -> RMSE[label=Actual]
+    \begin{enumerate}
+    		\item The aim of the phone interview is to collect the speeches of the person.
+    		\item The phone interview is preferably to be over 1 minute.
+		\item The interviewer should use the same application such as Call Recorder to record sound.
+		\item The interviewer must ask the person some questions during the recording. The interviewer could: 
+          \begin{enumerate}
+          	\item Ask for the person's personal contact, such as email, or phone number, or address.
+          	\item Ask the person's availability to come to the clinic, such as the date and time, or period of time
+          	\item Ask the person's individual health screening history: 
+          	Is this the first time you find a psychologist to talk with? Do you have any medical records in the past?
+          	\item Ask the person, is he/she is willing to help out in a questionnaire if the phone interview is less than 1 minute.
+          \end{enumerate}
+        \item It is not necessary to ask all the questions above as long as the length of the phone interview is around 1 minute.
+        \item Avoid saying something like, "Cheer up!", "Lighten up!" to provide help, or giving suggestions like 
+        		"Take a hot bath. That's what I always do when I upset!" to the patients. 
+        		Each phone call should obey the principle of "Ask for information and NOT providing unprofessional guidance". \cite{PCS16}
+        \item End with, thank you Sir/Ms for your time. We will contact you within 3 working days.
+        \item Extracting the speeches of the person from recording manually and pass it to the agent.
+	\end{enumerate}
+
+	\subsubsection{The autonomous agent}
+	Suppose Joy collected many persons' speeches and relevant data such as the number of hours they needed to consult the doctor and their names. 
+	She ran the autonomous agent to process them at night to produce a schedule for Antoine.
+	The agent first extracts the audio features from the speeches.
+	MFCC is the audio feature that is extracted by the agent. They are passed to the GPC to classify if the person is depressed. 
+
+	As the GPC is implemented using Python, the agent would execute the GPC by executing these lines of codes:
+
+	\begin{lstlisting}
+	private ArrayList<DiagnosedPatient> classifyDepression(ArrayList<DiagnosedPatient> patients) {
+		Process process;
+		try {
+			String command = "python onlinegp.py " + AudioFeaturesGenerator.EMOTION_DCAPSWOZ_ALL;
+			//System.out.println(command);
+			process = Runtime.getRuntime().exec(command);
+			InputStream is = process.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isr);
+			String line;
+			
+			int i = 0;
+			while ((line = br.readLine()) != null) {
+				  String[] tokens = line.split(" ");
+				  int depressedNum = Integer.parseInt(tokens[0]);
+				  boolean isDepressed = depressedNum == 1;
+				  patients.get(i).setIsDepressed(isDepressed);
+				  patients.get(i).setGpConfidence(Double.parseDouble(tokens[depressedNum + 1])); 
+				  i++;
+			}
+			br.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return patients;
 	}
-	@enduml
- 	\end{comment}
-
-	\subsection{Results}
-	We first ran the experiment across the dataset using all 526 features, without feature selection. 
-	As we would expect \cite{Cawley2014}, the results are unacceptable as the ratio of the number of features to the number of data points is too high,
-	resulting in possible overfitting. 
-	The results of the initial experiment is illustrated in Figure \ref{results_all}. 
-	We would expect the GP ARD would be able to theoritcally extract relevant features and improve prediction.
-	However, we have observed experimentally that GP ARD performs poorly, along with other GPs. \\
-
-	\begin{figure}[h]
- 		\begin{center}
-		\includegraphics[width=0.5\textwidth]{results_all} 
-  		\end{center}
-  		\caption{Results across all features}
-  		\label{results_all}
- 	\end{figure}
 	
-	We repeated the experiment with feature selection and ran each of the feature subset gathered from the feature selection algorithms against each of the machine 
-	learning algorithms. 
-	We observed that Relief, CIFE and CFS selected a large number of MFCC features. 
-	The number of features in each feature subset is shown in Table \ref{feat_subset}. 
-	This confirms our assumption that MFCC gives the best predictive power in PHQ-8 depression severity prediction. 
-	Hence, we also ran the experiment using only MFCC features. 
-	The best results across all feature subsets are shown in Figure \ref{results_best} and in Table \ref{rmse_results}. The line shown across the 
-	bar chart represents the baseline RMSE provided. \\
+	\end{lstlisting}
 
- 	\begin{table}[h]
- 		\begin{center}
-  			\begin{tabular}{ | r | c | }
-    			\hline
-			 \bfseries Feature Selection 	&\bfseries Number of features \\ \hline
-			 MFCC           			& 12 \\ \hline
-			 CIFE        				& 3 \\ \hline
-			 Relief 				& 23 \\ \hline
-			 CFS 					& 6 \\ \hline
-			 All 					& 526 \\ \hline
-			 \end{tabular}
-		\end{center}
- 	\caption{Feature subsets}
- 	\label{feat_subset}
- 	\end{table}
+	Then, GPC will reply its predition on the person with the confidence level.
+	The agent will trust the GPC if the person is predicted as not depressed with the confidence level \(\geq\) 70,
+	and these persons will be suggested to be rejected and will not be scheduled a consultation as the agent assumes Antoine is very busy and 
+	he would like to consult as little person as he could.
+	\\
 
-	\begin{figure}[h]
- 		\begin{center}
-		\includegraphics[width=0.5\textwidth]{results_best} 
-  		\end{center}
-  		\caption{Best Results across all feature subsets}
-  		\label{results_best}
- 	\end{figure}
+	These are a few sample data that is obtained from the GP:
+	\begin{enumerate}
+     	\item Daniel: GP is 91.9163306736\% confidence to say that the patient is normal and required 3.0h.
+		\item Miguel: GP is 54.36852983429999\% confidence to say that the patient is depressed and required 1.0h.
+		\item Maria: GP is 59.406768555\% confidence to say that the patient is normal and required 2.5h.
+     \end{enumerate}
 
-	\begin{table}[h!]
-		\begin{center}
-			\begin{tabular}{ | r | c | c | c | }
-			\hline
-			\multirow{2}{*}{\bfseries Algorithm}	& \multirow{2}{*}{\bfseries Subset}	& \multicolumn{2}{c|}{\bfseries RMSE} \\\cline{3-4}
-									&						& \bfseries Train 	& \bfseries Dev \\ \hline
-			\bfseries GP Dot Product  	& \bfseries MFCC  & \bfseries 5.03 & \bfseries 6.34 \\ \hline
-			AdaBoost              				& Relief					& 3.55 		& 6.52 \\ \hline
-			K-Nearest Neighbors   			& CFS 					& 3.75 		& 6.53 \\ \hline
-			SVM - Linear          				& MFCC  					& 5.29 		& 6.63 \\ \hline
-			Random Forest         			& CFS   					& 5.61 		& 6.75 \\ \hline
-			Decision Tree         				& MFCC  					& 5.60 		& 6.80 \\ \hline
-			SVM - RBF             				& CIFE  					& 4.91 		& 6.91 \\ \hline
-			GP Isotropic Matern   			& CFS   					& 0.00 		& 7.18 \\ \hline 
-			Naive Bayes           				& Relief					& 6.87 		& 7.59 \\ \hline
-			GP ARD                				& All   						& 3.72 		& 10.09 \\ \hline
+	According to these data, Daniel is not going to be scheduled a consultation, while the others will.
+	The scheduling is just done using greedy algorithm as the agent is designed to be used by Antoine only.
 
-			\end{tabular}
-		\end{center}
-		\caption{RMSE Results}
-		\label{rmse_results}
-	\end{table}
+	After the scheduling, a schedule of Antoine for the next week is generated and it is looked like this:
+	\begin{verbatim}
+	Antoine:
+	Miguel : 14-11-2016 (Mon) 08:00 14-11-2016 (Mon) 09:00
+	Davi : 14-11-2016 (Mon) 09:00 14-11-2016 (Mon) 10:30
+	Ethan : 14-11-2016 (Mon) 13:00 14-11-2016 (Mon) 15:00
+	Maria : 15-11-2016 (Tue) 08:00 15-11-2016 (Tue) 10:30
+	Lucia : 14-11-2016 (Mon) 10:30 14-11-2016 (Mon) 12:00
+	Elena : 14-11-2016 (Mon) 15:00 14-11-2016 (Mon) 16:30
+	Free: 14-11-2016 (Mon) 12:00 14-11-2016 (Mon) 12:00
+	Free: 14-11-2016 (Mon) 16:30 14-11-2016 (Mon) 17:00
+	Free: 15-11-2016 (Tue) 10:30 15-11-2016 (Tue) 12:00
+	Free: 15-11-2016 (Tue) 13:00 15-11-2016 (Tue) 17:00
+	Free: 16-11-2016 (Wed) 08:00 16-11-2016 (Wed) 12:00
+	Free: 16-11-2016 (Wed) 13:00 16-11-2016 (Wed) 17:00
+	Free: 17-11-2016 (Thu) 08:00 17-11-2016 (Thu) 12:00
+	Free: 17-11-2016 (Thu) 13:00 17-11-2016 (Thu) 17:00
+	Free: 18-11-2016 (Fri) 08:00 18-11-2016 (Fri) 12:00
+	Free: 18-11-2016 (Fri) 13:00 18-11-2016 (Fri) 17:00
+	\end{verbatim}
 	
-	As expected, the models perform better with the MFCC feature set. 
-	Unexpectedly, the simple GP dot product model, trained with 12 features and 95 data points, outperforms all other machine learning models in our tests. 
-	Our results also confirms the initial assumption that MFCC is an appropriate feature set to be used in emotion and therefore depression prediction and that GP is 
-	applicable and feasible in predicting PHQ-8 scores.
+	Note that, in the future if Antoine has a few new partners, a new scheduling algorithm is needed to ensure that everyone's work will be distributed clearly.
+	It is not hard to observe that it is a Constraint Satisfaction Problem (CSP), and thus we suggest genetic algorithm for this case, 
+	as it is one of the famous and useful algorithm for scheduling. \\
 
-	Here are the 95\% confidence interval for the predicted PHQ8 score for each subject of the test set.
+	Besides, phq-8 score is not used in the scheduling algorithm right now due to the high error-rate. However, we think that it will be good if we take 
+	the severity of depression into account in the future. \\
 
-	\begin{figure}[h]
- 		\begin{center}
-		\includegraphics[width=0.5\textwidth]{Confidence}
-  		\end{center}
-  		\caption{Confidence interval for each subject of the test set}
-  		\label{Confidence}
- 	\end{figure}
-
-
-
-	\subsection{Methodology to investigate depression through voice}
-    \begin{enumerate}
-		\item Using the same application to record sound – Example: Call Recorder
-		\item Ask the questions to the person during recording. The answer gathered is not important, as long as we could collect the voice. The voice recorded is preferably over 1 minute.
-        \begin{enumerate}
-            \item Ask for the person’s personal contact, such as email, or phone number, or address.
-            \item Asking the person’s availability to come to the clinic, the date and time, or period of time
-            \item Asking the person’s individual health screening history: Is this the first time you find a psychologist to talk with? Do you have any medical records in the past?
-            \item If the previous questions doesn’t let the person’s voice recording long enough, the agent might ask the person, is he/she is willing to help out in a questionnaire – (Can even collaborate with some questionnaires)
-        \end{enumerate}
-        \item It is not necessary to ask all the questions above as long as the patient’s voice recording can pass about a minute for each session.
-        \item Avoid saying something like, “Cheer up!”, “Lighten up!” to provide help, or giving suggestions like “Take a hot bath. That’s what I always do when I upset!” to the patients. Each phone call should obey the principle of “Ask for information and NOT providing unprofessional guidance”. \cite{PCS16}
-        \item End with, thank you Sir/Ms for your time. We will contact you within 3 working days.
-        \item Cut the voice recordings of the patient out from the whole phone call recordings manually and pass it to the GP model for processing.
-	\end{enumerate}
-
-
-
-    \subsection{Works done on Depression Classification}
-    \begin{enumerate}
-        \item I extended the result of Depression Regression to Depression Classification.
-        \item I tried using the predicted score as the feature but obtained poor result:
-
-        \begin{figure}[h]
- 		    \begin{center}
-		    \includegraphics[width=0.5\textwidth]{poor_results}
-  		    \end{center}
-  		    \caption{First results of the classification}
-  		    \label{poor_results}
- 	    \end{figure}
-
-        \item So I changed back to speech feature and obtained a very good result by using GP Dot Product!
-
-        \begin{figure}[h]
- 		    \begin{center}
-		    \includegraphics[width=0.5\textwidth]{gp_dot_product}
-  		    \end{center}
-  		    \caption{Results of the classification with the GP Dot Product}
-  		    \label{gp_dot_product}
- 	    \end{figure}
-
- 	    \item The GP-dot product obtains a depression F1 score of 0.67 whereas the normal F1 score of 0.92 which beats DeapAudioNet 0.52 for depression and 0.70 for normal. It also beats the baseline which has 0.41 for depression and 0.58 for normal
-        \item Other than the graph, the following table is generated:
-
-        \begin{table}[h]
-            \begin{center}
-                \begin{tabular}{ | r | c | c | c | c | }
-                 \hline
-                                                    & \bfseries F1	& \bfseries Precision 	& \bfseries Recall      & \bfseries Accuracy \\ \hline
-                 Gaussian Process (Dot-Product)		& 0.67(0.92) 	& 0.57(0.96)            & 0.8(0.88)			    & 0.87 \\ \hline
-                 DepAudioNet	                    & 0.52(0.7) 	& 0.35(1.0)	    		& 1.0(0.54)             & -  \\ \hline
-                 BaseLine                       	& 0.41(0.58) 	& 0.27(0.94)			& 0.89(0.42)            & -  \\ \hline
-                 \end{tabular}
-            \end{center}
-        \caption{F1, Precision, Recall and Accuracy for each model}
-        \label{summary_table}
-        \end{table}
-    \end{enumerate}
-
-
-	\begin{table}[h!]
-		\begin{center}
-			\begin{tabular}{ | r | c | c | }
-			\hline
-			\multirow{2}{*}{\bfseries Probability Range}	& \multicolumn{2}{c|}{\bfseries Accuracy} \\\cline{3-4}
-									&						& \bfseries Depression      & \bfseries Normal      \\ \hline
-			[0% , 10%) 	                                    & No Sample                 & No Sample             \\ \hline
-			[10% , 20%)            				            & 100\% (1 out of 1)		& No Sample 		    \\ \hline
-            [20% , 30%)	                                    & 100\% (4 out of 4)	    & No Sample             \\ \hline
-            [30% , 40%)	                                    & 84.21\% (16 out of 19)	& 100\% (1 out of 1)    \\ \hline
-            [40% , 50%)	                                    & 80\% (44 out of 55)	    & 69\% (3 out of 5)     \\ \hline
-            [50% , 60%)	                                    & 60\% (3 out of 5)	        & 80\% (44 out of 55)   \\ \hline
-            [60% , 70%)	                                    & 100\% (1 out of 1)	    & 84.21\% (16 out of 19)\\ \hline
-            [70% , 80%)	                                    & No Sample	                & 100\% (1 out of 1)    \\ \hline
-            [80%, 90%)	                                    & No Sample	                & 100\% (4 out of 4)    \\ \hline
-            [90%, 100%)	                                    & No Sample	                & No Sample             \\ \hline
-            100\%	                                        & No Sample                 & No Sample             \\ \hline
-            NAN	                                            & 90\% (9 out of 10)	    & 90\% (9 out of 10)    \\ \hline
-			\end{tabular}
-		\end{center}
-		\caption{Correlationship between Probabilities and Accuracy of classification}
-		\label{summary_table}
-	\end{table}
-
-    According to the table, we could certainly said that the interval [30%, 70%] is certainly an unsure area, and needs more investigation, though we do not know if the area is larger.
-    The resulting predicted result when getting a NAN is always not depressed (0), which might not be the case. One possible explanation the model keeps choosing the non-depressed when it is NAN, so it depends on the luck, when the model gets NAN, we probably needs to explore more.
-    How to balance between Exploration and Exploitation?
-
-    \subsection{Performance Metrics}
-    We are using F1 score to be the performance metrics of the depression classification task, so in the information retrieval world, there is something call precision and something call recall.
-    Precision is among the result I retrieved, how accurate it is. ( correct retrieved result / total retrieved) High Precision would show that the model retrieves accurate result.
-    Recall is among the result I retrieved, how relevant it is. ( correct retrieved result / total relevant) High Recall would show that the model retrieves result which is highly relevant to the query.
-    So for our case, in order to calculate the precision and recall of depression classification, we first look at the following table:
-
-	\begin{table}[h!]
-		\begin{center}
-			\begin{tabular}{ | r | c | c | }
-            \hline
-                                            & \bfseries True - Well predicted	& \bfseries False - Wrongly predicted    \\ \hline
-            Depressed? Yes (Positive)		& True Positive (tp) 	            & False Positive (fp)                    \\ \hline
-            Depressed? No (Negative)	    & True Negative (tn) 	            & False Negative (fn)	    		     \\ \hline
-            \end{tabular}
-		\end{center}
-		\caption{Precision and Recall for Depression Classification}
-		\label{summary_table}
-	\end{table}
-
-    Imagine we are retrieving a list of “Is his depressed?” list, the precision would be tp / (tp + fp) and so this is the formula for precision(P) is:
-    \begin{equation}\label{eq:prediction}
-  	\text{P} = \frac{tp}{tp + fp}
- 	\end{equation}
-
- 	Then what are the relevant list? The one who is correctly diagnosed as depressed and the one who is falsely diagnosed as not depressed are all relevant to depression and thus the formula for recall (R) would be:
-    \begin{equation}\label{eq:recall}
-  	\text{R} = \frac{tp}{tp + fn}
- 	\end{equation}
-
- 	Having a high precision and low recall or low precision and high recall are not good, like if you have no relevant document, then recall is infinite.
-    If nothing is retrieved, precision is also infinite, so we need something to strike for a balance, and F1 is the balance between precision and recall. It is defined as the harmonic mean of precision and recall, and thus the formula for F1 would be:
-    \begin{equation}\label{eq:balance}
-  	\text{F1} = \frac{1}{\frac{1}{P} + \frac{1}{R}} = \frac{PR}{P + R}
- 	\end{equation}
-
-    Moreover, we also added accuracy, which is every result that is predicted correctly / total result:
-    \begin{equation}\label{eq:accuracy}
-  	\text{Accuracy} = \frac{tp + tn}{tp + fp + tn + fn}
- 	\end{equation}
-
-    \begin{figure}[h]
-        \begin{center}
-        \includegraphics[width=0.5\textwidth]{accu_results}
-        \end{center}
-        \caption{Results of the accuracy}
-        \label{accu_results}
-    \end{figure}
-
-
-
-	\subsection{Methodology to investigate depression through voice}
-    \begin{enumerate}
-		\item Using the same application to record sound – Example: Call Recorder
-		\item Ask the questions to the person during recording. The answer gathered is not important, as long as we could collect the voice. The voice recorded is preferably over 1 minute.
-        \begin{enumerate}
-            \item Ask for the person’s personal contact, such as email, or phone number, or address.
-            \item Asking the person’s availability to come to the clinic, the date and time, or period of time
-            \item Asking the person’s individual health screening history: Is this the first time you find a psychologist to talk with? Do you have any medical records in the past?
-            \item If the previous questions doesn’t let the person’s voice recording long enough, the agent might ask the person, is he/she is willing to help out in a questionnaire – (Can even collaborate with some questionnaires)
-        \end{enumerate}
-        \item It is not necessary to ask all the questions above as long as the patient’s voice recording can pass about a minute for each session.
-        \item Avoid saying something like, “Cheer up!”, “Lighten up!” to provide help, or giving suggestions like “Take a hot bath. That’s what I always do when I upset!” to the patients. Each phone call should obey the principle of “Ask for information and NOT providing unprofessional guidance”. \cite{PCS16}
-        \item End with, thank you Sir/Ms for your time. We will contact you within 3 working days.
-        \item Cut the voice recordings of the patient out from the whole phone call recordings manually and pass it to the GP model for processing.
-	\end{enumerate}
-
-
-
-    \subsection{Works done on Depression Classification}
-    \begin{enumerate}
-        \item I extended the result of Depression Regression to Depression Classification.
-        \item I tried using the predicted score as the feature but obtained poor result:
-
-        \begin{figure}[h]
- 		    \begin{center}
-		    \includegraphics[width=0.5\textwidth]{poor_results}
-  		    \end{center}
-  		    \caption{First results of the classification}
-  		    \label{poor_results}
- 	    \end{figure}
-
-        \item So I changed back to speech feature and obtained a very good result by using GP Dot Product!
-
-        \begin{figure}[h]
- 		    \begin{center}
-		    \includegraphics[width=0.5\textwidth]{gp_dot_product}
-  		    \end{center}
-  		    \caption{Results of the classification with the GP Dot Product}
-  		    \label{gp_dot_product}
- 	    \end{figure}
-
- 	    \item The GP-dot product obtains a depression F1 score of 0.67 whereas the normal F1 score of 0.92 which beats DeapAudioNet 0.52 for depression and 0.70 for normal. It also beats the baseline which has 0.41 for depression and 0.58 for normal
-        \item Other than the graph, the following table is generated:
-
-        \begin{table}[h]
-            \begin{center}
-                \begin{tabular}{ | r | c | c | c | c | }
-                 \hline
-                                                    & \bfseries F1	& \bfseries Precision 	& \bfseries Recall      & \bfseries Accuracy \\ \hline
-                 Gaussian Process (Dot-Product)		& 0.67(0.92) 	& 0.57(0.96)            & 0.8(0.88)			    & 0.87 \\ \hline
-                 DepAudioNet	                    & 0.52(0.7) 	& 0.35(1.0)	    		& 1.0(0.54)             & -  \\ \hline
-                 BaseLine                       	& 0.41(0.58) 	& 0.27(0.94)			& 0.89(0.42)            & -  \\ \hline
-                 \end{tabular}
-            \end{center}
-        \caption{F1, Precision, Recall and Accuracy for each model}
-        \label{summary_table}
-        \end{table}
-    \end{enumerate}
-
-
-	\begin{table}[h!]
-		\begin{center}
-			\begin{tabular}{ | r | c | c | }
-			\hline
-			\multirow{2}{*}{\bfseries Probability Range}	& \multicolumn{2}{c|}{\bfseries Accuracy} \\\cline{3-4}
-									&						& \bfseries Depression      & \bfseries Normal      \\ \hline
-			[0% , 10%) 	                                    & No Sample                 & No Sample             \\ \hline
-			[10% , 20%)            				            & 100\% (1 out of 1)		& No Sample 		    \\ \hline
-            [20% , 30%)	                                    & 100\% (4 out of 4)	    & No Sample             \\ \hline
-            [30% , 40%)	                                    & 84.21\% (16 out of 19)	& 100\% (1 out of 1)    \\ \hline
-            [40% , 50%)	                                    & 80\% (44 out of 55)	    & 69\% (3 out of 5)     \\ \hline
-            [50% , 60%)	                                    & 60\% (3 out of 5)	        & 80\% (44 out of 55)   \\ \hline
-            [60% , 70%)	                                    & 100\% (1 out of 1)	    & 84.21\% (16 out of 19)\\ \hline
-            [70% , 80%)	                                    & No Sample	                & 100\% (1 out of 1)    \\ \hline
-            [80%, 90%)	                                    & No Sample	                & 100\% (4 out of 4)    \\ \hline
-            [90%, 100%)	                                    & No Sample	                & No Sample             \\ \hline
-            100\%	                                        & No Sample                 & No Sample             \\ \hline
-            NAN	                                            & 90\% (9 out of 10)	    & 90\% (9 out of 10)    \\ \hline
-			\end{tabular}
-		\end{center}
-		\caption{Correlationship between Probabilities and Accuracy of classification}
-		\label{summary_table}
-	\end{table}
-
-    According to the table, we could certainly said that the interval [30%, 70%] is certainly an unsure area, and needs more investigation, though we do not know if the area is larger.
-    The resulting predicted result when getting a NAN is always not depressed (0), which might not be the case. One possible explanation the model keeps choosing the non-depressed when it is NAN, so it depends on the luck, when the model gets NAN, we probably needs to explore more.
-    How to balance between Exploration and Exploitation?
-
-    \subsection{Performance Metrics}
-    We are using F1 score to be the performance metrics of the depression classification task, so in the information retrieval world, there is something call precision and something call recall.
-    Precision is among the result I retrieved, how accurate it is. ( correct retrieved result / total retrieved) High Precision would show that the model retrieves accurate result.
-    Recall is among the result I retrieved, how relevant it is. ( correct retrieved result / total relevant) High Recall would show that the model retrieves result which is highly relevant to the query.
-    So for our case, in order to calculate the precision and recall of depression classification, we first look at the following table:
-
-	\begin{table}[h!]
-		\begin{center}
-			\begin{tabular}{ | r | c | c | }
-            \hline
-                                            & \bfseries True - Well predicted	& \bfseries False - Wrongly predicted    \\ \hline
-            Depressed? Yes (Positive)		& True Positive (tp) 	            & False Positive (fp)                    \\ \hline
-            Depressed? No (Negative)	    & True Negative (tn) 	            & False Negative (fn)	    		     \\ \hline
-            \end{tabular}
-		\end{center}
-		\caption{Precision and Recall for Depression Classification}
-		\label{summary_table}
-	\end{table}
-
-    Imagine we are retrieving a list of “Is his depressed?” list, the precision would be tp / (tp + fp) and so this is the formula for precision(P) is:
-    \begin{equation}\label{eq:prediction}
-  	\text{P} = \frac{tp}{tp + fp}
- 	\end{equation}
-
- 	Then what are the relevant list? The one who is correctly diagnosed as depressed and the one who is falsely diagnosed as not depressed are all relevant to depression and thus the formula for recall (R) would be:
-    \begin{equation}\label{eq:recall}
-  	\text{R} = \frac{tp}{tp + fn}
- 	\end{equation}
-
- 	Having a high precision and low recall or low precision and high recall are not good, like if you have no relevant document, then recall is infinite.
-    If nothing is retrieved, precision is also infinite, so we need something to strike for a balance, and F1 is the balance between precision and recall. It is defined as the harmonic mean of precision and recall, and thus the formula for F1 would be:
-    \begin{equation}\label{eq:balance}
-  	\text{F1} = \frac{1}{\frac{1}{P} + \frac{1}{R}} = \frac{PR}{P + R}
- 	\end{equation}
-
-    Moreover, we also added accuracy, which is every result that is predicted correctly / total result:
-    \begin{equation}\label{eq:accuracy}
-  	\text{Accuracy} = \frac{tp + tn}{tp + fp + tn + fn}
- 	\end{equation}
-
-    \begin{figure}[h]
-        \begin{center}
-        \includegraphics[width=0.5\textwidth]{accu_results}
-        \end{center}
-        \caption{Results of the accuracy}
-        \label{accu_results}
-    \end{figure}
-
-
+	Online GP is not implemented yet but we also think that it will be good if we implement it to improve the accuracy or error rate of the model.
+	
 	\section{Conclusion}	
 	Our work has succesfully shown that GP is a good model for this problem and can predict PHQ-8 better than state-of-the-art machine learning models. 
 	In addition to being on par or better at prediction, GP can inherently provide an estimate of prediction uncertainty. 
