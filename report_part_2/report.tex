@@ -194,7 +194,7 @@
 	In our model, we exploit this property, unique to GPs. 
 	After the interview, GPC will predict the depression label with a confidence $p$ on the audio recording. 
 	As mentioned in the modelling, we define a particular probability $\rho_c$. 
-	If the GPC predicts with $p \geq \rho_c$, then we can trust the predicted label and continue to decide appropriately based on the label whereas if the GPC predicts with $p < \rho_c$, then we cannot trust the predicted label and refer the patient to an appointment with the psychiatrist to obtain more data.
+	If the GPC predicts with $p \geq \rho_c$, then we can trust the predicted label and continue to decide appropriately based on the label whereas if the GPC predicts with $p < \rho_c$, then we cannot trust the predicted label and refer the patient to a general practitioner to obtain more data.
 	We determine the probability $\rho_c$ experimentally by observing the prediction quality of the labels in the training data, a summary is given in Table \ref{tab:rho}. We observe that with a $\rho_c = 70\%$, it would predict the depression label with $100\%$ accuraccy. 
 	Henceforth, in this paper we will define $\rho_c = 70\%$.
 	
