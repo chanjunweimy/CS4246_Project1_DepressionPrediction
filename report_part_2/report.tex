@@ -85,16 +85,15 @@
 	
 	\subsection{Objective}
 	In the past decade, researchers have had successfully correlate emotion with voice production and speech acoustics \cite{uwa2001}. 
-    Analogous to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen success, proving that it is an effective indicator of depression severity \cite{jov2016}. In a recent study, Gaussian Process Dot Product trained using the Mel Frequency Cepstral Coefficients (MFCC) acoustic feature subset was found to be a good model for the prediction of depression incidence and severity with better accuracies than other state-of-the-art machine learning models \cite{cs42462016}.\\
+    Analogous to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen success, proving that it is an effective indicator of depression severity \cite{jov2016}. In a recent study, Gaussian Process (GP) Dot Product trained using the Mel Frequency Cepstral Coefficients (MFCC) acoustic feature subset was found to be a good model for the prediction of depression incidence and severity with better accuracies than other state-of-the-art machine learning models \cite{cs42462016}.\\
 
 	We propose a framework based on the outputs of the Gaussian Process Dot Product on MFCC model. The framework lowers the barriers to diagnosis and treatment of depression by supplanting the diagnosis process in primary care with the predictions of the model in most cases, requiring the PCP's attention only in ambiguous cases. In univocal cases, patients are referred directly to specialists for treatment, thereby reducing the referral chain to a single step. Specialized healthcare providers are also given the predicted Patient Health Questionaire 8 (PHQ-8) score of the patient to prioritize urgent cases better, improving appointment scheduling efficiency. On the side of PCPs, time and resources saved can be utilized to provide better quality healthcare in all other aspects.
 	
 	\section{Modelling and Approach}
-	Leveraging on the success of the modeling of depression prediction of Personal Health Questionaire depression scale (PHQ-8) scores in project 1, we extend and apply the work done to solve the aforementioned problem of under-staffing.
     Our solution is to implement pre-screening and automate the process of the deciding if the person needs an appointment or otherwise.
     In this manner, we cut down on the number of appointments reducing the workload on the staff. 
     Moreover, our process allows prioritizing of patient's appointments by their PHQ-8 score which represents the severity of depression.
-    Hence, we would need to use two Gaussian Processes (GP): Gaussian Process Classifier (GPC) and the Gaussian Process Regressor (GPR). 
+    Hence, we would need to use two Gaussian Processes: Gaussian Process Classifier (GPC) and the Gaussian Process Regressor (GPR). 
     In this section, we will firstly describe the process that we are proposing, and we will go into detail on each component of the process. 
     We note that the process is a general framework and that different clinics have different operating processes, clinics should tweak the framework to better fit their needs. 
     Hence, we would omit some detail in our model and leave them to the implementer.
