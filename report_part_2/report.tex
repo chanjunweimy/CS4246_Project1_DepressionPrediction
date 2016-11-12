@@ -379,16 +379,11 @@ The greatest advantage of using a GP is that it provides us with a probability e
 	Online GP is not implemented yet but we also think that it will be good if we implement it to improve the accuracy or error rate of the model.
 	
 	\section{Conclusion}	
-	Our work has succesfully shown that GP is a good model for this problem and can predict PHQ-8 better than state-of-the-art machine learning models. 
-	In addition to being on par or better at prediction, GP can inherently provide an estimate of prediction uncertainty. 
-	This allows the user to gauge the model's confidence of the prediction, and to make more informed decisions based on both the prediction and its uncertainty. 
-	We can also intelligently supplement more data to our training set based on the prediction uncertaintly. 
-	Therefore, after considering both results and GP's advantages, we conclude the GP Dot Product trained using MFCC feature set is a good model for 
-	depression prediction.
+		In our work, we have defined a general framework to allow automated decision making on depression patients. Our framework relies on the probability estimate from the GP model to predict a patient's depression label with confidence. Through the model, we decide if the person should go for further diagnosis, or go for treatment with the psychiatrist or does not need any treatment. Our framework relies upon and extends the work done in project 1, with the GPC. We tested the performance of GPC and found it to be incredibly accurate at 87\%. After that, we implemented a prototype based on the framework. We have demonstrated that it is possible to build an application to automate and to quicken the process of referrals.
 	
 	\section{Further Work}
 	The framework that we suggested not only can be used to help doctors for the diagnosis of MDD, but also extendable to other depression-related 
-	diseases such as Bipolar disorder and PDD or even other mental illnesses that result in subtle differences in voice acoustics. 
+	diseases such as Bipolar disorder and PDD or even other mental illnesses that can be identified by subtle differences in voice acoustics. 
 
 	
 	\section{Contributions}
