@@ -85,17 +85,16 @@
 	Diagnosis and treatment of depression in Singapore are difficult. Apart from the highlighted difficulties that PCPs face, there are also significant delays in specialized treatment, which can extend up to several months due to the presence of an extended referral chain to a psychiatrist, inherent in the public health system. Sociocultural factors such as stigmatization compound the problem. In Asian societies, where a majority of the public, including mental health professionals, think that they should be protected from people with mental disorders or that these people should be locked up. \cite{chong2009}. These issues justify need for a better process for diagnosing depression. \\
 	
 	\subsection{Objective}
-	In the past decade, researchers have had successfully correlate emotion with voice production and speech acoustics \cite{uwa2001}. 
-    Analogous to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen success, proving that it is an effective indicator of depression severity \cite{jov2016}. In a recent study, Gaussian Process Dot Product trained using the Mel Frequency Cepstral Coefficients (MFCC) acoustic feature subset was found to be a good model for the prediction of depression incidence and severity with better accuracies than other state-of-the-art machine learning models \cite{cs42462016}.\\
+	In the past decade, researchers have successfully correlated emotion with voice production and speech acoustics \cite{uwa2001}. 
+    Analogous to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen success, proving that it is an effective indicator of depression severity \cite{jov2016}. In a recent study, Gaussian Process (GP) Dot Product trained using the Mel Frequency Cepstral Coefficients (MFCC) acoustic feature subset was found to be a good model for the prediction of depression incidence and severity with better accuracies than other state-of-the-art machine learning models \cite{cs42462016}.\\
 
 	We propose a framework based on the outputs of the Gaussian Process Dot Product on MFCC model. The framework lowers the barriers to diagnosis and treatment of depression by supplanting the diagnosis process in primary care with the predictions of the model in most cases, requiring the PCP's attention only in ambiguous cases. In univocal cases, patients are referred directly to specialists for treatment, thereby reducing the referral chain to a single step. Specialized healthcare providers are also given the predicted Patient Health Questionaire 8 (PHQ-8) score of the patient to prioritize urgent cases better, improving appointment scheduling efficiency. On the side of PCPs, time and resources saved can be utilized to provide better quality healthcare in all other aspects.
 	
 	\section{Modelling and Approach}
-	Leveraging on the success of the modeling of depression prediction of Personal Health Questionaire depression scale (PHQ-8) scores in project 1, we extend and apply the work done to solve the aforementioned problem of under-staffing.
     Our solution is to implement pre-screening and automate the process of the deciding if the person needs an appointment or otherwise.
     In this manner, we cut down on the number of appointments reducing the workload on the staff. 
     Moreover, our process allows prioritizing of patient's appointments by their PHQ-8 score which represents the severity of depression.
-    Hence, we would need to use two Gaussian Processes (GP): Gaussian Process Classifier (GPC) and the Gaussian Process Regressor (GPR). 
+    Hence, we would need to use two Gaussian Processes: Gaussian Process Classifier (GPC) and the Gaussian Process Regressor (GPR). 
     In this section, we will firstly describe the process that we are proposing, and we will go into detail on each component of the process. 
     We note that the process is a general framework and that different clinics have different operating processes, clinics should tweak the framework to better fit their needs. 
     Hence, we would omit some detail in our model and leave them to the implementer.
@@ -196,7 +195,7 @@ The greatest advantage of using GP over other machine learning algorithms is tha
     With that probability, we can decide if the predicted label can be relied on or that it cannot be trusted and needs to learn this data point. 
     In our model, we exploit this property, unique to GPs. 
     After the interview, GPC will predict the depression label with a confidence $p$ on the audio recording. 
-    As mentioned in the modeling, we define a particular probability $\rho_c$. 
+    As mentioned in Automation Flow earlier, we define a particular probability $\rho_c$. 
     If the GPC predicts with $p \geq \rho_c$, then we can trust the predicted label and continue to decide appropriately based on the label whereas if the GPC predicts with $p < \rho_c$, then we cannot trust the predicted label and refer the patient to a general practitioner to obtain more data.
     We determine the probability $\rho_c$ experimentally by observing the prediction quality of the labels in the training data, a summary is given in Table \ref{tab:rho}. We observe that with a $\rho_c = 70\%$, it would predict the depression label with $100\%$ accuracy. 
     Henceforth, in this paper we will define $\rho_c = 70\%$.
@@ -225,19 +224,16 @@ The greatest advantage of using GP over other machine learning algorithms is tha
     We were inspired by triage algorithms used in emergency services \cite{shah2015managing,oredsson2011systematic}, where the priority of one's treatments are decided by the severity of their ailments \cite{wiki:Triage}.
     We have seen that this method dispenses limited resources with efficiency \cite{rosedale2011effectiveness} throughout many emergency services worldwide. 
     Similarly, we want to apply that idea to psychiatric clinics, which are also facing a shortage of resources. 
-    Since the depression clinic is understaffed and struggling to keep up with a number of patients, it is wise to prioritize the individuals who are predicted with higher PHQ-8 scores, which indicates that they are likely to be more depressed. 
-    Hence, we optimize the scheduling of appointments, prioritizing people with higher predicted PHQ-8 scores.
-
+    Since the depression clinic is understaffed and struggling to keep up with a number of patients, we prioritize the individuals who are predicted with higher PHQ-8 scores, which indicates that they are likely to be more depressed thus, optimizing the scheduling process.
+    
 	\subsection{Qualitative Advantages}
 The greatest advantage of using a GP is that it provides us with a probability estimate along with the predicted label. 
     We rely on the probability to determine the reliability of the predicted label. 
-    As we are dealing with human beings, we would want to rely on the predicted label only if it is reliable. 
-    Additionally, we have read in medical literature regarding the dire consequences of misdiagnosis and/or inappropriate treatment \cite{nasrallah2015consequences,bowden2001strategies,dunner2003clinical} in the area of depression. 
-    With the probability, we can be confident of the decisions that we make; that can potentially affect a person. 
-    Assume that we have a predicted label that can be trusted, then with the label, i.e. true for depressed and false for not depressed, we can decide if the person needs to come to the clinic for an appointment. 
-    Hence, reducing the number of appointments that are made, easing the workload of the staff in the clinic. \\
+    As we are dealing with human beings, we would want to rely on the predicted label only if it is reliable as there are dire consequences to misdiagnosis and/or inappropriate treatment in the area of depression \cite{nasrallah2015consequences,bowden2001strategies,dunner2003clinical}. 
+    With the probability, we can be confident of the decisions that we make and decide if the person needs to come to the clinic for an appointment. 
+    This in turn, reduces the number of appointments that are made, which eases the workload of the staff in the clinic. \\
     
-    In addition to reducing the workload of the staff, the GP models can potentially improve as more patients go through the pre-screening process.
+    The GP models can also potentially improve as more patients go through the pre-screening process.
     It can be the case that the GP is not confident of its prediction, then we should not trust the label that the GP had predicted. 
     Then, a psychiatrist would need to determine with the help of a physical examination if the person in question is depressed or not and administer the appropriate treatment. 
     From the appointment with the psychiatrist, he/she can determine if the patient is depressed or not. 
@@ -249,9 +245,7 @@ The greatest advantage of using a GP is that it provides us with a probability e
     This allows the removal of any bias (e.g. gender, racial) in pre-screening, which can potentially cause misdiagnosis. 
     Additionally, the clinic can save skilled human resources as they can hire anyone or can use an automated system to perform the pre-screening task.
     We also prioritize the clinic's resources based on a person's depression severity, allowing better allocation of resources. 
-    This ensures that the clinic's resources are directed to people who need them most. \\
-
-    Hence, our model introduces an unbiased pre-screening process reaping the following benefits: leading to a reduction in the number of appointments, reduction of human resources required, a pre-screening process whose accuracy improves incrementally over time, and a better allocation of resources.
+    This ensures that the clinic's resources are directed to people who need them most. 	
 
 	\section{Proof Of Concept}
 In order demonstrate our framework, a prototype has been created. Before we are going deeply into the prototype, 
@@ -260,7 +254,6 @@ In order demonstrate our framework, a prototype has been created. Before we are 
     \subsection{The success of GPC}
     As Gaussian Process (Dot-Product) works well in the depression regression task, we believe that it will work well in the classification task too, and we tested it. 
     The result is shown in figure \ref{figure:gp_dot_product} and table \ref{table:comparisionOfGPModelWithOthers}. \\
-    
          \begin{figure}[h]
              \begin{center}
             \includegraphics[width=0.5\textwidth]{gp_dot_product}
@@ -349,6 +342,7 @@ In order demonstrate our framework, a prototype has been created. Before we are 
     The scheduling is just done using a greedy algorithm as the agent is designed to be used by Antoine only.
 
     After the scheduling, a schedule of Antoine for the next week is generated and it is looks like this:
+
 	\begin{Verbatim}[fontsize=\tiny]
 	Antoine:
 	Miguel : 14-11-2016 (Mon) 08:00 14-11-2016 (Mon) 09:00
@@ -389,17 +383,17 @@ In order demonstrate our framework, a prototype has been created. Before we are 
 	\section{Contributions}
 	\begin{itemize}
 		\item \textbf{Antoine Charles Vincent Garcia}: 
-		Scripting the program, setting up machine learning libraries, running tests and generation of the utility function.
+		Scripting the program, writing the proof of concept and running tests.
 		\item \textbf{Chan Jun Wei}: 
-		Scripting the program, setting up machine learning libraries, running tests and generation of the utility function.
+		Scripting the program, writing the proof of concept and running tests.
 		\item \textbf{Chen Tze Cheng}: 
-		Scripting the program, setting up machine learning libraries, running tests and generation of the utility function.
+		Scripting the program, writing the proof of concept and running tests.
 		\item \textbf{Eric Ewe Yow Choong}: 
-		Formatting the report as well as research and writing up of the technical approach section.
+		Formatting the report and writing up of the technical approach section.
 		\item \textbf{Han Liang Wee, Eric}: 
-		Retrieving data, testing as well as research and writing up of the technical approach section.
+		Retrieving data,research, testing and writing up of the technical approach section.
 		\item \textbf{Ho Wei Li}: 
-		Research, vetting of the report and writing up of the motivation and introduction of the experiment. \\
+		Research, vetting of the report and writing up of the introduction section of the report. \\
 	\end{itemize}
 	
 	\bibliographystyle{aaai}
