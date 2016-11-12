@@ -275,7 +275,7 @@ def printPerformances(models_performances):
 
 depressionClassifer = gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct())
 depressionClassifer.fit(X_train, y_bin_train)
-#f1, performance = getClassifierPerformance(depressionClassifer, "depressionClassifer", mode, X_train[:,bitVec], y_bin_train, X_dev[:,bitVec])
+#f1, performance = getClassifierPerformance(depressionClassifer, "depressionClassifer", "MFCC", X_train, y_bin_train, X_dev)
 #print performance
 
 #print "PHQ8:"
