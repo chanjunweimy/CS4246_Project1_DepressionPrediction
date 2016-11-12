@@ -85,17 +85,16 @@
 	Diagnosis and treatment of depression in Singapore are difficult. Apart from the highlighted difficulties that PCPs face, there are also significant delays in specialized treatment, which can extend up to several months due to the presence of an extended referral chain to a psychiatrist, inherent in the public health system. Sociocultural factors such as stigmatization compound the problem. In Asian societies, where a majority of the public, including mental health professionals, think that they should be protected from people with mental disorders or that these people should be locked up. \cite{chong2009}. These issues justify need for a better process for diagnosing depression. \\
 	
 	\subsection{Objective}
-	In the past decade, researchers have had successfully correlate emotion with voice production and speech acoustics \cite{uwa2001}. 
-    Analogous to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen success, proving that it is an effective indicator of depression severity \cite{jov2016}. In a recent study, Gaussian Process Dot Product trained using the Mel Frequency Cepstral Coefficients (MFCC) acoustic feature subset was found to be a good model for the prediction of depression incidence and severity with better accuracies than other state-of-the-art machine learning models \cite{cs42462016}.\\
+	In the past decade, researchers have successfully correlated emotion with voice production and speech acoustics \cite{uwa2001}. 
+    Analogous to that, active research of late into the use of voice acoustics as predictors of clinical depression scores has seen success, proving that it is an effective indicator of depression severity \cite{jov2016}. In a recent study, Gaussian Process (GP) Dot Product trained using the Mel Frequency Cepstral Coefficients (MFCC) acoustic feature subset was found to be a good model for the prediction of depression incidence and severity with better accuracies than other state-of-the-art machine learning models \cite{cs42462016}.\\
 
 	We propose a framework based on the outputs of the Gaussian Process Dot Product on MFCC model. The framework lowers the barriers to diagnosis and treatment of depression by supplanting the diagnosis process in primary care with the predictions of the model in most cases, requiring the PCP's attention only in ambiguous cases. In univocal cases, patients are referred directly to specialists for treatment, thereby reducing the referral chain to a single step. Specialized healthcare providers are also given the predicted Patient Health Questionaire 8 (PHQ-8) score of the patient to prioritize urgent cases better, improving appointment scheduling efficiency. On the side of PCPs, time and resources saved can be utilized to provide better quality healthcare in all other aspects.
 	
 	\section{Modelling and Approach}
-	Leveraging on the success of the modeling of depression prediction of Personal Health Questionaire depression scale (PHQ-8) scores in project 1, we extend and apply the work done to solve the aforementioned problem of under-staffing.
     Our solution is to implement pre-screening and automate the process of the deciding if the person needs an appointment or otherwise.
     In this manner, we cut down on the number of appointments reducing the workload on the staff. 
     Moreover, our process allows prioritizing of patient's appointments by their PHQ-8 score which represents the severity of depression.
-    Hence, we would need to use two Gaussian Processes (GP): Gaussian Process Classifier (GPC) and the Gaussian Process Regressor (GPR). 
+    Hence, we would need to use two Gaussian Processes: Gaussian Process Classifier (GPC) and the Gaussian Process Regressor (GPR). 
     In this section, we will firstly describe the process that we are proposing, and we will go into detail on each component of the process. 
     We note that the process is a general framework and that different clinics have different operating processes, clinics should tweak the framework to better fit their needs. 
     Hence, we would omit some detail in our model and leave them to the implementer.
@@ -373,16 +372,11 @@ The greatest advantage of using a GP is that it provides us with a probability e
 	Online GP is not implemented yet but we also think that it will be good if we implement it to improve the accuracy or error rate of the model.
 	
 	\section{Conclusion}	
-	Our work has succesfully shown that GP is a good model for this problem and can predict PHQ-8 better than state-of-the-art machine learning models. 
-	In addition to being on par or better at prediction, GP can inherently provide an estimate of prediction uncertainty. 
-	This allows the user to gauge the model's confidence of the prediction, and to make more informed decisions based on both the prediction and its uncertainty. 
-	We can also intelligently supplement more data to our training set based on the prediction uncertaintly. 
-	Therefore, after considering both results and GP's advantages, we conclude the GP Dot Product trained using MFCC feature set is a good model for 
-	depression prediction.
+		In our work, we have defined a general framework to allow automated decision making on depression patients. Our framework relies on the probability estimate from the GP model to predict a patient's depression label with confidence. Through the model, we decide if the person should go for further diagnosis, or go for treatment with the psychiatrist or does not need any treatment. Our framework relies upon and extends the work done in project 1, with the GPC. We tested the performance of GPC and found it to be incredibly accurate at 87\%. After that, we implemented a prototype based on the framework. We have demonstrated that it is possible to build an application to automate and to quicken the process of referrals.
 	
 	\section{Further Work}
 	The framework that we suggested not only can be used to help doctors for the diagnosis of MDD, but also extendable to other depression-related 
-	diseases such as Bipolar disorder and PDD or even other mental illnesses that result in subtle differences in voice acoustics. 
+	diseases such as Bipolar disorder and PDD or even other mental illnesses that can be identified by subtle differences in voice acoustics. 
 
 	
 	\section{Contributions}
@@ -398,7 +392,7 @@ The greatest advantage of using a GP is that it provides us with a probability e
 		\item \textbf{Han Liang Wee, Eric}: 
 		Retrieving data,research, testing and writing up of the technical approach section.
 		\item \textbf{Ho Wei Li}: 
-		Research, vetting of the report and writing up of the introduction section of the report.
+		Research, vetting of the report and writing up of the introduction section of the report. \\
 	\end{itemize}
 	
 	\bibliographystyle{aaai}
