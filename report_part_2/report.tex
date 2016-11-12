@@ -270,16 +270,14 @@
  	 \end{figure}
 
         \begin{table}[h!]
-		\begin{adjustbox}{width=0.53\textwidth,center}
-            	\resizebox {0.5\textwidth }{!}{ %
+            	\resizebox {0.45\textwidth }{!}{ %
                 \begin{tabular}{ | r | c | c | c | c | }
                  \hline
                                                     & \bfseries F1	& \bfseries Precision 	& \bfseries Recall      & \bfseries Accuracy \\ \hline
-                 Gaussian Process (Dot-Product)		& 0.67(0.92) 	& 0.57(0.96)            & 0.8(0.88)			    & 0.87 \\ \hline
+                 GPC		& 0.67(0.92) 	& 0.57(0.96)            & 0.8(0.88)			    & 0.87 \\ \hline
                  DepAudioNet	                    & 0.52(0.7) 	& 0.35(1.0)	    		& 1.0(0.54)             & -  \\ \hline
                  BaseLine                       	& 0.41(0.58) 	& 0.27(0.94)			& 0.89(0.42)            & -  \\ \hline
-                 \end{tabular}%}
-}
+                 \end{tabular}}
         \caption{Our GPC beats the related study (DepAudioNet) and the baseline.}
         \label{table:comparisionOfGPModelWithOthers}
         \end{table}
@@ -353,33 +351,26 @@
 
 	After the scheduling, a schedule of Antoine for the next week is generated and it is looked like this:
 	\begin{Verbatim}[fontsize=\tiny]
-	\begin{lrbox}{\myv}\begin{minipage}{0.5\textwidth}
-	\begin{verbatim}
 	Antoine:
-	Miguel : 
-	14-11-2016 (Mon) 08:00 
-	14-11-2016 (Mon) 09:00
-	Davi : 
-	14-11-2016 (Mon) 09:00 
-	14-11-2016 (Mon) 10:30
-	Ethan : 
-	14-11-2016 (Mon) 13:00 
-	14-11-2016 (Mon) 15:00
-	Maria : 
-	15-11-2016 (Tue) 08:00 
-	15-11-2016 (Tue) 10:30
-	Lucia : 
-	14-11-2016 (Mon) 10:30 
-	14-11-2016 (Mon) 12:00
-	Elena : 
+	Miguel : 14-11-2016 (Mon) 08:00 14-11-2016 (Mon) 09:00
+	Davi : 14-11-2016 (Mon) 09:00 14-11-2016 (Mon) 10:30
+	Ethan : 14-11-2016 (Mon) 13:00 14-11-2016 (Mon) 15:00
+	Maria : 15-11-2016 (Tue) 08:00 15-11-2016 (Tue) 10:30
+	Lucia : 14-11-2016 (Mon) 10:30 14-11-2016 (Mon) 12:00
+	Elena : 14-11-2016 (Mon) 15:00 14-11-2016 (Mon) 16:30
+	Free: 14-11-2016 (Mon) 12:00 14-11-2016 (Mon) 12:00
+	Free: 14-11-2016 (Mon) 16:30 14-11-2016 (Mon) 17:00
+	Free: 15-11-2016 (Tue) 10:30 15-11-2016 (Tue) 12:00
+	Free: 15-11-2016 (Tue) 13:00 15-11-2016 (Tue) 17:00
+	Free: 16-11-2016 (Wed) 08:00 16-11-2016 (Wed) 12:00
+	Free: 16-11-2016 (Wed) 13:00 16-11-2016 (Wed) 17:00
+	Free: 17-11-2016 (Thu) 08:00 17-11-2016 (Thu) 12:00
+	Free: 17-11-2016 (Thu) 13:00 17-11-2016 (Thu) 17:00
+	Free: 18-11-2016 (Fri) 08:00 18-11-2016 (Fri) 12:00
+	Free: 18-11-2016 (Fri) 13:00 18-11-2016 (Fri) 17:00
 	\end{Verbatim}
-	14-11-2016 (Mon) 16:30
-	Free: 
-	14-11-2016 (Mon) 12:00 
-	14-11-2016 (Mon) 12:00
-	...
-	\end{minipage}\end{lrbox}
-	\resizebox{0.5\textwidth}{!}{\usebox\myv}
+
+	
 	
 	Note that, in the future if Antoine has a few new partners, a new scheduling algorithm is needed to ensure that everyone's work will be distributed clearly.
 	It is not hard to observe that it is a Constraint Satisfaction Problem (CSP), and thus we suggest genetic algorithm for this case, 
