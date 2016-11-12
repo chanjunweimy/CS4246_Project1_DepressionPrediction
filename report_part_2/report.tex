@@ -42,6 +42,7 @@
 \setlength{\pdfpagewidth}{8.5in}
 \setlength{\pdfpageheight}{11in}
 
+\newsavebox\myv
 
 \title{
 	CS4246 AI Planning and Decision Making - Project 2 \\
@@ -325,7 +326,7 @@
         \item It is not necessary to ask all the questions above as long as the length of the phone interview is around 1 minute.
         \item Avoid saying something like, "Cheer up!", "Lighten up!" to provide help, or giving suggestions like 
         		"Take a hot bath. That's what I always do when I upset!" to the patients. 
-        		Each phone call should obey the principle of "Ask for information and NOT providing unprofessional guidance". \cite{PCS16}
+        		Each phone call should obey the principle of "Ask for information and NOT providing unprofessional guidance". \cite{PsychCentral2015}
         \item End with, thank you Sir/Ms for your time. We will contact you within 3 working days.
         \item Extracting the speeches of the person from recording manually and pass it to the agent.
 	\end{enumerate}
@@ -355,25 +356,35 @@
 	The scheduling is just done using greedy algorithm as the agent is designed to be used by Antoine only.
 
 	After the scheduling, a schedule of Antoine for the next week is generated and it is looked like this:
-	\begin{verbatim}[width=0.5\textwidth]
+	
+	\begin{lrbox}{\myv}\begin{minipage}{0.5\textwidth}
+	\begin{verbatim}
 	Antoine:
-	Miguel : 14-11-2016 (Mon) 08:00 14-11-2016 (Mon) 09:00
-	Davi : 14-11-2016 (Mon) 09:00 14-11-2016 (Mon) 10:30
-	Ethan : 14-11-2016 (Mon) 13:00 14-11-2016 (Mon) 15:00
-	Maria : 15-11-2016 (Tue) 08:00 15-11-2016 (Tue) 10:30
-	Lucia : 14-11-2016 (Mon) 10:30 14-11-2016 (Mon) 12:00
-	Elena : 14-11-2016 (Mon) 15:00 14-11-2016 (Mon) 16:30
-	Free: 14-11-2016 (Mon) 12:00 14-11-2016 (Mon) 12:00
-	Free: 14-11-2016 (Mon) 16:30 14-11-2016 (Mon) 17:00
-	Free: 15-11-2016 (Tue) 10:30 15-11-2016 (Tue) 12:00
-	Free: 15-11-2016 (Tue) 13:00 15-11-2016 (Tue) 17:00
-	Free: 16-11-2016 (Wed) 08:00 16-11-2016 (Wed) 12:00
-	Free: 16-11-2016 (Wed) 13:00 16-11-2016 (Wed) 17:00
-	Free: 17-11-2016 (Thu) 08:00 17-11-2016 (Thu) 12:00
-	Free: 17-11-2016 (Thu) 13:00 17-11-2016 (Thu) 17:00
-	Free: 18-11-2016 (Fri) 08:00 18-11-2016 (Fri) 12:00
-	Free: 18-11-2016 (Fri) 13:00 18-11-2016 (Fri) 17:00
+	Miguel : 
+	14-11-2016 (Mon) 08:00 
+	14-11-2016 (Mon) 09:00
+	Davi : 
+	14-11-2016 (Mon) 09:00 
+	14-11-2016 (Mon) 10:30
+	Ethan : 
+	14-11-2016 (Mon) 13:00 
+	14-11-2016 (Mon) 15:00
+	Maria : 
+	15-11-2016 (Tue) 08:00 
+	15-11-2016 (Tue) 10:30
+	Lucia : 
+	14-11-2016 (Mon) 10:30 
+	14-11-2016 (Mon) 12:00
+	Elena : 
+	14-11-2016 (Mon) 15:00 
+	14-11-2016 (Mon) 16:30
+	Free: 
+	14-11-2016 (Mon) 12:00 
+	14-11-2016 (Mon) 12:00
+	...
 	\end{verbatim}
+	\end{minipage}\end{lrbox}
+	\resizebox{0.5\textwidth}{!}{\usebox\myv}
 	
 	Note that, in the future if Antoine has a few new partners, a new scheduling algorithm is needed to ensure that everyone's work will be distributed clearly.
 	It is not hard to observe that it is a Constraint Satisfaction Problem (CSP), and thus we suggest genetic algorithm for this case, 
@@ -393,11 +404,9 @@
 	depression prediction.
 	
 	\section{Further Work}
-	For this experiment, we only used machine learning algorithms with their default parameters. 
-	An aspect that deserves further exploration is to perform automatic hyper-parameter optimization
-	across all the machine learning algorithms to fine-tune each model's performance. 
-	In particular, we can try Hyperopt-sklearn \cite{Komer2014HyperoptsklearnAH} or GP based hyper-parameter tuner. 
-	We opine that with hyper-parameter tuning, we can predict PHQ-8 scores better and can have a more objective comparison of the different learning algorithms.
+	The framework that we suggested not only can be used to help doctors for the diagnosis of depression, but also extendable to other depression-related 
+	diseases such as PSTD. 
+
 	
 	\section{Contributions}
 	\begin{itemize}
