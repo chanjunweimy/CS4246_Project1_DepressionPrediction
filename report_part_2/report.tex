@@ -81,7 +81,7 @@
 	\subsection{Motivation}
 	The most recent study conducted by the Institute of Mental Health has shown that Major Depressive Disorder (MDD) is the most common mental disorder in Singapore. An estimated 1 in 17 people having suffered from MDD at some point in their lives which is almost twice that of the next most common disorder, alcohol abuse \cite{annacadmedsg}. In 2015, despite falling overall suicide rates, and a shrinking proportion of youths in the aging population of Singapore, the number of suicide deaths in youths between 10-19 of age was twice as many as the year before, and it is also the highest in 15 years \cite{samaritansofsingapore2016}. The large increase in suicide rates is a worrying trend, as suicide is closely correlated with depression. In light of all the available data, we extrapolate that the prevalence of MDD has increased over the last five years. \\
 
-	Diagnosis and treatment of depression in Singapore are difficult. Apart from the highlighted difficulties that GPs face, there are also significant delays in specialized treatment, which can extend up to several months due to the presence of an extended referral chain to a psychiatrist, inherent in the public health system. Sociocultural factors such as stigmatization compound the problem. In Asian societies, where a majority of the public, including mental health professionals, think that they should be protected from people with mental disorders or that these people should be locked up. \cite{chong2009}. These issues justify need for a better process for diagnosing depression. \\
+	Diagnosis and treatment of depression in Singapore are difficult. Apart from the highlighted difficulties that GPs face, there are also significant delays in specialized treatment, which can extend up to several months due to the presence of an extended referral chain to a psychiatrist, inherent in the public health system. Sociocultural factors such as stigmatization compound the problem. In Asian societies, where a majority of the public, including mental health professionals, think that they should be protected from people with mental disorders or that these people should be locked up. \cite{chong2009}. These issues justify need for a better process for diagnosing depression.
 	
 	\subsection{Objective}
 	In the past decade, researchers have had successfully correlate emotion with voice production and speech acoustics \cite{uwa2001}. 
@@ -194,9 +194,8 @@ We noted that regardless of the questions asked, a depressed person will still e
 The greatest advantage of using GP over other machine learning algorithms is that it provides us with a probability estimate representing confidence of the prediction. 
     With that probability, we can decide if the predicted label can be relied on or that it cannot be trusted and needs to learn this data point. 
     In our model, we exploit this property, unique to GPs. 
-    After the interview, GPC will predict the depression label with a confidence $p$ on the audio recording. 
-    As mentioned in the modeling, we define a particular probability $\rho_c$. 
-    If the GPC predicts with $p \geq \rho_c$, then we can trust the predicted label and continue to decide appropriately based on the label whereas if the GPC predicts with $p < \rho_c$, then we cannot trust the predicted label and refer the patient to a general practitioner to obtain more data.
+    As mentioned in Automation Flow earlier, we define a particular probability $\rho_c$. 
+    Together with $p$, we can decide the patient's next step in the process.
     We determine the probability $\rho_c$ experimentally by observing the prediction quality of the labels in the training data, a summary is given in Table \ref{tab:rho}. We observe that with a $\rho_c = 70\%$, it would predict the depression label with $100\%$ accuracy. 
     Henceforth, in this paper we will define $\rho_c = 70\%$.
 	
@@ -224,19 +223,16 @@ The greatest advantage of using GP over other machine learning algorithms is tha
     We were inspired by triage algorithms used in emergency services \cite{shah2015managing,oredsson2011systematic}, where the priority of one's treatments are decided by the severity of their ailments \cite{wiki:Triage}.
     We have seen that this method dispenses limited resources with efficiency \cite{rosedale2011effectiveness} throughout many emergency services worldwide. 
     Similarly, we want to apply that idea to psychiatric clinics, which are also facing a shortage of resources. 
-    Since the depression clinic is understaffed and struggling to keep up with a number of patients, it is wise to prioritize the individuals who are predicted with higher PHQ-8 scores, which indicates that they are likely to be more depressed. 
-    Hence, we optimize the scheduling of appointments, prioritizing people with higher predicted PHQ-8 scores.
-
+    Since the depression clinic is understaffed and struggling to keep up with a number of patients, we prioritize the individuals who are predicted with higher PHQ-8 scores, which indicates that they are likely to be more depressed thus, optimizing the scheduling process.
+    
 	\subsection{Qualitative Advantages}
 The greatest advantage of using a GP is that it provides us with a probability estimate along with the predicted label. 
     We rely on the probability to determine the reliability of the predicted label. 
-    As we are dealing with human beings, we would want to rely on the predicted label only if it is reliable. 
-    Additionally, we have read in medical literature regarding the dire consequences of misdiagnosis and/or inappropriate treatment \cite{nasrallah2015consequences,bowden2001strategies,dunner2003clinical} in the area of depression. 
-    With the probability, we can be confident of the decisions that we make; that can potentially affect a person. 
-    Assume that we have a predicted label that can be trusted, then with the label, i.e. true for depressed and false for not depressed, we can decide if the person needs to come to the clinic for an appointment. 
-    Hence, reducing the number of appointments that are made, easing the workload of the staff in the clinic. \\
+    As we are dealing with human beings, we would want to rely on the predicted label only if it is reliable as there are dire consequences to misdiagnosis and/or inappropriate treatment in the area of depression \cite{nasrallah2015consequences,bowden2001strategies,dunner2003clinical}. 
+    With the probability, we can be confident of the decisions that we make and decide if the person needs to come to the clinic for an appointment. 
+    This in turn, reduces the number of appointments that are made, which eases the workload of the staff in the clinic. \\
     
-    In addition to reducing the workload of the staff, the GP models can potentially improve as more patients go through the pre-screening process.
+    The GP models can also potentially improve as more patients go through the pre-screening process.
     It can be the case that the GP is not confident of its prediction, then we should not trust the label that the GP had predicted. 
     Then, a psychiatrist would need to determine with the help of a physical examination if the person in question is depressed or not and administer the appropriate treatment. 
     From the appointment with the psychiatrist, he/she can determine if the patient is depressed or not. 
@@ -248,17 +244,15 @@ The greatest advantage of using a GP is that it provides us with a probability e
     This allows the removal of any bias (e.g. gender, racial) in pre-screening, which can potentially cause misdiagnosis. 
     Additionally, the clinic can save skilled human resources as they can hire anyone or can use an automated system to perform the pre-screening task.
     We also prioritize the clinic's resources based on a person's depression severity, allowing better allocation of resources. 
-    This ensures that the clinic's resources are directed to people who need them most. \\
-
-    Hence, our model introduces an unbiased pre-screening process reaping the following benefits: leading to a reduction in the number of appointments, reduction of human resources required, a pre-screening process whose accuracy improves incrementally over time, and a better allocation of resources.
+    This ensures that the clinic's resources are directed to people who need them most. 	
 
 	\section{Proof Of Concept}
-	In order demonstrate our framework, a prototype has been created. Before we are going deeply into the prototype, 
-	we will first talk about the success of our GPC. Then we will discuss about a scenario of a busy doctor and how our prototype is going to help him.
+	In order demonstrate our framework, a prototype has been created. Before we are going deeply into the prototype, we will first talk about the success of our GPC. 
+	Then we will discuss about a scenario of a busy doctor and how our prototype is going to help him.
 	
 	\subsection{The success of GPC}
 	As Gaussian Process (Dot-Product) works well in the depression regrassion task, we believe that it will work well in the classification task too, and we tested it. 
-	The result is shown in figure \ref{figure:gp_dot_product} and table \ref{table:comparisionOfGPModelWithOthers}. \\
+	The result is shown in figure \ref{figure:gp_dot_product} and table \ref{table:comparisionOfGPModelWithOthers}.
 	
          \begin{figure}[h]
  		    \begin{center}
@@ -304,7 +298,7 @@ The greatest advantage of using a GP is that it provides us with a probability e
 	\subsubsection{Phone Interview :}
 	Right now, Antoine has to ask his nurse, Joy to do the phone interview as this task is not supported by the autonomous agent yet. 
 	In the future, the phone interview might be able to be conducted by the autonomous agent.
-	Antoine has given his nurse a guideline to follow, and the guideline is the following:
+	Antoine has given his nurse a guideline to follow, and the guidelines are as follows:
 	
    	\begin{enumerate}
     		\item The aim of the phone interview is to collect the speeches of the person.
@@ -367,18 +361,16 @@ The greatest advantage of using a GP is that it provides us with a probability e
 	Then, GPC will reply its predition on the person with the confidence level.
 	The agent will trust the GPC if the person is predicted as not depressed with the confidence level \(\geq\) 70,
 	and these persons will be suggested to be rejected and will not be scheduled a consultation as the agent assumes Antoine is very busy and 
-	he would like to consult as little person as he could. \\
-
-	These are a few sample data that is obtained from the GP:
+	he would like to consult as little person as he could. 
+	The following are a few sample data that is obtained from the GP:
 	\begin{enumerate}
      	\item Daniel: GP is 91.9163306736\% confidence to say that the patient is normal and required 3.0h.
 		\item Miguel: GP is 54.36852983429999\% confidence to say that the patient is depressed and required 1.0h.
-		\item Maria: GP is 59.406768555\% confidence to say that the patient is normal and required 2.5h.
+		\item Maria: GP is 59.406768555\% confidence to say that the patient is normal and required 2.5h. \\
      	\end{enumerate}
 
 	According to these data, Daniel is not going to be scheduled a consultation, while the others will.
 	The scheduling is just done using greedy algorithm as the agent is designed to be used by Antoine only.
-
 	After the scheduling, a schedule of Antoine for the next week is generated and it is looked like this:
 	\begin{Verbatim}[fontsize=\tiny]
 	Antoine:
@@ -425,17 +417,17 @@ The greatest advantage of using a GP is that it provides us with a probability e
 	\section{Contributions}
 	\begin{itemize}
 		\item \textbf{Antoine Charles Vincent Garcia}: 
-		Scripting the program, setting up machine learning libraries, running tests and generation of the utility function.
+		Scripting the program, writing the proof of concept and running tests.
 		\item \textbf{Chan Jun Wei}: 
-		Scripting the program, setting up machine learning libraries, running tests and generation of the utility function.
+		Scripting the program, writing the proof of concept and running tests.
 		\item \textbf{Chen Tze Cheng}: 
-		Scripting the program, setting up machine learning libraries, running tests and generation of the utility function.
+		Scripting the program, writing the proof of concept and running tests.
 		\item \textbf{Eric Ewe Yow Choong}: 
-		Formatting the report as well as research and writing up of the technical approach section.
+		Formatting the report and writing up of the technical approach section.
 		\item \textbf{Han Liang Wee, Eric}: 
-		Retrieving data, testing as well as research and writing up of the technical approach section.
+		Retrieving data,research, testing and writing up of the technical approach section.
 		\item \textbf{Ho Wei Li}: 
-		Research, vetting of the report and writing up of the motivation and introduction of the experiment. \\
+		Research, vetting of the report and writing up of the introduction section of the report.
 	\end{itemize}
 	
 	\bibliographystyle{aaai}
