@@ -1,26 +1,23 @@
 @ECHO OFF
 
 SETLOCAL enabledelayedexpansion
-for /r %%i in (*) do (
-    echo %%i
-    
-    SET "line=%%i"
-    
-    SET "tempLine=!line:.wav=!"
-    IF NOT %%tempLine%%==%%line%% (
-    echo 'getting noise sample.'
+for /r %%i in (*) do (    
+    SET line=%%i
 
-    ffmpeg -i %%i -vn -ss 00:00:00 -t 00:00:01 !line:.wav=_noise.wav!
+    IF NOT "!line:.wav=!" == "%%i" (
+        echo 'getting noise sample.'
 
-    echo 'generating noise profile.'
+        ffmpeg -i %%i -vn -ss 00:00:00 -t 00:00:01 !line:.wav=_noise.wav!
 
-    sox !line:.wav=_noise.wav! -n noiseprof noise.prof
+        echo 'generating noise profile.'
 
-    echo 'cleaning original audio.'
+        sox !line:.wav=_noise.wav! -n noiseprof noise.prof
 
-    sox %%i !line:.wav=_clean.wav! noisered noise.prof 0.21
+        echo 'cleaning original audio.'
 
-    echo 'cleaned audio generated.'
+        sox %%i !line:.wav=_clean.wav! noisered noise.prof 0.21
+
+        echo 'cleaned audio generated.'
     )
     
 )
