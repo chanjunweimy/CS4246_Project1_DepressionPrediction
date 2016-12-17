@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Map;
 
+//implemented using windows batch file.
 public class NoiseRemover {
 	private static NoiseRemover _remover = null;
 	private static final String NOISE_SAMPLE = "noiseaud.wav";
