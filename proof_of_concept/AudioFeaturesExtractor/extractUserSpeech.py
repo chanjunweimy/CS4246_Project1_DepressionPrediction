@@ -12,7 +12,9 @@ for (dirpath, dirnames, filenames) in walk("."):
                 spamreader = csv.reader(csvfile, delimiter='\t', quotechar='|')
                 i = 0
                 for row in spamreader:
-                    if row[0] == 'start_time':
+                    if not row:
+                        continue
+                    elif row[0] == 'start_time':
                         continue
                     print row[0]
                     newAudioName = audiofile.replace("clean.wav", str(i) + ".wav")
