@@ -262,13 +262,13 @@ def printPerformances(models_performances):
 #print rmse_train
 #print rmse_predict
 
-classifiers = [("KNN", None, KNeighborsClassifier(2)),
-               ("Linear SVM", None, SVC(kernel="linear")),
-               ("RBF SVM", None, SVC(gamma=2, C=1)),
-               ("DT", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
-               ("RF", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
-                                                         max_depth=20)),
-               ("AB", None, AdaBoostClassifier(random_state=13370)),
+classifiers = [#("KNN", None, KNeighborsClassifier(2)),
+               #("Linear SVM", None, SVC(kernel="linear")),
+               #("RBF SVM", None, SVC(gamma=2, C=1)),
+               #("DT", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
+               #("RF", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
+               #                                          max_depth=20)),
+               #("AB", None, AdaBoostClassifier(random_state=13370)),
                #("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*1)))),
                ("GP-DP", ["MFCC","All","CIFE","CFS"], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
                # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
@@ -280,6 +280,9 @@ classifiers = [("KNN", None, KNeighborsClassifier(2)),
                
 ]
 #classify(X_train[:,bitVec], X_dev[:,bitVec])
+
+models_f1 = []
+models_performances = []
 models_f1, models_performances = getClassifieresPerformances(classifiers, models_f1, models_performances)
 #models_f1, models_performances = getClassifieresPerformancesByDefinedX(classifiers, 'predict', models_f1, models_performances, newTrainX, y_bin_train, newDevX)
 models_f1, models_performances = addRelatedWork(models_f1, models_performances)

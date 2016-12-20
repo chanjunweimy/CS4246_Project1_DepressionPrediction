@@ -23,11 +23,11 @@ public class AudioFeaturesGenerator {
 	//public static final String FILEPATH_FEATURE_OUT = "data/features/";
 	public static final String FILEPATH_FEATURE_OUT = "";
 	
-	public static final String FILEPATH_DCAPSWOZ = "data/dcapswoz_audio_participantonly/dev";
-	//public static final String FILEPATH_DCAPSWOZ = "data/dcapswoz_audio_participantonly/train";
+	//public static final String FILEPATH_DCAPSWOZ = "data/dcapswoz_audio_participantonly_merged/dev";
+	public static final String FILEPATH_DCAPSWOZ = "data/dcapswoz_audio_participantonly_merged/train";
 
-	public static final String FILEPATH_RESULT = "data/dcapswoz_audio_participantonly/result/dev_split_modified.csv";
-	//public static final String FILEPATH_RESULT = "data/dcapswoz_audio_participantonly/result/training_split_modified.csv";
+	//public static final String FILEPATH_RESULT = "data/dcapswoz_audio_participantonly/result/dev_split.csv";
+	public static final String FILEPATH_RESULT = "data/dcapswoz_audio_participantonly/result/training_split.csv";
 	
 	public static final String EMOTION_DCAPSWOZ_MFCC = FILEPATH_FEATURE_OUT + "emotion_dcapswoz_mfcc.txt";
 	public static final String EMOTION_DCAPSWOZ_SPECTRUM = FILEPATH_FEATURE_OUT + "emotion_dcapswoz_spectrum.txt";
@@ -61,7 +61,7 @@ public class AudioFeaturesGenerator {
 			builder.append(outcome);
 			builder.append(System.lineSeparator());
 		}
-		writeToFile(filename, true, outcomes.toString());
+		writeToFile(filename, true, builder.toString());
 	}
 	
 	public boolean computeMFCC(File[] audioFiles, String filename) {
