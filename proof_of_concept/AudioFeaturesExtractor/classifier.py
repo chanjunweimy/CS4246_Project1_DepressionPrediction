@@ -72,6 +72,8 @@ def fit_svc_val(x):
             #fs[i] += np.sqrt(np.square(svr.predict(X_train[idx_valid])-Y_train[idx_valid]).mean())
         fs[i] *= 1./nfold
     return fs
+    
+
 
 class RBF_ARD_WRAPPER:
     def __init__(self, kernel_ardIn):
@@ -86,24 +88,26 @@ class RBF_ARD_WRAPPER:
     def predict(self, X):
         return self.m.predict(X)[0]
         
-def trainModels(regressors, models_rmse): 
-    for name, featSelectionMode, model in regressors:
-        modes = featSelectionMode
-        if featSelectionMode==None:
-            modes = featSelectionFns.keys()
-        rmses = []
-        for eaMode in modes:
-            bitVec = bitVecs[eaMode]
-            model.fit(X_train[:,bitVec], y_train[:])
-            rmse_train = sqrt(mean_squared_error(y_train, model.predict(X_train[:,bitVec])))
-            rmse_predict = sqrt(mean_squared_error(y_dev, model.predict(X_dev[:,bitVec])))
-            rmses.append([name + '('+eaMode+')', rmse_train, rmse_predict])
-            print(name + '('+eaMode+')')
-            print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
-        rmses=sorted(rmses, key=lambda l: l[2])
-        models_rmse.append(rmses[0])
-    return models_rmse
-  
+def mean(a):
+    return sum(a) / len(a)
+    
+def getEnsemblesPerformances(previous_layer, current_layer, models_f1, models_performances): 
+    X_temp_train = []
+    X_temp_dev = []
+    for name, featSelectionMode, model in previous_layer:            
+        model.fit(X_train, y_bin_train)
+        X_temp_train.append(model.predict(X_train))
+        X_temp_dev.append(model.predict(X_dev))
+    
+    X_new_train = map(list, zip(*X_temp_train)) # Transpose list of lists
+    X_new_dev = map(list, zip(*X_temp_dev)) # Transpose list of lists
+    
+    for name, featSelectionMode, model in current_layer:            
+        f1, performance = getClassifierPerformance(model, name, "MFCC", X_new_train, y_bin_train, X_new_dev)
+        models_f1.append(f1)
+        models_performances.append(performance)
+    return models_f1, models_performances
+        
 def getClassifieresPerformances(classifiers, models_f1, models_performances): 
     for name, featSelectionMode, model in classifiers:            
         f1, performance = getClassifierPerformance(model, name, "MFCC", X_train, y_bin_train, X_dev)
@@ -237,24 +241,38 @@ domain       =[{'name': 'C',      'type': 'continuous', 'domain': (0.,7.)},
                {'name': 'gamma',  'type': 'continuous', 'domain': (-12.,-2.)}]
 opt = GPyOpt.methods.BayesianOptimization(f = fit_svc_val,            # function to optimize       
                                          domain = domain,         # box-constrains of the problem
-                                         acquisition_type ='LCB',       # LCB acquisition
+                                         #acquisition_type ='LCB',       # LCB acquisition
+                                         acquisition_type ='EI',     # http://nbviewer.jupyter.org/github/SheffieldML/GPyOpt/blob/master/manual/GPyOpt_reference_manual.ipynb  
                                          acquisition_weight = 0.1)   # Exploration exploitation
 # it may take a few seconds
 opt.run_optimization(max_iter=50)
 # opt.plot_convergence()
 x_best = np.exp(opt.X[np.argmin(opt.Y)])
 
+domain       =[{'name': 'C',      'type': 'continuous', 'domain': (0.,7.)},
+               {'name': 'gamma',  'type': 'continuous', 'domain': (-12.,-2.)}]
+opt = GPyOpt.methods.BayesianOptimization(f = fit_svc_val,            # function to optimize       
+                                         domain = domain,         # box-constrains of the problem
+                                         #acquisition_type ='LCB',       # LCB acquisition
+                                         acquisition_type ='MPI',     # http://nbviewer.jupyter.org/github/SheffieldML/GPyOpt/blob/master/manual/GPyOpt_reference_manual.ipynb  
+                                         acquisition_weight = 0.1)   # Exploration exploitation
+# it may take a few seconds
+opt.run_optimization(max_iter=50)
+# opt.plot_convergence()
+x_best_2 = np.exp(opt.X[np.argmin(opt.Y)])
+
 
 classifiers = [("KNN", None, KNeighborsClassifier(2)),
                ("Linear SVM", None, SVC(kernel="linear")),
                ("RBF SVM", None, SVC(gamma=2, C=1)),
-               ("OPT SVM", None, SVC(C=x_best[0], gamma=x_best[1])),
+               ("OPT SVM_EI", None, SVC(C=x_best[0], gamma=x_best[1])),
+               ("OPT SVM_MPI", None, SVC(C=x_best_2[0], gamma=x_best_2[1])),
                ("DT", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
                ("RF", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
                                                          max_depth=20)),
                ("AB", None, AdaBoostClassifier(random_state=13370)),
                #("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*1)))),
-               ("GP-DP", ["MFCC","All","CIFE","CFS"], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
+               ("GP-DP", ["MFCC"], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
                # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
                # GP beats SVM in our experiment (qualitative advantages)
                # only keep RBF, dot product and matern on the chart
@@ -265,9 +283,29 @@ classifiers = [("KNN", None, KNeighborsClassifier(2)),
 ]
 #classify(X_train[:,bitVec], X_dev[:,bitVec])
 
+ensembles = [("KNN_ENS", None, KNeighborsClassifier(2)),
+               ("Linear SVM_ENS", None, SVC(kernel="linear")),
+               ("RBF SVM_ENS", None, SVC(gamma=2, C=1)),
+               ("DT_ENS", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
+               ("RF_ENS", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
+                                                         max_depth=20)),
+               ("AB_ENS", None, AdaBoostClassifier(random_state=13370)),
+               #("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*1)))),
+               ("GP-DP_ENS", ["MFCC"], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
+               # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
+               # GP beats SVM in our experiment (qualitative advantages)
+               # only keep RBF, dot product and matern on the chart
+               # add a paragraph 'Processed Data'
+               #1) generate the dataset with 526 features
+               #2) the predictive variance and predictive mean (best and worst) of some vectors from the dot product.
+               
+]
+
+
 models_f1 = []
 models_performances = []
 models_f1, models_performances = getClassifieresPerformances(classifiers, models_f1, models_performances)
+models_f1, models_performances = getEnsemblesPerformances(classifiers, ensembles, models_f1, models_performances)
 #models_f1, models_performances = getClassifieresPerformancesByDefinedX(classifiers, 'predict', models_f1, models_performances, newTrainX, y_bin_train, newDevX)
 models_f1, models_performances = addRelatedWork(models_f1, models_performances)
 models_f1=sorted(models_f1, key=lambda l: l[1])
