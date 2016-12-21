@@ -54,66 +54,24 @@ elif len(sys.argv) == 2:
 X_train, y_train, X_dev, y_dev, y_bin_train, y_bin_dev = read_train_dev_files_with_binary(x_train_file_name, x_dev_file_name, y_train_file_name, y_dev_file_name, y_bin_train_file_name, y_bin_dev_file_name)
 n_feats = len(X_train[0])
 
-# We perform feature selection first
-numFeatsFn = lambda n: int(ceil(sqrt(n_feats)))
-def reliefPostProc(X, y):
-    scores = reliefF.reliefF(X,y)
-    indexes = range(0, len(scores))
-    pairedScores = zip(scores, indexes)
-    pairedScores = sorted(pairedScores, reverse=True)
-    return np.array([ eaPair[1] for eaPair in pairedScores][:numFeatsFn(n_feats)])
-
-def baselineProc(X,y):
-    return range(0,n_feats)
-
-def ml(X, y):
-    ml = gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=0.5))
-    #scores = cross_val_score(ml, X, y, cv=5, n_jobs=-1, scoring='mean_squared_error') #problem
-    scores = 0
-    return sqrt(-1*np.mean(scores))
-
-def convertToBitVec(featSel):
-    def wrapper(X, y):
-        feats = featSel(X,y)
-        bitVec = [False] * n_feats
-        for eaF in feats:
-            bitVec[eaF] = True
-        bitVec = np.array(bitVec)
-        return len(feats),bitVec
-    return wrapper
-
-mfccIntVec = [1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-
-def returnMask(intVec):
-    def wrapper(X,y):
-        mask = intVec
-        mask = np.array(mask).astype('bool')
-        return np.sum(mask),mask
-    return wrapper
-
-# CIFE: index of selected features, F[1] is the most important feature
-# CFS: index of selected features
-# RELIEF: index of selected features, F[1] is the most important feature
-featSelectionFns = {
-    "All": convertToBitVec(baselineProc),
-    "Relief": convertToBitVec(reliefPostProc),
-    "CIFE": convertToBitVec(CIFE.cife),
-    "CFS": convertToBitVec(CFS.cfs),
-    "MFCC": returnMask(mfccIntVec)
-}
-timeTaken = []
-bitVecs = {}
-
-#print 'ok1'
-
-for featSelName, featSel in featSelectionFns.iteritems():
-    start = time.clock()    
-    numFeats,bitVec = featSel(X_train,y_train)
-    timeTaken = time.clock() - start
-    score = ml(X_train[:,bitVec], y_train) #problem
-    bitVecs[featSelName] = bitVec
-    #print(featSelName+ "," + str(numFeats) + ": " + str(score) + " in "+ str(timeTaken) + "seconds")
-
+nfold = 3
+def fit_svc_val(x):
+    x = np.atleast_2d(np.exp(x))
+    fs = np.zeros((x.shape[0],1))
+    for i in range(x.shape[0]):
+        fs[i] = 0
+        for n in range(nfold):
+            idx = np.array(range(X_train.shape[0]))
+            idx_valid = np.logical_and(idx>=X_train.shape[0]/nfold*n, idx<X_train.shape[0]/nfold*(n+1))
+            idx_train = np.logical_not(idx_valid)
+            svc = SVC(C=x[i,0] ,gamma=x[i,1])
+            #svc.fit(X_train[idx_train],y_bin_train[idx_train])
+            f1, performance = getClassifierPerformanceOfXAndY(svc, "SVC-BO", "MFCC", 
+            X_train[idx_train], y_bin_train[idx_train], X_train[idx_valid], y_bin_train[idx_valid])
+            fs[i] += 1 - f1[1]
+            #fs[i] += np.sqrt(np.square(svr.predict(X_train[idx_valid])-Y_train[idx_valid]).mean())
+        fs[i] *= 1./nfold
+    return fs
 
 class RBF_ARD_WRAPPER:
     def __init__(self, kernel_ardIn):
@@ -170,7 +128,17 @@ def getClassifierPerformance(model, name, eaMode, X, Y, X_star):
     performance = [name + '(' + eaMode + ')', pp_f1, pp_precision, pp_recall, pp_accuracy, np_f1, np_precision, np_recall, np_accuracy]
     return f1, performance
 
-def classifyForF1(classifier, X, positive_bit):
+def getClassifierPerformanceOfXAndY(model, name, eaMode, X, Y, X_star, Y_star):
+    model.fit(X, Y)
+    #pt_f1, pt_precision, pt_recall, pt_accuracy = classifyForF1WithY(model, X, y_bin_train, 1)
+    pp_f1, pp_precision, pp_recall, pp_accuracy = classifyForF1WithY(model, X_star, Y_star, 1)
+    #nt_f1, nt_precision, nt_recall, nt_accuracy = classifyForF1WithY(model, X, y_bin_train, 0)
+    np_f1, np_precision, np_recall, np_accuracy = classifyForF1WithY(model, X_star, Y_star,0)
+    f1 = [name + '(' + eaMode + ')', pp_f1, np_f1]
+    performance = [name + '(' + eaMode + ')', pp_f1, pp_precision, pp_recall, pp_accuracy, np_f1, np_precision, np_recall, np_accuracy]
+    return f1, performance
+
+def classifyForF1WithY(classifier, X, Y, positive_bit):
     #depressionClassifer = gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct())
     #classifier.fit(newTrainX, y_bin_train)
     classifiedResult = classifier.predict(X)
@@ -184,8 +152,8 @@ def classifyForF1(classifier, X, positive_bit):
     tn = 0.0
     fn = 0.0
 
-    for i in range(len(y_bin_dev)):
-        actual = y_bin_dev[i]
+    for i in range(len(Y)):
+        actual = Y[i]
         predicted = classifiedResult[i]
         
         if actual == positive_bit and predicted == actual:
@@ -210,7 +178,7 @@ def classifyForF1(classifier, X, positive_bit):
         precision = tp / (tp + fp)
     
     if len(y_bin_dev) != 0:
-        accuracy = (tp + tn) / len(y_bin_dev)
+        accuracy = (tp + tn) / len(Y)
     
     if (tp + fn) != 0:
         recall = tp / (tp + fn)
@@ -223,6 +191,9 @@ def classifyForF1(classifier, X, positive_bit):
     #print 'accuracy:' + str(accuracy)
     #print 'f1:' + str(f1)
     return f1, precision, recall, accuracy
+    
+def classifyForF1(classifier, X, positive_bit):
+    return classifyForF1WithY(classifier, X, y_bin_dev, positive_bit)
     
 def addRelatedWork(models_f1, models_performances):
     f1 = ['DepAudioNet', 0.52, 0.70]
@@ -262,13 +233,26 @@ def printPerformances(models_performances):
 #print rmse_train
 #print rmse_predict
 
-classifiers = [#("KNN", None, KNeighborsClassifier(2)),
-               #("Linear SVM", None, SVC(kernel="linear")),
-               #("RBF SVM", None, SVC(gamma=2, C=1)),
-               #("DT", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
-               #("RF", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
-               #                                          max_depth=20)),
-               #("AB", None, AdaBoostClassifier(random_state=13370)),
+domain       =[{'name': 'C',      'type': 'continuous', 'domain': (0.,7.)},
+               {'name': 'gamma',  'type': 'continuous', 'domain': (-12.,-2.)}]
+opt = GPyOpt.methods.BayesianOptimization(f = fit_svc_val,            # function to optimize       
+                                         domain = domain,         # box-constrains of the problem
+                                         acquisition_type ='LCB',       # LCB acquisition
+                                         acquisition_weight = 0.1)   # Exploration exploitation
+# it may take a few seconds
+opt.run_optimization(max_iter=50)
+# opt.plot_convergence()
+x_best = np.exp(opt.X[np.argmin(opt.Y)])
+
+
+classifiers = [("KNN", None, KNeighborsClassifier(2)),
+               ("Linear SVM", None, SVC(kernel="linear")),
+               ("RBF SVM", None, SVC(gamma=2, C=1)),
+               ("OPT SVM", None, SVC(C=x_best[0], gamma=x_best[1])),
+               ("DT", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
+               ("RF", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
+                                                         max_depth=20)),
+               ("AB", None, AdaBoostClassifier(random_state=13370)),
                #("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*1)))),
                ("GP-DP", ["MFCC","All","CIFE","CFS"], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
                # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
