@@ -54,26 +54,6 @@ elif len(sys.argv) == 2:
 X_train, y_train, X_dev, y_dev, y_bin_train, y_bin_dev = read_train_dev_files_with_binary(x_train_file_name, x_dev_file_name, y_train_file_name, y_dev_file_name, y_bin_train_file_name, y_bin_dev_file_name)
 n_feats = len(X_train[0])
 
-nfold = 3
-def fit_svc_val(x):
-    x = np.atleast_2d(np.exp(x))
-    fs = np.zeros((x.shape[0],1))
-    for i in range(x.shape[0]):
-        fs[i] = 0
-        for n in range(nfold):
-            idx = np.array(range(X_train.shape[0]))
-            idx_valid = np.logical_and(idx>=X_train.shape[0]/nfold*n, idx<X_train.shape[0]/nfold*(n+1))
-            idx_train = np.logical_not(idx_valid)
-            svc = SVC(C=x[i,0] ,gamma=x[i,1])
-            #svc.fit(X_train[idx_train],y_bin_train[idx_train])
-            f1, performance = getClassifierPerformanceOfXAndY(svc, "SVC-BO", "MFCC", 
-            X_train[idx_train], y_bin_train[idx_train], X_train[idx_valid], y_bin_train[idx_valid])
-            fs[i] += 1 - f1[1]
-            #fs[i] += np.sqrt(np.square(svr.predict(X_train[idx_valid])-Y_train[idx_valid]).mean())
-        fs[i] *= 1./nfold
-    return fs
-    
-
 
 class RBF_ARD_WRAPPER:
     def __init__(self, kernel_ardIn):
@@ -237,36 +217,9 @@ def printPerformances(models_performances):
 #print rmse_train
 #print rmse_predict
 
-domain       =[{'name': 'C',      'type': 'continuous', 'domain': (0.,7.)},
-               {'name': 'gamma',  'type': 'continuous', 'domain': (-12.,-2.)}]
-opt = GPyOpt.methods.BayesianOptimization(f = fit_svc_val,            # function to optimize       
-                                         domain = domain,         # box-constrains of the problem
-                                         #acquisition_type ='LCB',       # LCB acquisition
-                                         acquisition_type ='EI',     # http://nbviewer.jupyter.org/github/SheffieldML/GPyOpt/blob/master/manual/GPyOpt_reference_manual.ipynb  
-                                         acquisition_weight = 0.1)   # Exploration exploitation
-# it may take a few seconds
-opt.run_optimization(max_iter=50)
-# opt.plot_convergence()
-x_best = np.exp(opt.X[np.argmin(opt.Y)])
-
-domain       =[{'name': 'C',      'type': 'continuous', 'domain': (0.,7.)},
-               {'name': 'gamma',  'type': 'continuous', 'domain': (-12.,-2.)}]
-opt = GPyOpt.methods.BayesianOptimization(f = fit_svc_val,            # function to optimize       
-                                         domain = domain,         # box-constrains of the problem
-                                         #acquisition_type ='LCB',       # LCB acquisition
-                                         acquisition_type ='MPI',     # http://nbviewer.jupyter.org/github/SheffieldML/GPyOpt/blob/master/manual/GPyOpt_reference_manual.ipynb  
-                                         acquisition_weight = 0.1)   # Exploration exploitation
-# it may take a few seconds
-opt.run_optimization(max_iter=50)
-# opt.plot_convergence()
-x_best_2 = np.exp(opt.X[np.argmin(opt.Y)])
-
-
 classifiers = [("KNN", None, KNeighborsClassifier(2)),
                ("Linear SVM", None, SVC(kernel="linear")),
                ("RBF SVM", None, SVC(gamma=2, C=1)),
-               ("OPT SVM_EI", None, SVC(C=x_best[0], gamma=x_best[1])),
-               ("OPT SVM_MPI", None, SVC(C=x_best_2[0], gamma=x_best_2[1])),
                ("DT", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
                ("RF", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
                                                          max_depth=20)),
