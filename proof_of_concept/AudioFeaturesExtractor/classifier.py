@@ -30,6 +30,7 @@ import matplotlib.mlab as mlab
 import math
 import matplotlib.pyplot as plt
 
+
 x_train_file_name = "data/splitted/X/MFCC/trainX.txt"
 x_dev_file_name = "data/splitted/X/MFCC/devX.txt"
 y_train_file_name = "data/splitted/y/trainY.txt"
@@ -71,22 +72,22 @@ class RBF_ARD_WRAPPER:
 def mean(a):
     return sum(a) / len(a)
     
-def getEnsemblesPerformances(previous_layer, current_layer, models_f1, models_performances): 
+def getEnsemblesPerformances(previous_layer, current_layer, models_f1, models_performances, xTrain, yTrain, xDev, layer): 
     X_temp_train = []
     X_temp_dev = []
     for name, featSelectionMode, model in previous_layer:            
-        model.fit(X_train, y_bin_train)
-        X_temp_train.append(model.predict(X_train))
-        X_temp_dev.append(model.predict(X_dev))
+        model.fit(xTrain, yTrain)
+        X_temp_train.append(model.predict(xTrain))
+        X_temp_dev.append(model.predict(xDev))
     
     X_new_train = map(list, zip(*X_temp_train)) # Transpose list of lists
     X_new_dev = map(list, zip(*X_temp_dev)) # Transpose list of lists
     
     for name, featSelectionMode, model in current_layer:            
-        f1, performance = getClassifierPerformance(model, name, "MFCC", X_new_train, y_bin_train, X_new_dev)
+        f1, performance = getClassifierPerformance(model, name + str(layer), "MFCC", X_new_train, yTrain, X_new_dev)
         models_f1.append(f1)
         models_performances.append(performance)
-    return models_f1, models_performances
+    return models_f1, models_performances, X_new_train, X_new_dev
         
 def getClassifieresPerformances(classifiers, models_f1, models_performances): 
     for name, featSelectionMode, model in classifiers:            
@@ -258,7 +259,19 @@ ensembles = [("KNN_ENS", None, KNeighborsClassifier(2)),
 models_f1 = []
 models_performances = []
 models_f1, models_performances = getClassifieresPerformances(classifiers, models_f1, models_performances)
-models_f1, models_performances = getEnsemblesPerformances(classifiers, ensembles, models_f1, models_performances)
+
+#layer = 2
+#models_f1, models_performances, X_new_train, X_new_dev = getEnsemblesPerformances(classifiers, ensembles, models_f1, models_performances, X_train, y_bin_train, X_dev, layer)
+
+#layer = layer + 1
+#models_f1, models_performances, X_new_train, X_new_dev = getEnsemblesPerformances(ensembles, ensembles, models_f1, models_performances, X_new_train, y_bin_train, X_new_dev, layer)
+
+#models_f1 = []
+#models_performances = []
+#layer = layer + 1
+#models_f1, models_performances, X_new_train, X_new_dev = getEnsemblesPerformances(ensembles, ensembles, models_f1, models_performances, X_new_train, y_bin_train, X_new_dev, layer)
+
+
 #models_f1, models_performances = getClassifieresPerformancesByDefinedX(classifiers, 'predict', models_f1, models_performances, newTrainX, y_bin_train, newDevX)
 models_f1, models_performances = addRelatedWork(models_f1, models_performances)
 models_f1=sorted(models_f1, key=lambda l: l[1])
