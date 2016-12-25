@@ -218,6 +218,24 @@ def printPerformances(models_performances):
 #print rmse_train
 #print rmse_predict
 
+num0 = 0
+num1 = 0
+for y in y_bin_train:
+    if y == 1:
+        num1 = num1 + 1
+    elif y == 0:
+        num0 = num0 + 1
+print str(num0) + 'non-depressed training samples and ' + str(num1) + 'depressed training samples'
+
+num0 = 0
+num1 = 0
+for y in y_bin_dev:
+    if y == 1:
+        num1 = num1 + 1
+    elif y == 0:
+        num0 = num0 + 1
+print str(num0) + 'non-depressed dev samples and ' + str(num1) + 'depressed dev samples'
+
 classifiers = [("KNN", None, KNeighborsClassifier(2)),
                ("Linear SVM", None, SVC(kernel="linear")),
                ("RBF SVM", None, SVC(gamma=2, C=1)),
