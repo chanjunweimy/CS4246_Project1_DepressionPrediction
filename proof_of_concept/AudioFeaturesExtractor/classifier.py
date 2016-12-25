@@ -31,8 +31,8 @@ import math
 import matplotlib.pyplot as plt
 
 
-x_train_file_name = "data/splitted/X/MFCC/trainX.txt"
-x_dev_file_name = "data/splitted/X/MFCC/devX.txt"
+x_train_file_name = "data/splitted/X/pyAudioAnalysis/trainX.txt"
+x_dev_file_name = "data/splitted/X/pyAudioAnalysis/devX.txt"
 y_train_file_name = "data/splitted/y/trainY.txt"
 y_dev_file_name = "data/splitted/y/devY.txt"
 
@@ -55,6 +55,7 @@ elif len(sys.argv) == 2:
 X_train, y_train, X_dev, y_dev, y_bin_train, y_bin_dev = read_train_dev_files_with_binary(x_train_file_name, x_dev_file_name, y_train_file_name, y_dev_file_name, y_bin_train_file_name, y_bin_dev_file_name)
 n_feats = len(X_train[0])
 
+modeString = "st"
 
 class RBF_ARD_WRAPPER:
     def __init__(self, kernel_ardIn):
@@ -84,14 +85,14 @@ def getEnsemblesPerformances(previous_layer, current_layer, models_f1, models_pe
     X_new_dev = map(list, zip(*X_temp_dev)) # Transpose list of lists
     
     for name, featSelectionMode, model in current_layer:            
-        f1, performance = getClassifierPerformance(model, name + str(layer), "MFCC", X_new_train, yTrain, X_new_dev)
+        f1, performance = getClassifierPerformance(model, name + str(layer), modeString, X_new_train, yTrain, X_new_dev)
         models_f1.append(f1)
         models_performances.append(performance)
     return models_f1, models_performances, X_new_train, X_new_dev
         
 def getClassifieresPerformances(classifiers, models_f1, models_performances): 
     for name, featSelectionMode, model in classifiers:            
-        f1, performance = getClassifierPerformance(model, name, "MFCC", X_train, y_bin_train, X_dev)
+        f1, performance = getClassifierPerformance(model, name, modeString, X_train, y_bin_train, X_dev)
         models_f1.append(f1)
         models_performances.append(performance)
     return models_f1, models_performances
