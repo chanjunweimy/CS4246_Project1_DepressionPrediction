@@ -6,6 +6,7 @@ AudioFeaturesExtractor/bin
 AudioFeaturesExtractor/release
 AudioFeaturesExtractor/*.txt
 AudioFeaturesExtractor/*.model
+table.csv
 
 data/
 emotion_dcapswoz_mfcc.txt
