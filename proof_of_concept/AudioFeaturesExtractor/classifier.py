@@ -1,4 +1,5 @@
 from math import sqrt, isnan
+from sklearn.svm import LinearSVC
 from sklearn import gaussian_process as gp
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVR
@@ -30,6 +31,8 @@ import matplotlib.mlab as mlab
 import math
 import matplotlib.pyplot as plt
 
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.feature_selection import SelectFromModel
 
 x_train_file_name = "data/splitted/X/pyAudioAnalysis/trainX.txt"
 x_dev_file_name = "data/splitted/X/pyAudioAnalysis/devX.txt"
@@ -55,21 +58,59 @@ elif len(sys.argv) == 2:
 X_train, y_train, X_dev, y_dev, y_bin_train, y_bin_dev = read_train_dev_files_with_binary(x_train_file_name, x_dev_file_name, y_train_file_name, y_dev_file_name, y_bin_train_file_name, y_bin_dev_file_name)
 n_feats = len(X_train[0])
 
-modeString = "st"
+modeString = "l1bs"
+testMode = "Relief"
 
-class RBF_ARD_WRAPPER:
-    def __init__(self, kernel_ardIn):
-        self.kernel_ard = kernel_ardIn
-    def fit(self, X_trainIn, y_trainIn):
-        y_train_l = y_trainIn.reshape((y_trainIn.shape[0], 1))
-        self.m = models.GPRegression(X_trainIn, y_train_l, self.kernel_ard)
-        self.m.constrain_positive('')
-        self.m.optimize_restarts(num_restarts=10)
-        self.m.randomize()
-        self.m.optimize()
-    def predict(self, X):
-        return self.m.predict(X)[0]
-        
+# We perform feature selection first
+numFeatsFn = lambda n: int(ceil(sqrt(n_feats)))
+def reliefPostProc(X, y):
+    scores = reliefF.reliefF(X,y)
+    indexes = range(0, len(scores))
+    pairedScores = zip(scores, indexes)
+    pairedScores = sorted(pairedScores, reverse=True)
+    return np.array([ eaPair[1] for eaPair in pairedScores][:numFeatsFn(n_feats)])
+
+def baselineProc(X,y):
+    return range(0,n_feats)
+
+def ml(X, y):
+    ml = gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=0.5))
+    scores = cross_val_score(ml, X, y, cv=5, n_jobs=-1, scoring='mean_squared_error') #problem
+    #scores = 0
+    return sqrt(-1*np.mean(scores))
+
+def convertToBitVec(featSel):
+    def wrapper(X, y):
+        feats = featSel(X,y)
+        bitVec = [False] * n_feats
+        for eaF in feats:
+            bitVec[eaF] = True
+        bitVec = np.array(bitVec)
+        return len(feats),bitVec
+    return wrapper
+
+
+# CIFE: index of selected features, F[1] is the most important feature
+# CFS: index of selected features
+# RELIEF: index of selected features, F[1] is the most important feature
+featSelectionFns = {
+    "All": convertToBitVec(baselineProc),
+    "Relief": convertToBitVec(reliefPostProc),
+    "CIFE": convertToBitVec(CIFE.cife),
+    "CFS": convertToBitVec(CFS.cfs)
+}
+timeTaken = []
+bitVecs = {}
+
+#for featSelName, featSel in featSelectionFns.iteritems():
+#    start = time.clock()    
+#    numFeats,bitVec = featSel(X_train,y_train)
+#    timeTaken = time.clock() - start
+#    score = ml(X_train[:,bitVec], y_train) #problem
+#    bitVecs[featSelName] = bitVec
+#    print(featSelName+ "," + str(numFeats) + ": " + str(score) + " in "+ str(timeTaken) + "seconds")
+#    print bitVec
+
 def mean(a):
     return sum(a) / len(a)
     
@@ -77,6 +118,11 @@ def getEnsemblesPerformances(previous_layer, current_layer, models_f1, models_pe
     X_temp_train = []
     X_temp_dev = []
     for name, featSelectionMode, model in previous_layer:            
+        modes = featSelectionMode
+        if featSelectionMode==None:
+            modes = featSelectionFns.keys()
+        mode = modes[0]
+        #bitVec = bitVecs[mode]
         model.fit(xTrain, yTrain)
         X_temp_train.append(model.predict(xTrain))
         X_temp_dev.append(model.predict(xDev))
@@ -92,6 +138,10 @@ def getEnsemblesPerformances(previous_layer, current_layer, models_f1, models_pe
         
 def getClassifieresPerformances(classifiers, models_f1, models_performances): 
     for name, featSelectionMode, model in classifiers:            
+        modes = featSelectionMode
+        if featSelectionMode==None:
+            modes = featSelectionFns.keys()
+        mode = modes[0]
         f1, performance = getClassifierPerformance(model, name, modeString, X_train, y_bin_train, X_dev)
         models_f1.append(f1)
         models_performances.append(performance)
@@ -237,15 +287,15 @@ for y in y_bin_dev:
         num0 = num0 + 1
 print str(num0) + 'non-depressed dev samples and ' + str(num1) + 'depressed dev samples'
 
-classifiers = [("KNN", None, KNeighborsClassifier(2)),
-               ("Linear SVM", None, SVC(kernel="linear")),
-               ("RBF SVM", None, SVC(gamma=2, C=1)),
-               ("DT", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
-               ("RF", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
+classifiers = [("KNN", [testMode], KNeighborsClassifier(2)),
+               ("Linear SVM", [testMode], SVC(kernel="linear")),
+               ("RBF SVM", [testMode], SVC(gamma=2, C=1)),
+               ("DT", [testMode], DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
+               ("RF", [testMode], RandomForestClassifier(n_estimators=10, min_samples_split=1024,
                                                          max_depth=20)),
-               ("AB", None, AdaBoostClassifier(random_state=13370)),
+               ("AB", [testMode], AdaBoostClassifier(random_state=13370)),
                #("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*1)))),
-               ("GP-DP", ["MFCC"], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
+               ("GP-DP", [testMode], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
                # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
                # GP beats SVM in our experiment (qualitative advantages)
                # only keep RBF, dot product and matern on the chart
@@ -256,15 +306,15 @@ classifiers = [("KNN", None, KNeighborsClassifier(2)),
 ]
 #classify(X_train[:,bitVec], X_dev[:,bitVec])
 
-ensembles = [("KNN_ENS", None, KNeighborsClassifier(2)),
-               ("Linear SVM_ENS", None, SVC(kernel="linear")),
-               ("RBF SVM_ENS", None, SVC(gamma=2, C=1)),
-               ("DT_ENS", None, DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
-               ("RF_ENS", None, RandomForestClassifier(n_estimators=10, min_samples_split=1024,
+ensembles = [("KNN_ENS", ["All"], KNeighborsClassifier(2)),
+               ("Linear SVM_ENS", ["All"], SVC(kernel="linear")),
+               ("RBF SVM_ENS", ["All"], SVC(gamma=2, C=1)),
+               ("DT_ENS", ["All"], DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
+               ("RF_ENS", ["All"], RandomForestClassifier(n_estimators=10, min_samples_split=1024,
                                                          max_depth=20)),
-               ("AB_ENS", None, AdaBoostClassifier(random_state=13370)),
+               ("AB_ENS", ["All"], AdaBoostClassifier(random_state=13370)),
                #("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*1)))),
-               ("GP-DP_ENS", ["MFCC"], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
+               ("GP-DP_ENS", ["All"], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
                # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
                # GP beats SVM in our experiment (qualitative advantages)
                # only keep RBF, dot product and matern on the chart
@@ -273,6 +323,44 @@ ensembles = [("KNN_ENS", None, KNeighborsClassifier(2)),
                #2) the predictive variance and predictive mean (best and worst) of some vectors from the dot product.
                
 ]
+
+#feature selection
+#tree based selection
+#clf = ExtraTreesClassifier()
+#clf = clf.fit(X_train, y_bin_train)
+#print clf.feature_importances_
+#model = SelectFromModel(clf, prefit=True)
+
+#L1-based selection
+#lsvc = LinearSVC(C=17, penalty="l1", dual=False).fit(X_train, y_bin_train)
+#model = SelectFromModel(lsvc, prefit=True)
+
+#bit_Array = model.get_support()
+
+
+
+print bit_Array
+
+X_temp_train = []
+for row in X_train:
+    temp_row = []
+    for i in range(len(row)):
+        if bit_Array[i] == True:
+            temp_row.append(row[i])
+    X_temp_train.append(temp_row)
+    
+X_train = X_temp_train
+
+X_temp_dev = []
+for row in X_dev:
+    temp_row = []
+    for i in range(len(row)):
+        if bit_Array[i] == True:
+            temp_row.append(row[i])
+    X_temp_dev.append(temp_row)
+    print len(temp_row)
+X_dev = X_temp_dev
+
 
 
 models_f1 = []
