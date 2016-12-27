@@ -31,6 +31,8 @@ import matplotlib.mlab as mlab
 import math
 import matplotlib.pyplot as plt
 
+from sklearn.feature_selection import RFE
+
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.feature_selection import SelectFromModel
 
@@ -335,9 +337,44 @@ ensembles = [("KNN_ENS", ["All"], KNeighborsClassifier(2)),
 #lsvc = LinearSVC(C=17, penalty="l1", dual=False).fit(X_train, y_bin_train)
 #model = SelectFromModel(lsvc, prefit=True)
 
+#Recursive Feature Elimination
+#lsvc = LinearSVC(penalty="l1", dual=False)
+#rfe = RFE(lsvc, 1)
+#model = rfe.fit(X_train, y_bin_train)
+#print("Num Features: %d") % model.n_features_
+#print("Feature Ranking: %s") % model.ranking_
+
 #bit_Array = model.get_support()
 
+#my own estimation
+startBits = [False, False, False, False, False, 
+             False, False, False, False, False, 
+             False, False, False, False, False, 
+             False, False, False, False, False, 
+             False, False, False, False, False, 
+             False, False, False, False, False, 
+             False, False, False, False]
 
+featureChoices = [("Zero-crossing Rate", False, 1, 2),
+            ("Energy", False, 2, 3),
+            ("Entropy of Energy", True, 3, 4),
+            ("Spectral Centroid", False, 4, 5),
+            ("Spectral Speed", False, 5, 6),
+            ("Spectral Entropy", False, 6, 7),
+            ("Spectral Flux", False, 7, 8),
+            ("Spectral Rolloff", True, 8, 9),
+            ("MFCCs", False, 9, 22),
+            ("Chroma Vector", False, 22, 34),
+            ("Chroma Deviation", False, 34, 35)
+            ]
+
+print 'chosen feature(s):'
+bit_Array = startBits            
+for featureName, featureBit, featureStart, featureEnd in featureChoices:
+    if featureBit == True:
+        print featureName
+        for i in range(featureStart - 1, featureEnd - 1):
+            bit_Array[i] = True
 
 print bit_Array
 
