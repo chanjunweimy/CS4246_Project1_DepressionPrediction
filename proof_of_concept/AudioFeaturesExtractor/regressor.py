@@ -10,6 +10,7 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import BaggingRegressor
 #from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 #from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.metrics import mean_squared_error
@@ -36,9 +37,6 @@ from sklearn.feature_selection import RFE
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.feature_selection import SelectFromModel
 
-import csv
-
-
 x_train_file_name = "data/splitted/X/pyAudioAnalysis/trainX.txt"
 x_dev_file_name = "data/splitted/X/pyAudioAnalysis/devX.txt"
 y_train_file_name = "data/splitted/y/trainY.txt"
@@ -63,8 +61,7 @@ elif len(sys.argv) == 2:
 X_train, y_train, X_dev, y_dev, y_bin_train, y_bin_dev = read_train_dev_files_with_binary(x_train_file_name, x_dev_file_name, y_train_file_name, y_dev_file_name, y_bin_train_file_name, y_bin_dev_file_name)
 n_feats = len(X_train[0])
 
-modeString = "l1bs"
-testMode = "Relief"
+modeString = "all"
 
 # We perform feature selection first
 numFeatsFn = lambda n: int(ceil(sqrt(n_feats)))
@@ -141,13 +138,13 @@ def getEnsemblesPerformances(previous_layer, current_layer, models_f1, models_pe
         models_performances.append(performance)
     return models_f1, models_performances, X_new_train, X_new_dev
         
-def getClassifieresPerformances(classifiers, models_f1, models_performances, X_train2, X_dev2): 
+def getClassifieresPerformances(classifiers, models_f1, models_performances): 
     for name, featSelectionMode, model in classifiers:            
         modes = featSelectionMode
         if featSelectionMode==None:
             modes = featSelectionFns.keys()
         mode = modes[0]
-        f1, performance = getClassifierPerformance(model, name, modeString, X_train2, y_bin_train, X_dev2)
+        f1, performance = getClassifierPerformance(model, name, modeString, X_train, y_bin_train, X_dev)
         models_f1.append(f1)
         models_performances.append(performance)
     return models_f1, models_performances
@@ -262,17 +259,7 @@ def printPerformances(models_performances):
         
 
 
-#mode = "MFCC"
-#bitVec = bitVecs[mode]
 
-
-#depressionRegressor = gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())
-#depressionRegressor.fit(X_train[:,bitVec], y_train)
-#phq8 = depressionRegressor.predict(X_dev[:,bitVec])
-#rmse_train = sqrt(mean_squared_error(y_train, depressionRegressor.predict(X_train[:,bitVec])))
-#rmse_predict = sqrt(mean_squared_error(y_dev, phq8))
-#print rmse_train
-#print rmse_predict
 
 num0 = 0
 num1 = 0
@@ -292,160 +279,46 @@ for y in y_bin_dev:
         num0 = num0 + 1
 print str(num0) + 'non-depressed dev samples and ' + str(num1) + 'depressed dev samples'
 
-classifiers = [("KNN", [testMode], KNeighborsClassifier(2)),
-               ("Linear SVM", [testMode], SVC(kernel="linear")),
-               ("RBF SVM", [testMode], SVC(gamma=2, C=1)),
-               ("Decision Tree", [testMode], DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
-               ("Random Forest", [testMode], RandomForestClassifier(n_estimators=10, min_samples_split=1024,
+regressors = [
+               ("SVM - Linear", None, SVR(kernel="linear")),
+               ("SVM - RBF", None, SVR(gamma=2, C=1)),
+               ("Decision Tree", None, DecisionTreeRegressor(min_samples_split=1024, max_depth=20)),
+               ("Random Forest", None, RandomForestRegressor(n_estimators=10, min_samples_split=1024,
                                                          max_depth=20)),
-               ("AdaBoost", [testMode], AdaBoostClassifier(random_state=13370)),
-               #("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*1)))),
-               ("GP-DP", [testMode], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
+               ("AdaBoost", None, AdaBoostRegressor(random_state=13370)),
+               ("Naive Bayes", None, GaussianNB()),
+               ("KNN", None, KNeighborsRegressor(2)),
+               #("GP isotropic RBF", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RBF())),
+               #("GP anisotropic RBF", ["All"], gp.GaussianProcessRegressor(kernel=gp.kernels.RBF(length_scale=np.array([1]*n_feats)))),
+               #("GP isotropic matern nu=0.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=0.5))),
+               #("GP isotropic matern nu=1.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=1.5))),
+               #("GP Isotropic Matern", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=2.5))),
+# bad performance
+               ("GP Dot Product", ["CFS", "CIFE", "MFCC", "All"], gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())),
                # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
                # GP beats SVM in our experiment (qualitative advantages)
                # only keep RBF, dot product and matern on the chart
                # add a paragraph 'Processed Data'
                #1) generate the dataset with 526 features
                #2) the predictive variance and predictive mean (best and worst) of some vectors from the dot product.
-               
-]
-#classify(X_train[:,bitVec], X_dev[:,bitVec])
 
-ensembles = [("KNN_ENS", ["All"], KNeighborsClassifier(2)),
-               ("Linear SVM_ENS", ["All"], SVC(kernel="linear")),
-               ("RBF SVM_ENS", ["All"], SVC(gamma=2, C=1)),
-               ("DT_ENS", ["All"], DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
-               ("RF_ENS", ["All"], RandomForestClassifier(n_estimators=10, min_samples_split=1024,
-                                                         max_depth=20)),
-               ("AB_ENS", ["All"], AdaBoostClassifier(random_state=13370)),
-               #("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*1)))),
-               ("GP-DP_ENS", ["All"], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
-               # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
-               # GP beats SVM in our experiment (qualitative advantages)
-               # only keep RBF, dot product and matern on the chart
-               # add a paragraph 'Processed Data'
-               #1) generate the dataset with 526 features
-               #2) the predictive variance and predictive mean (best and worst) of some vectors from the dot product.
-               
+#  3-th leading minor not positive definite
+#    ("GP exp sine squared", gp.GaussianProcessRegressor(kernel=gp.kernels.ExpSineSquared())),
+               #("GP rational quadratic", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RationalQuadratic())),
+               #("GP white kernel", None, gp.GaussianProcessRegressor(kernel=gp.kernels.WhiteKernel())),
+               ("GP abs_exp", None, gp.GaussianProcess(corr='absolute_exponential')),
+               #("GP squared_exp", ["All"], gp.GaussianProcess(corr='squared_exponential')),
+               #("GP cubic", None, gp.GaussianProcess(corr='cubic')),
+               ("GP linear", None, gp.GaussianProcess(corr='linear')),
+               #("GP RBF ARD", ["All"], RBF_ARD_WRAPPER(kern.RBF(input_dim=n_feats, variance=1., lengthscale=np.array([1]*n_feats), ARD=True)))]
 ]
 
-#feature selection
-#tree based selection
-#clf = ExtraTreesClassifier()
-#clf = clf.fit(X_train, y_bin_train)
-#print clf.feature_importances_
-#model = SelectFromModel(clf, prefit=True)
-
-#L1-based selection
-#lsvc = LinearSVC(C=17, penalty="l1", dual=False).fit(X_train, y_bin_train)
-#model = SelectFromModel(lsvc, prefit=True)
-
-#Recursive Feature Elimination
-#lsvc = LinearSVC(penalty="l1", dual=False)
-#rfe = RFE(lsvc, 1)
-#model = rfe.fit(X_train, y_bin_train)
-#print("Num Features: %d") % model.n_features_
-#print("Feature Ranking: %s") % model.ranking_
-
-#bit_Array = model.get_support()
-
-#my own estimation
-featureChoices = [("Zero-crossing Rate", False, 1, 2),
-            ("Energy", False, 2, 3),
-            ("Entropy of Energy", True, 3, 4),
-            ("Spectral Centroid", False, 4, 5),
-            ("Spectral Spread", False, 5, 6),
-            ("Spectral Entropy", False, 6, 7),
-            ("Spectral Flux", False, 7, 8),
-            ("Spectral Rolloff", True, 8, 9),
-            ("MFCCs", False, 9, 22),
-            ("Chroma Vector", False, 22, 34),
-            ("Chroma Deviation", False, 34, 35)
-            ]
-
-chosenFeatureAndModels = []           
-def automaticChooseFeatures(i):
-    if i == len(featureChoices):
-        chosenFeature = []
-        numOfFeatures = 0
-        bit_Array = [False, False, False, False, False, 
-             False, False, False, False, False, 
-             False, False, False, False, False, 
-             False, False, False, False, False, 
-             False, False, False, False, False, 
-             False, False, False, False, False, 
-             False, False, False, False]            
-        for featureName, featureBit, featureStart, featureEnd in featureChoices:
-            if featureBit == True:
-                chosenFeature.append(featureName)
-                for i in range(featureStart - 1, featureEnd - 1):
-                    bit_Array[i] = True
-        if len(chosenFeature) == 0:
-            return
-        
-        X_temp_train = []
-        for row in X_train:
-            temp_row = []
-            for i in range(len(row)):
-                if bit_Array[i] == True:
-                    temp_row.append(row[i])
-            X_temp_train.append(temp_row)
-            
-        X_train2 = X_temp_train
-
-        X_temp_dev = []
-        for row in X_dev:
-            temp_row = []
-            for i in range(len(row)):
-                if bit_Array[i] == True:
-                    temp_row.append(row[i])
-            X_temp_dev.append(temp_row)
-            numOfFeatures = len(temp_row)
-        X_dev2 = X_temp_dev    
-        models_f1 = []
-        models_performances = []
-        models_f1, models_performances = getClassifieresPerformances(classifiers, models_f1, models_performances, X_train2, X_dev2)
-        models_f1=sorted(models_f1, key=lambda l: l[1])
-        chosenFeatureAndModel = (chosenFeature, numOfFeatures, models_f1[len(models_f1)-1])
-        chosenFeatureAndModels.append(chosenFeatureAndModel)
-    elif i < len(featureChoices):
-        #not choose
-        featureChoices[i] = (featureChoices[i][0], False, featureChoices[i][2], featureChoices[i][3])
-        automaticChooseFeatures(i+1)
-        
-        #choose
-        featureChoices[i] = (featureChoices[i][0], True, featureChoices[i][2], featureChoices[i][3])
-        automaticChooseFeatures(i+1)
-
-
-automaticChooseFeatures(0)
-
-print chosenFeatureAndModels    
-with open('table.csv', 'wb') as csvfile:
-    fieldnames = ['Index', 'Feature Used', 'Num of Audio Features', 'Num of Features', 'Best F1 score', 'Best Machine Learning Model']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    index = 1
-    writer.writeheader()
-    for chosenFeature, numOfFeatures, model_f1 in chosenFeatureAndModels:
-        writer.writerow({'Index':str(index), 'Feature Used':','.join(chosenFeature), 'Num of Audio Features':len(chosenFeature), 'Num of Features':numOfFeatures, 'Best F1 score':str(model_f1[1]) + '(' + str(model_f1[2]) + ')', 'Best Machine Learning Model':model_f1[0]})
-        index = index + 1
-
-#layer = 2
-#models_f1, models_performances, X_new_train, X_new_dev = getEnsemblesPerformances(classifiers, ensembles, models_f1, models_performances, X_train, y_bin_train, X_dev, layer)
-
-#layer = layer + 1
-#models_f1, models_performances, X_new_train, X_new_dev = getEnsemblesPerformances(ensembles, ensembles, models_f1, models_performances, X_new_train, y_bin_train, X_new_dev, layer)
-
-#models_f1 = []
-#models_performances = []
-#layer = layer + 1
-#models_f1, models_performances, X_new_train, X_new_dev = getEnsemblesPerformances(ensembles, ensembles, models_f1, models_performances, X_new_train, y_bin_train, X_new_dev, layer)
-
-
-#models_f1, models_performances = getClassifieresPerformancesByDefinedX(classifiers, 'predict', models_f1, models_performances, newTrainX, y_bin_train, newDevX)
-#models_f1, models_performances = addRelatedWork(models_f1, models_performances)
-
-#models_performances=sorted(models_performances, key=lambda l: l[1])
-
-#plot_f1(models_f1)
-#printPerformances(models_performances)
+models_rmse = []
+for name, featSelectionMode, model in regressors:
+    model.fit(X_train, y_train)
+    rmse_train = sqrt(mean_squared_error(y_train, model.predict(X_train)))
+    rmse_predict = sqrt(mean_squared_error(y_dev, model.predict(X_dev)))
+    models_rmse.append([name + '('+modeString+')', rmse_train, rmse_predict])
+    print(name + '('+modeString+')')
+    print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
+plot_bar(models_rmse)

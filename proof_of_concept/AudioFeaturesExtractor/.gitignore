@@ -8,6 +8,8 @@ AudioFeaturesExtractor/*.txt
 AudioFeaturesExtractor/*.model
 table.csv
 
+*.csv
+
 data/
 emotion_dcapswoz_mfcc.txt
 emotion_dcapswoz_all_train.txt

@@ -292,41 +292,38 @@ for y in y_bin_dev:
         num0 = num0 + 1
 print str(num0) + 'non-depressed dev samples and ' + str(num1) + 'depressed dev samples'
 
-classifiers = [("KNN", [testMode], KNeighborsClassifier(2)),
-               ("Linear SVM", [testMode], SVC(kernel="linear")),
-               ("RBF SVM", [testMode], SVC(gamma=2, C=1)),
-               ("Decision Tree", [testMode], DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
-               ("Random Forest", [testMode], RandomForestClassifier(n_estimators=10, min_samples_split=1024,
+regressors = [
+               ("SVM - Linear", None, SVR(kernel="linear")),
+               ("SVM - RBF", None, SVR(gamma=2, C=1)),
+               ("Decision Tree", None, DecisionTreeRegressor(min_samples_split=1024, max_depth=20)),
+               ("Random Forest", None, RandomForestRegressor(n_estimators=10, min_samples_split=1024,
                                                          max_depth=20)),
-               ("AdaBoost", [testMode], AdaBoostClassifier(random_state=13370)),
-               #("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*1)))),
-               ("GP-DP", [testMode], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
+               ("AdaBoost", None, AdaBoostRegressor(random_state=13370)),
+               ("Naive Bayes", None, GaussianNB()),
+               ("KNN", None, KNeighborsRegressor(2)),
+               #("GP isotropic RBF", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RBF())),
+               #("GP anisotropic RBF", ["All"], gp.GaussianProcessRegressor(kernel=gp.kernels.RBF(length_scale=np.array([1]*n_feats)))),
+               #("GP isotropic matern nu=0.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=0.5))),
+               #("GP isotropic matern nu=1.5", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=1.5))),
+               #("GP Isotropic Matern", None, gp.GaussianProcessRegressor(kernel=gp.kernels.Matern(nu=2.5))),
+# bad performance
+               ("GP Dot Product", ["CFS", "CIFE", "MFCC", "All"], gp.GaussianProcessRegressor(kernel=gp.kernels.DotProduct())),
                # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
                # GP beats SVM in our experiment (qualitative advantages)
                # only keep RBF, dot product and matern on the chart
                # add a paragraph 'Processed Data'
                #1) generate the dataset with 526 features
                #2) the predictive variance and predictive mean (best and worst) of some vectors from the dot product.
-               
-]
-#classify(X_train[:,bitVec], X_dev[:,bitVec])
 
-ensembles = [("KNN_ENS", ["All"], KNeighborsClassifier(2)),
-               ("Linear SVM_ENS", ["All"], SVC(kernel="linear")),
-               ("RBF SVM_ENS", ["All"], SVC(gamma=2, C=1)),
-               ("DT_ENS", ["All"], DecisionTreeClassifier(min_samples_split=1024, max_depth=20)),
-               ("RF_ENS", ["All"], RandomForestClassifier(n_estimators=10, min_samples_split=1024,
-                                                         max_depth=20)),
-               ("AB_ENS", ["All"], AdaBoostClassifier(random_state=13370)),
-               #("GP ARD", ["MFCC"], gp.GaussianProcessClassifier(kernel=ard_kernel(sigma=1.2, length_scale=np.array([1]*1)))),
-               ("GP-DP_ENS", ["All"], gp.GaussianProcessClassifier(kernel=gp.kernels.DotProduct()))
-               # output the confidence level and the predictive variance for the dot product (the only one that we keep in the end)
-               # GP beats SVM in our experiment (qualitative advantages)
-               # only keep RBF, dot product and matern on the chart
-               # add a paragraph 'Processed Data'
-               #1) generate the dataset with 526 features
-               #2) the predictive variance and predictive mean (best and worst) of some vectors from the dot product.
-               
+#  3-th leading minor not positive definite
+#    ("GP exp sine squared", gp.GaussianProcessRegressor(kernel=gp.kernels.ExpSineSquared())),
+               #("GP rational quadratic", None, gp.GaussianProcessRegressor(kernel=gp.kernels.RationalQuadratic())),
+               #("GP white kernel", None, gp.GaussianProcessRegressor(kernel=gp.kernels.WhiteKernel())),
+               ("GP abs_exp", None, gp.GaussianProcess(corr='absolute_exponential')),
+               #("GP squared_exp", ["All"], gp.GaussianProcess(corr='squared_exponential')),
+               #("GP cubic", None, gp.GaussianProcess(corr='cubic')),
+               ("GP linear", None, gp.GaussianProcess(corr='linear')),
+               #("GP RBF ARD", ["All"], RBF_ARD_WRAPPER(kern.RBF(input_dim=n_feats, variance=1., lengthscale=np.array([1]*n_feats), ARD=True)))]
 ]
 
 #feature selection
@@ -363,7 +360,20 @@ featureChoices = [("Zero-crossing Rate", False, 1, 2),
             ("Chroma Deviation", False, 34, 35)
             ]
 
-chosenFeatureAndModels = []           
+
+def trainRegressors(regressors, X_train2, X_dev2):
+    rmses = []
+    for name, featSelectionMode, model in regressors:
+        model.fit(X_train2, y_train)
+        rmse_train = sqrt(mean_squared_error(y_train, model.predict(X_train2)))
+        rmse_predict = sqrt(mean_squared_error(y_dev, model.predict(X_dev2)))
+        rmses.append([name, rmse_train, rmse_predict])
+        #print(name + '('+modeString+')')
+        #print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
+    rmses = sorted(rmses, key=lambda l: l[2])
+    return rmses[0]
+    
+chosenFeatureAndModels = []   
 def automaticChooseFeatures(i):
     if i == len(featureChoices):
         chosenFeature = []
@@ -402,11 +412,8 @@ def automaticChooseFeatures(i):
             X_temp_dev.append(temp_row)
             numOfFeatures = len(temp_row)
         X_dev2 = X_temp_dev    
-        models_f1 = []
-        models_performances = []
-        models_f1, models_performances = getClassifieresPerformances(classifiers, models_f1, models_performances, X_train2, X_dev2)
-        models_f1=sorted(models_f1, key=lambda l: l[1])
-        chosenFeatureAndModel = (chosenFeature, numOfFeatures, models_f1[len(models_f1)-1])
+        rmse = trainRegressors(regressors, X_train2, X_dev2)
+        chosenFeatureAndModel = (chosenFeature, numOfFeatures, rmse)
         chosenFeatureAndModels.append(chosenFeatureAndModel)
     elif i < len(featureChoices):
         #not choose
@@ -421,13 +428,13 @@ def automaticChooseFeatures(i):
 automaticChooseFeatures(0)
 
 print chosenFeatureAndModels    
-with open('table.csv', 'wb') as csvfile:
-    fieldnames = ['Index', 'Feature Used', 'Num of Audio Features', 'Num of Features', 'Best F1 score', 'Best Machine Learning Model']
+with open('regressorTable.csv', 'wb') as csvfile:
+    fieldnames = ['Index', 'Feature Used', 'Num of Audio Features', 'Num of Features', 'Lowest RMSE prediction score', 'RMSE training score', 'Best Machine Learning Model']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     index = 1
     writer.writeheader()
-    for chosenFeature, numOfFeatures, model_f1 in chosenFeatureAndModels:
-        writer.writerow({'Index':str(index), 'Feature Used':','.join(chosenFeature), 'Num of Audio Features':len(chosenFeature), 'Num of Features':numOfFeatures, 'Best F1 score':str(model_f1[1]) + '(' + str(model_f1[2]) + ')', 'Best Machine Learning Model':model_f1[0]})
+    for chosenFeature, numOfFeatures, rmse in chosenFeatureAndModels:
+        writer.writerow({'Index':str(index), 'Feature Used':','.join(chosenFeature), 'Num of Audio Features':len(chosenFeature), 'Num of Features':numOfFeatures, 'Lowest RMSE prediction score':str(rmse[2]), 'RMSE training score':str(rmse[1]), 'Best Machine Learning Model':rmse[0]})
         index = index + 1
 
 #layer = 2
