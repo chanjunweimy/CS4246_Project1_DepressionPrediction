@@ -12,7 +12,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 #from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 #from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 #from sklearn.model_selection import cross_val_score#, ShuffleSplit
 from skfeature.function.statistical_based import CFS
 from skfeature.function.information_theoretical_based import CIFE
@@ -362,16 +362,20 @@ featureChoices = [("Zero-crossing Rate", False, 1, 2),
 
 
 def trainRegressors(regressors, X_train2, X_dev2):
-    rmses = []
+    rmsesAndMaes = []
     for name, featSelectionMode, model in regressors:
         model.fit(X_train2, y_train)
-        rmse_train = sqrt(mean_squared_error(y_train, model.predict(X_train2)))
-        rmse_predict = sqrt(mean_squared_error(y_dev, model.predict(X_dev2)))
-        rmses.append([name, rmse_train, rmse_predict])
+        predictTrain = model.predict(X_train2)
+        predictDev = model.predict(X_dev2)
+        rmse_train = sqrt(mean_squared_error(y_train, predictTrain))
+        rmse_predict = sqrt(mean_squared_error(y_dev, predictDev))
+        mae_train = mean_absolute_error(y_train, predictTrain)
+        mae_dev = mean_absolute_error(y_dev, predictDev)
+        rmsesAndMaes.append([name, rmse_train, rmse_predict, mae_train, mae_dev])
         #print(name + '('+modeString+')')
         #print("\tT:" + str(rmse_train)+"\n\tP:"+str(rmse_predict))
-    rmses = sorted(rmses, key=lambda l: l[2])
-    return rmses[0]
+    rmsesAndMaes = sorted(rmsesAndMaes, key=lambda l: l[2])
+    return rmsesAndMaes[0]
     
 chosenFeatureAndModels = []   
 def automaticChooseFeatures(i):
@@ -412,8 +416,8 @@ def automaticChooseFeatures(i):
             X_temp_dev.append(temp_row)
             numOfFeatures = len(temp_row)
         X_dev2 = X_temp_dev    
-        rmse = trainRegressors(regressors, X_train2, X_dev2)
-        chosenFeatureAndModel = (chosenFeature, numOfFeatures, rmse)
+        rmseAndMae = trainRegressors(regressors, X_train2, X_dev2)
+        chosenFeatureAndModel = (chosenFeature, numOfFeatures, rmseAndMae)
         chosenFeatureAndModels.append(chosenFeatureAndModel)
     elif i < len(featureChoices):
         #not choose
@@ -429,12 +433,18 @@ automaticChooseFeatures(0)
 
 print chosenFeatureAndModels    
 with open('regressorTable.csv', 'wb') as csvfile:
-    fieldnames = ['Index', 'Feature Used', 'Num of Audio Features', 'Num of Features', 'Lowest RMSE prediction score', 'RMSE training score', 'Best Machine Learning Model']
+    fieldnames = ['Index', 'Feature Used', 'Num of Audio Features', 'Num of Features', 
+                    'Lowest RMSE prediction score', 'RMSE training score', 
+                    'Lowest MAE prediction score', 'MAE training score', 'Best Machine Learning Model']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     index = 1
     writer.writeheader()
-    for chosenFeature, numOfFeatures, rmse in chosenFeatureAndModels:
-        writer.writerow({'Index':str(index), 'Feature Used':','.join(chosenFeature), 'Num of Audio Features':len(chosenFeature), 'Num of Features':numOfFeatures, 'Lowest RMSE prediction score':str(rmse[2]), 'RMSE training score':str(rmse[1]), 'Best Machine Learning Model':rmse[0]})
+    for chosenFeature, numOfFeatures, rmseAndMae in chosenFeatureAndModels:
+        writer.writerow({'Index':str(index), 'Feature Used':','.join(chosenFeature), 
+        'Num of Audio Features':len(chosenFeature), 'Num of Features':numOfFeatures, 
+        'Lowest RMSE prediction score':str(rmseAndMae[2]), 'RMSE training score':str(rmseAndMae[1]), 
+        'Lowest MAE prediction score':str(rmseAndMae[4]), 'MAE training score':str(rmseAndMae[3]), 
+        'Best Machine Learning Model':rmseAndMae[0]})
         index = index + 1
 
 #layer = 2
